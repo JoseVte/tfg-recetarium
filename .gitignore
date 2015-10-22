@@ -12,3 +12,4 @@ Thumbs.db
 /.settings
 /RUNNING_PID
 *.log
+play-fork-run.sbt
