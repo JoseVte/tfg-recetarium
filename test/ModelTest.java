@@ -16,46 +16,20 @@ import java.io.FileInputStream;
 import play.libs.ws.*;
 
 public class ModelTest {
-    JndiDatabaseTester databaseTester;
-    Application app;
+    public void initializeData() {
+        String [] list = {"Josrom", "Dantar", "Ericmaster", "xChaco"};
 
-    // Data needed for create the fake
-    private static HashMap<String, String> settings() {
-        HashMap<String, String> settings = new HashMap<String, String>();
-        settings.put("db.default.url", "jdbc:mysql://localhost:3306/play_test");
-        settings.put("db.default.username", "root");
-        settings.put("db.default.password", "");
-        settings.put("db.default.jndiName", "DefaultDS");
-        settings.put("jpa.default", "mySqlPersistenceUnit");
-        return(settings);
-    }
-
-    @BeforeClass
-    public static void createTables() {
-        Application fakeApp = Helpers.fakeApplication(settings());
-        running (fakeApp, () -> {
-            JPA.withTransaction(() -> {});
-        });
-    }
-
-    @Before
-    public void initializeData() throws Exception {
-        app = Helpers.fakeApplication(settings());
-        databaseTester = new JndiDatabaseTester("DefaultDS");
-        IDataSet initialDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("test/resources/employee_dataset_1.xml"));
-        databaseTester.setDataSet(initialDataSet);
-        databaseTester.onSetup();
-    }
-
-    @After
-    public void closeDB() throws Exception {
-        databaseTester.onTearDown();
+        for (String name : list) {
+            Employee e = new Employee(name);
+            EmployeeService.create(e);
+        }
     }
 
     @Test
     public void testFindEmployee() {
-        running (app, () -> {
+        running (fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
+                initializeData();
                 Employee e = EmployeeService.find(1);
                 assertEquals(e.name, "Josrom");
             });
@@ -64,8 +38,9 @@ public class ModelTest {
 
     @Test
     public void testFindEmployeeNotFound() {
-        running (app, () -> {
+        running (fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
+                initializeData();
                 Employee e = EmployeeService.find(5);
                 assertNull(e);
             });
@@ -74,8 +49,9 @@ public class ModelTest {
 
     @Test
     public void testFindAllEmployees() {
-        running (app, () -> {
+        running (fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
+                initializeData();
                 List<Employee> e = EmployeeService.all();
                 long count = EmployeeService.count();
                 assertEquals(count, 4);
@@ -90,8 +66,9 @@ public class ModelTest {
 
     @Test
     public void testPageEmployees() {
-        running (app, () -> {
+        running (fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
+                initializeData();
                 List<Employee> e = EmployeeService.paginate(0, 3);
 
                 assertTrue(e.contains(new Employee("Josrom")));
@@ -107,8 +84,9 @@ public class ModelTest {
 
     @Test
     public void testCreateEmployee() {
-        running (app, () -> {
+        running (fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
+                initializeData();
                 Employee create = new Employee("New test");
                 Employee e = EmployeeService.create(create);
                 assertEquals(e, create);
@@ -118,8 +96,9 @@ public class ModelTest {
 
     @Test
     public void testUpdateEmployee() {
-        running (app, () -> {
+        running (fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
+                initializeData();
                 Employee create = new Employee("New test");
                 Employee e = EmployeeService.create(create);
                 e.name = "Update test";
@@ -131,8 +110,9 @@ public class ModelTest {
 
     @Test
     public void testDeleteEmployee() {
-        running (app, () -> {
+        running (fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
+                initializeData();
                 Employee create = new Employee("New test");
                 Employee e = EmployeeService.create(create);
                 
