@@ -22,7 +22,7 @@ public class ModelTest {
     // Data needed for create the fake
     private static HashMap<String, String> settings() {
         HashMap<String, String> settings = new HashMap<String, String>();
-        settings.put("db.default.url", "jdbc:mysql://api.recetarium.com:3306/play_test");
+        settings.put("db.default.url", "jdbc:mysql://localhost:3306/play_test");
         settings.put("db.default.username", "root");
         settings.put("db.default.password", "");
         settings.put("db.default.jndiName", "DefaultDS");
