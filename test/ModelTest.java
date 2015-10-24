@@ -1,19 +1,12 @@
-import org.junit.*;
-import play.test.*;
-import play.Application;
-import play.mvc.*;
-import static play.test.Helpers.*;
-import static org.junit.Assert.*;
-import play.db.jpa.*;
-import java.util.List;
-import models.*;
-import org.dbunit.*;
-import org.dbunit.dataset.*;
-import org.dbunit.dataset.xml.*;
-import java.util.HashMap;
-import java.io.FileInputStream;
+import models.Employee;
+import models.EmployeeService;
+import org.junit.Test;
+import play.db.jpa.JPA;
 
-import play.libs.ws.*;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
 
 public class ModelTest {
     public void initializeData() {

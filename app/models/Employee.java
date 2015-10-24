@@ -1,11 +1,11 @@
 package models;
 
-import javax.persistence.*;
 import play.data.validation.Constraints;
-import play.data.format.*;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Employee {

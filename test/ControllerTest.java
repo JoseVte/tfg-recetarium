@@ -1,21 +1,12 @@
-import org.junit.*;
-import play.test.*;
-import play.Application;
-import play.mvc.*;
-import static play.test.Helpers.*;
-import static org.junit.Assert.*;
-import play.db.jpa.*;
-import java.util.List;
-import models.*;
-import org.dbunit.*;
-import org.dbunit.dataset.*;
-import org.dbunit.dataset.xml.*;
-import java.util.HashMap;
-import java.io.FileInputStream;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import play.libs.ws.*;
+import org.junit.Test;
 import play.libs.Json;
+import play.libs.ws.WS;
+import play.libs.ws.WSResponse;
+
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
 
 public class ControllerTest {
     int timeout = 4000;
