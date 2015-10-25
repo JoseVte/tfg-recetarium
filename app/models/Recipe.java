@@ -30,6 +30,12 @@ public class Recipe implements Creatable, Updatable {
     
     @OneToMany(mappedBy="recipe")
     public List<Comment> comments;
+    
+    @ManyToMany(mappedBy="recipesFavorites")
+    public List<User> favorites;
+    
+    @OneToMany(mappedBy="recipe",fetch=FetchType.LAZY)
+    public List<Rating> ratings;
 
     @Column(name="created_at", insertable=false, nullable=false)
     @Temporal(TemporalType.TIMESTAMP)

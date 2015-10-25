@@ -39,6 +39,26 @@ public class User implements Creatable, Updatable {
     
     @OneToMany(mappedBy="user")
     public List<Comment> comments;
+    
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="friends",
+    	joinColumns={@JoinColumn(name="user_id")},
+    	inverseJoinColumns={@JoinColumn(name="friend_id")},
+    	uniqueConstraints={@UniqueConstraint(columnNames={"user_id","friend_id"})})
+    public List<User> myFriends;
+    
+    @ManyToMany(mappedBy="myFriends")
+    public List<User> friends;
+    
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="favorites",
+    	joinColumns={@JoinColumn(name="user_id")},
+    	inverseJoinColumns={@JoinColumn(name="recipe_id")},
+    	uniqueConstraints={@UniqueConstraint(columnNames={"user_id","recipe_id"})})
+    public List<Recipe> recipesFavorites;
+    
+    @OneToMany(mappedBy="user",fetch=FetchType.LAZY)
+    public List<Rating> ratings;
 
     @Column(name="created_at", insertable=false, nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
