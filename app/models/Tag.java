@@ -12,30 +12,18 @@ import util.*;
         CreatedAtListener.class,
         UpdatedAtListener.class
 })
-@Table(name = "comments")
-public class Comment implements Creatable, Updatable {
+@Table(name = "tags")
+public class Tag implements Creatable, Updatable {
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     public Integer id;
 
     @Column(nullable = false)
     public String text;
-
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="recipe_id")
-    public Recipe recipe;
     
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    public User user;
+    @ManyToMany(mappedBy="tags")
+    public List<Recipe> recipes;
     
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="parent_comment_id")
-    public Comment parent;
-    
-    @OneToMany(mappedBy="parent")
-    public List<Comment> replies;
-
     @Column(name="created_at", insertable=false, nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
@@ -62,9 +50,8 @@ public class Comment implements Creatable, Updatable {
         return updatedAt;
     }
     
-    public Comment () {}
-    
-    public Comment(String text) {
+    public Tag() {}
+    public Tag(String text) {
     	this.text = text;
     }
 }

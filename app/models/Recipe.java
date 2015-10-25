@@ -36,6 +36,13 @@ public class Recipe implements Creatable, Updatable {
     
     @OneToMany(mappedBy="recipe",fetch=FetchType.LAZY)
     public List<Rating> ratings;
+    
+    @ManyToMany(fetch=FetchType.LAZY)
+    @JoinTable(name="recipe_tags",
+    	joinColumns={@JoinColumn(name="recipe_id")},
+    	inverseJoinColumns={@JoinColumn(name="tag_id")},
+    	uniqueConstraints={@UniqueConstraint(columnNames={"tag_id","recipe_id"})})
+    public List<Tag> tags;
 
     @Column(name="created_at", insertable=false, nullable=false)
     @Temporal(TemporalType.TIMESTAMP)
