@@ -5,6 +5,11 @@ import java.util.List;
 
 import javax.persistence.*;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import play.data.validation.Constraints;
 import util.*;
 
 @Entity
@@ -13,22 +18,25 @@ import util.*;
         UpdatedAtListener.class
 })
 @Table(name = "tags")
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Tag implements Creatable, Updatable {
 	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     public Integer id;
 
-    @Column(nullable = false)
+	@Constraints.Required
+	@Column(nullable = false)
     public String text;
     
     @ManyToMany(mappedBy="tags")
     public List<Recipe> recipes;
     
-    @Column(name="created_at", insertable=false, nullable=false)
+    @Column(name="created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @Column(name="updated_at", insertable=false, nullable=false)
+    @Column(name="updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 

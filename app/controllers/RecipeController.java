@@ -10,12 +10,13 @@ import play.data.Form;
 import play.db.jpa.*;
 
 import models.*;
+import models.service.RecipeService;
 import views.html.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class EmployeeController extends Controller {
-    static Form<Employee> employeeForm = Form.form(Employee.class);
+public class RecipeController extends Controller {
+    static Form<Recipe> recipeForm = Form.form(Recipe.class);
 
     /**
      * Add the content-type json to response
@@ -30,16 +31,7 @@ public class EmployeeController extends Controller {
     }
 
     /**
-     * Get the index page
-     *
-     * @return Result
-     */
-    public Result index() {
-        return ok(index.render("API REST for JAVA Play Framework"));
-    }
-
-    /**
-     * Get the employees with pagination
+     * Get the recipes with pagination
      *
      * @param Integer page
      * @param Integer size
@@ -48,21 +40,21 @@ public class EmployeeController extends Controller {
      */
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size) {
-        List models = EmployeeService.paginate(page-1, size);
-        Long count = EmployeeService.count();
+        List<Recipe> models = RecipeService.paginate(page-1, size);
+        Long count = RecipeService.count();
 
         ObjectNode result = Json.newObject();
         result.put("data", Json.toJson(models));
         result.put("total", count);
-        if (page > 1) result.put("link-prev", routes.EmployeeController.list(page-1, size).toString());
-        if (page*size < count) result.put("link-next", routes.EmployeeController.list(page+1, size).toString());
-        result.put("link-self", routes.EmployeeController.list(page, size).toString());
+        if (page > 1) result.put("link-prev", routes.RecipeController.list(page-1, size).toString());
+        if (page*size < count) result.put("link-next", routes.RecipeController.list(page+1, size).toString());
+        result.put("link-self", routes.RecipeController.list(page, size).toString());
 
         return jsonResult(ok(result));
     }
 
     /**
-     * Get one employee by id
+     * Get one recipe by id
      *
      * @param Integer id
      *
@@ -70,47 +62,47 @@ public class EmployeeController extends Controller {
      */
     @Transactional(readOnly = true)
     public Result get(Integer id) {
-        Employee employee = EmployeeService.find(id);
-        if (employee == null ) {
+        Recipe recipe = RecipeService.find(id);
+        if (recipe == null ) {
             ObjectNode result = Json.newObject();
             result.put("error", "Not found " + id);
             return jsonResult(notFound(result));
         }
-        return jsonResult(ok(Json.toJson(employee)));
+        return jsonResult(ok(Json.toJson(recipe)));
     }
 
     /**
-     * Create an employee with the data of request
+     * Create an recipe with the data of request
      *
      * @return Result
      */
     @Transactional
     public Result create() {
-        Form<Employee> employee = employeeForm.bindFromRequest();
-        if (employee.hasErrors()) {
-            return jsonResult(badRequest(employee.errorsAsJson()));
+        Form<Recipe> recipe = recipeForm.bindFromRequest();
+        if (recipe.hasErrors()) {
+            return jsonResult(badRequest(recipe.errorsAsJson()));
         }
-        Employee newEmployee = EmployeeService.create(employee.get());
-        return jsonResult(created(Json.toJson(newEmployee)));
+        Recipe newRecipe = RecipeService.create(recipe.get());
+        return jsonResult(created(Json.toJson(newRecipe)));
     }
 
     /**
-     * Update an employee with the data of request
+     * Update an recipe with the data of request
      *
      * @return Result
      */
     @Transactional
     public Result update() {
-        Form<Employee> employee = employeeForm.bindFromRequest();
-        if (employee.hasErrors()) {
-            return jsonResult(badRequest(employee.errorsAsJson()));
+        Form<Recipe> recipe = recipeForm.bindFromRequest();
+        if (recipe.hasErrors()) {
+            return jsonResult(badRequest(recipe.errorsAsJson()));
         }
-        Employee updatedEmployee = EmployeeService.update(employee.get());
-        return jsonResult(ok(Json.toJson(updatedEmployee)));
+        Recipe updatedRecipe = RecipeService.update(recipe.get());
+        return jsonResult(ok(Json.toJson(updatedRecipe)));
     }
 
     /**
-     * Delete an employee by id
+     * Delete an recipe by id
      *
      * @param Integer id
      *
@@ -118,7 +110,7 @@ public class EmployeeController extends Controller {
      */
     @Transactional
     public Result delete(Integer id) {
-        if (EmployeeService.delete(id)) {
+        if (RecipeService.delete(id)) {
             ObjectNode result = Json.newObject();
             result.put("msg", "Deleted " + id);
             return jsonResult(ok(result));

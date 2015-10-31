@@ -3,6 +3,17 @@ package models;
 import util.*;
 
 import javax.persistence.*;
+
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import models.dao.UserDAO;
+import play.data.validation.Constraints;
+import play.data.validation.ValidationError;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,17 +23,24 @@ import java.util.List;
         UpdatedAtListener.class
 })
 @Table(name = "users")
-public class User implements Creatable, Updatable {
-    @Id
+@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+public class User implements Creatable, Updatable, Serializable {
+	private static final long serialVersionUID = 1L;
+
+	@Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     public Integer id;
 
-    @Column(nullable = false)
+    @Constraints.Required
+    @Column(nullable = false, unique = true)
     public String username;
 
-    @Column(nullable = false)
+    @Constraints.Required
+    @Column(nullable = false, unique = true)
     public String email;
 
+    @Constraints.Required
     @Column(nullable = false)
     public String password;
 
@@ -31,7 +49,9 @@ public class User implements Creatable, Updatable {
     @Column(name="last_name")
     public String lastName;
 
+    @Constraints.Required
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     public TypeUser type;
 
     @OneToMany(mappedBy="user")
@@ -60,11 +80,11 @@ public class User implements Creatable, Updatable {
     @OneToMany(mappedBy="user",fetch=FetchType.LAZY)
     public List<Rating> ratings;
 
-    @Column(name="created_at", insertable=false, nullable=false)
+    @Column(name="created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
-    @Column(name="updated_at", insertable=false, nullable=false)
+    @Column(name="updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
@@ -96,4 +116,20 @@ public class User implements Creatable, Updatable {
         this.lastName = lastName;
         this.type = type;
     }
+    
+    public List<ValidationError> validate() {
+        List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (!UserDAO.where("email", email).isEmpty()) {
+            errors.add(new ValidationError("email", "This e-mail is already registered."));
+        }
+        if (!UserDAO.where("username", username).isEmpty()) {
+            errors.add(new ValidationError("username", "This username is already registered."));
+        }
+        return errors.isEmpty() ? null : errors;
+    }
+
+	public void emptyToNull() {
+		if (firstName != null && firstName.isEmpty()) firstName = null;
+		if (lastName != null && lastName.isEmpty()) lastName = null;
+	}
 }

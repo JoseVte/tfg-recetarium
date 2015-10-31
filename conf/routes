@@ -3,15 +3,24 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.EmployeeController.index()
+GET     /                           controllers.UserController.index()
 
 # Routes API Rest
-GET     /employees                  controllers.EmployeeController.list(page: Integer ?= 1, size: Integer ?= 3)
-GET     /employees/$id<[0-9]+>      controllers.EmployeeController.get(id: Integer)
-POST    /employees                  controllers.EmployeeController.create()
-PUT     /employees                  controllers.EmployeeController.update()
-PATCH   /employees                  controllers.EmployeeController.update()
-DELETE  /employees/$id<[0-9]+>      controllers.EmployeeController.delete(id: Integer)
+## Users
+GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3)
+GET     /users/$id<[0-9]+>      controllers.UserController.get(id: Integer)
+POST    /users                  controllers.UserController.create()
+PUT     /users                  controllers.UserController.update()
+PATCH   /users                  controllers.UserController.update()
+DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
+
+## Recipes
+GET     /recipes                  controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3)
+GET     /recipes/$id<[0-9]+>      controllers.RecipeController.get(id: Integer)
+POST    /recipes                  controllers.RecipeController.create()
+PUT     /recipes                  controllers.RecipeController.update()
+PATCH   /recipes                  controllers.RecipeController.update()
+DELETE  /recipes/$id<[0-9]+>      controllers.RecipeController.delete(id: Integer)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
