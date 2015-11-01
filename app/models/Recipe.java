@@ -60,6 +60,9 @@ public class Recipe implements Creatable, Updatable, Serializable {
     	inverseJoinColumns={@JoinColumn(name="tag_id")},
     	uniqueConstraints={@UniqueConstraint(columnNames={"tag_id","recipe_id"})})
     public List<Tag> tags;
+    
+    @OneToMany(mappedBy="recipe")
+    public List<Media> media;
 
     @Column(name="created_at")
     @Temporal(TemporalType.TIMESTAMP)

@@ -93,6 +93,7 @@ public class UserDAO {
      *
      * @param String field
      * @param Object value
+     * @param Integer id
      * @param String comparison
      *
      * @return List<User>
@@ -107,6 +108,7 @@ public class UserDAO {
      *
      * @param String field
      * @param Object value
+     * @param Integer id
      *
      * @return List<User>
      */

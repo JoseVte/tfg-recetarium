@@ -92,6 +92,7 @@ public class RecipeDAO {
      *
      * @param String field
      * @param Object value
+     * @param Integer id
      * @param String comparison
      *
      * @return List<Recipe>
@@ -106,6 +107,7 @@ public class RecipeDAO {
      *
      * @param String field
      * @param Object value
+     * @param Integer id
      *
      * @return List<Recipe>
      */
