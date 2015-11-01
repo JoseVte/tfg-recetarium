@@ -14,18 +14,16 @@ import play.data.validation.ValidationError;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
 @EntityListeners({
-        CreatedAtListener.class,
-        UpdatedAtListener.class
+        TimestampListener.class
 })
 @Table(name = "recipes")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class Recipe implements Creatable, Updatable, Serializable {
+public class Recipe extends Timestamp implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -63,32 +61,6 @@ public class Recipe implements Creatable, Updatable, Serializable {
     
     @OneToMany(mappedBy="recipe")
     public List<Media> media;
-
-    @Column(name="created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @Column(name="updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-
-    @Override
-    public void setCreatedAt(Date date) {
-        this.createdAt = date;
-    }
-
-    @Override
-    public void setUpdatedAt(Date date) {
-        this.updatedAt = date;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
     
     public Recipe() {}
 

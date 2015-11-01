@@ -1,7 +1,8 @@
 package models.dao;
 
 import java.util.List;
-import java.util.Map;
+
+import javax.persistence.NoResultException;
 
 import models.User;
 import play.db.jpa.JPA;
@@ -34,6 +35,21 @@ public class UserDAO {
     public static User find(Integer id) {
         return JPA.em().find(User.class, id);
     }
+    
+    /**
+     * Find with trashed an user by id
+     *
+     * @param Integer id
+     *
+     * @return User
+     */
+    public static User findWithTrashed(Integer id) {
+        try {
+        	return(User) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id = " + id + " AND deleted_at is not null").getSingleResult();
+        } catch (NoResultException e) {
+        	return null;
+        }
+    }
 
     /**
      * Update an user
@@ -43,17 +59,18 @@ public class UserDAO {
      * @return User
      */
     public static User update(User model) {
+        User aux = JPA.em().getReference(User.class, model.id);
+        model.setCreatedAt(aux.getCreatedAt());
         return JPA.em().merge(model);
     }
 
     /**
      * Delete an user by id
      *
-     * @param Integer id
+     * @param User user
      */
-    public static void delete(Integer id) {
-        User model = JPA.em().getReference(User.class, id);
-        JPA.em().remove(model);
+    public static void delete(User user) {
+        JPA.em().remove(user);
     }
 
     /**

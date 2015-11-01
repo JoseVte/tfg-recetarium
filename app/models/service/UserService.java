@@ -38,6 +38,17 @@ public class UserService {
     public static User find(Integer id) {
         return UserDAO.find(id);
     }
+    
+    /**
+     * Find with trashed an user by id
+     *
+     * @param Integer id
+     *
+     * @return User
+     */
+    public static User findWithTrashed(Integer id) {
+        return UserDAO.findWithTrashed(id);
+    }
 
     /**
      * Delete an user by id
@@ -47,13 +58,12 @@ public class UserService {
     public static Boolean delete(Integer id) {
         User user = UserDAO.find(id);
         if (user != null) {
-            UserDAO.delete(id);
+            UserDAO.delete(user);
             return true;
         } else {
             return false;
         }
     }
-
     /**
      * Get all users
      *

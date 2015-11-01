@@ -14,18 +14,16 @@ import play.data.validation.ValidationError;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
 @EntityListeners({
-        CreatedAtListener.class,
-        UpdatedAtListener.class
+        TimestampListener.class
 })
 @Table(name = "users")
 @JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class User implements Creatable, Updatable, Serializable {
+public class User extends Timestamp implements Serializable {
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -79,32 +77,6 @@ public class User implements Creatable, Updatable, Serializable {
     
     @OneToMany(mappedBy="user",fetch=FetchType.LAZY)
     public List<Rating> ratings;
-
-    @Column(name="created_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt;
-
-    @Column(name="updated_at")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt;
-
-    @Override
-    public void setCreatedAt(Date date) {
-        this.createdAt = date;
-    }
-
-    @Override
-    public void setUpdatedAt(Date date) {
-        this.updatedAt = date;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
 
     public User() {}
 
