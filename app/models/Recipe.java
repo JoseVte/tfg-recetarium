@@ -98,7 +98,7 @@ public class Recipe implements Creatable, Updatable, Serializable {
 	
 	public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!RecipeDAO.where("slug", slug).isEmpty()) {
+        if (!RecipeDAO.check("slug", slug, id).isEmpty()) {
             errors.add(new ValidationError("slug", "This slug is already used."));
         }
         return errors.isEmpty() ? null : errors;

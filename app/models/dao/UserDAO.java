@@ -1,6 +1,7 @@
 package models.dao;
 
 import java.util.List;
+import java.util.Map;
 
 import models.User;
 import play.db.jpa.JPA;
@@ -96,9 +97,9 @@ public class UserDAO {
      *
      * @return List<User>
      */
-    @SuppressWarnings("unchecked")
-	public static List<User> where(String field, Object value, String comparison) {
-    	return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + field + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
+	@SuppressWarnings("unchecked")
+	public static List<User> check(String field, Object value, Integer id, String comparison) {
+    	return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " +id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
     
     /**
@@ -109,8 +110,7 @@ public class UserDAO {
      *
      * @return List<User>
      */
-    @SuppressWarnings("unchecked")
-	public static List<User> where(String field, Object value) {
-    	return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + field + " = '" + value + "' ORDER BY id").getResultList();
+    public static List<User> check(String field, Object value, Integer id) {
+    	return check(field, value, id, "=");
     }
 }

@@ -81,10 +81,10 @@ UNLOCK TABLES;
 LOCK TABLES `ratings` WRITE;
 /*!40000 ALTER TABLE `ratings` DISABLE KEYS */;
 
-INSERT INTO `ratings` (`recipe_id`, `user_id`, `rating`)
+INSERT INTO `ratings` (`id`,`recipe_id`, `user_id`, `rating`)
 VALUES
-	(1, 1, 5.0),
-	(1, 2, 6.66);
+	(1, 1, 1, 5.0),
+	(2, 1, 2, 6.66);
 
 /*!40000 ALTER TABLE `ratings` ENABLE KEYS */;
 UNLOCK TABLES;

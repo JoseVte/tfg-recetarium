@@ -97,8 +97,8 @@ public class RecipeDAO {
      * @return List<Recipe>
      */
     @SuppressWarnings("unchecked")
-	public static List<Recipe> where(String field, Object value, String comparison) {
-    	return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + field + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
+	public static List<Recipe> check(String field, Object value, Integer id, String comparison) {
+    	return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " +id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
     
     /**
@@ -109,8 +109,7 @@ public class RecipeDAO {
      *
      * @return List<Recipe>
      */
-    @SuppressWarnings("unchecked")
-	public static List<Recipe> where(String field, Object value) {
-    	return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + field + " = '" + value + "' ORDER BY id").getResultList();
+	public static List<Recipe> check(String field, Object value, Integer id) {
+    	return check(field, value, id, "=");
     }
 }

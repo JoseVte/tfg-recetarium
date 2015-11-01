@@ -119,10 +119,10 @@ public class User implements Creatable, Updatable, Serializable {
     
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!UserDAO.where("email", email).isEmpty()) {
+        if (!UserDAO.check("email", email, id).isEmpty()) {
             errors.add(new ValidationError("email", "This e-mail is already registered."));
         }
-        if (!UserDAO.where("username", username).isEmpty()) {
+        if (!UserDAO.check("username", username, id).isEmpty()) {
             errors.add(new ValidationError("username", "This username is already registered."));
         }
         return errors.isEmpty() ? null : errors;
