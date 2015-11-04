@@ -2,13 +2,12 @@ package models.dao;
 
 import java.util.List;
 
-import javax.persistence.NoResultException;
-
 import models.User;
 import play.db.jpa.JPA;
 
 public class UserDAO {
-	static String TABLE = User.class.getName();
+    static String TABLE = User.class.getName();
+
     /**
      * Create an user
      *
@@ -16,7 +15,7 @@ public class UserDAO {
      *
      * @return User
      */
-    public static User create (User model) {
+    public static User create(User model) {
         model.emptyToNull();
         JPA.em().persist(model);
         // Flush and refresh for check
@@ -34,21 +33,6 @@ public class UserDAO {
      */
     public static User find(Integer id) {
         return JPA.em().find(User.class, id);
-    }
-    
-    /**
-     * Find with trashed an user by id
-     *
-     * @param Integer id
-     *
-     * @return User
-     */
-    public static User findWithTrashed(Integer id) {
-        try {
-        	return(User) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id = " + id + " AND deleted_at is not null").getSingleResult();
-        } catch (NoResultException e) {
-        	return null;
-        }
     }
 
     /**
@@ -79,7 +63,7 @@ public class UserDAO {
      * @return List<User>
      */
     @SuppressWarnings("unchecked")
-	public static List<User> all() {
+    public static List<User> all() {
         return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
     }
 
@@ -92,8 +76,9 @@ public class UserDAO {
      * @return List<User>
      */
     @SuppressWarnings("unchecked")
-	public static List<User> paginate(Integer page, Integer size) {
-        return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page*size).setMaxResults(size).getResultList();
+    public static List<User> paginate(Integer page, Integer size) {
+        return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
+                .setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
@@ -104,7 +89,7 @@ public class UserDAO {
     public static Long count() {
         return (Long) JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m").getSingleResult();
     }
-    
+
     /**
      * Where clause
      *
@@ -115,11 +100,12 @@ public class UserDAO {
      *
      * @return List<User>
      */
-	@SuppressWarnings("unchecked")
-	public static List<User> check(String field, Object value, Integer id, String comparison) {
-    	return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " +id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
+    @SuppressWarnings("unchecked")
+    public static List<User> check(String field, Object value, Integer id, String comparison) {
+        return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field
+                + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
-    
+
     /**
      * Where clause
      *
@@ -130,6 +116,6 @@ public class UserDAO {
      * @return List<User>
      */
     public static List<User> check(String field, Object value, Integer id) {
-    	return check(field, value, id, "=");
+        return check(field, value, id, "=");
     }
 }

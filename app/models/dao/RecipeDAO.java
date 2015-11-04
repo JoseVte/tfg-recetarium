@@ -6,7 +6,8 @@ import models.Recipe;
 import play.db.jpa.JPA;
 
 public class RecipeDAO {
-	static String TABLE = Recipe.class.getName();
+    static String TABLE = Recipe.class.getName();
+
     /**
      * Create an recipe
      *
@@ -14,7 +15,7 @@ public class RecipeDAO {
      *
      * @return Recipe
      */
-    public static Recipe create (Recipe model) {
+    public static Recipe create(Recipe model) {
         model.emptyToNull();
         JPA.em().persist(model);
         // Flush and refresh for check
@@ -61,7 +62,7 @@ public class RecipeDAO {
      * @return List<Recipe>
      */
     @SuppressWarnings("unchecked")
-	public static List<Recipe> all() {
+    public static List<Recipe> all() {
         return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
     }
 
@@ -74,8 +75,9 @@ public class RecipeDAO {
      * @return List<Recipe>
      */
     @SuppressWarnings("unchecked")
-	public static List<Recipe> paginate(Integer page, Integer size) {
-        return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page*size).setMaxResults(size).getResultList();
+    public static List<Recipe> paginate(Integer page, Integer size) {
+        return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
+                .setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
@@ -86,7 +88,7 @@ public class RecipeDAO {
     public static Long count() {
         return (Long) JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m").getSingleResult();
     }
-    
+
     /**
      * Where clause
      *
@@ -98,10 +100,11 @@ public class RecipeDAO {
      * @return List<Recipe>
      */
     @SuppressWarnings("unchecked")
-	public static List<Recipe> check(String field, Object value, Integer id, String comparison) {
-    	return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " +id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
+    public static List<Recipe> check(String field, Object value, Integer id, String comparison) {
+        return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field
+                + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
-    
+
     /**
      * Where clause
      *
@@ -111,7 +114,7 @@ public class RecipeDAO {
      *
      * @return List<Recipe>
      */
-	public static List<Recipe> check(String field, Object value, Integer id) {
-    	return check(field, value, id, "=");
+    public static List<Recipe> check(String field, Object value, Integer id) {
+        return check(field, value, id, "=");
     }
 }

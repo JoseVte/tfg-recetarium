@@ -9,20 +9,19 @@ import javax.persistence.TemporalType;
 
 @MappedSuperclass
 public class Timestamp {
-    @Column(name="created_at")
+    @Column(name = "created_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
-    
+
     public void setCreatedAt(Date date) {
         this.createdAt = date;
     }
-    
+
     public Date getCreatedAt() {
         return createdAt;
     }
-    
 
-    @Column(name="updated_at")
+    @Column(name = "updated_at")
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 

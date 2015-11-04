@@ -40,14 +40,14 @@ public class RecipeController extends Controller {
      */
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size) {
-        List<Recipe> models = RecipeService.paginate(page-1, size);
+        List<Recipe> models = RecipeService.paginate(page - 1, size);
         Long count = RecipeService.count();
 
         ObjectNode result = Json.newObject();
         result.put("data", Json.toJson(models));
         result.put("total", count);
-        if (page > 1) result.put("link-prev", routes.RecipeController.list(page-1, size).toString());
-        if (page*size < count) result.put("link-next", routes.RecipeController.list(page+1, size).toString());
+        if (page > 1) result.put("link-prev", routes.RecipeController.list(page - 1, size).toString());
+        if (page * size < count) result.put("link-next", routes.RecipeController.list(page + 1, size).toString());
         result.put("link-self", routes.RecipeController.list(page, size).toString());
 
         return jsonResult(ok(result));
@@ -63,7 +63,7 @@ public class RecipeController extends Controller {
     @Transactional(readOnly = true)
     public Result get(Integer id) {
         Recipe recipe = RecipeService.find(id);
-        if (recipe == null ) {
+        if (recipe == null) {
             ObjectNode result = Json.newObject();
             result.put("error", "Not found " + id);
             return jsonResult(notFound(result));

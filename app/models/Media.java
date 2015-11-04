@@ -16,38 +16,40 @@ import play.data.validation.ValidationError;
 import util.*;
 
 @Entity
-@EntityListeners({
-        TimestampListener.class
-})
-@Table(name = "media", uniqueConstraints={@UniqueConstraint(columnNames={"filename","recipe_id"})})
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@EntityListeners({ TimestampListener.class })
+@Table(name = "media", uniqueConstraints = { @UniqueConstraint(columnNames = { "filename", "recipe_id" }) })
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Media extends Timestamp implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    public Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Integer            id;
 
-	@Constraints.Required
-	@Column(nullable = false)
-    public String filename;
+    @Constraints.Required
+    @Column(nullable = false)
+    public String             filename;
 
-    @ManyToOne(fetch=FetchType.LAZY)
-    @JoinColumn(name="recipe_id")
-    public Recipe recipe;
-    
-    public Media () {}
-    
-    public Media(String filename) {
-    	this.filename = filename;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "recipe_id")
+    public Recipe             recipe;
+
+    public Media() {
     }
-    
+
+    public Media(String filename) {
+        this.filename = filename;
+    }
+
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
         if (!MediaDAO.check(recipe.id, filename, id).isEmpty()) {
             errors.add(new ValidationError("filename", "This filename is already used for this recipe."));
         }
         return errors.isEmpty() ? null : errors;
+    }
+
+    public void emptyToNull() {
     }
 }

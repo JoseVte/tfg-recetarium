@@ -49,14 +49,14 @@ public class UserController extends Controller {
      */
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size) {
-        List<User> models = UserService.paginate(page-1, size);
+        List<User> models = UserService.paginate(page - 1, size);
         Long count = UserService.count();
 
         ObjectNode result = Json.newObject();
         result.put("data", Json.toJson(models));
         result.put("total", count);
-        if (page > 1) result.put("link-prev", routes.UserController.list(page-1, size).toString());
-        if (page*size < count) result.put("link-next", routes.UserController.list(page+1, size).toString());
+        if (page > 1) result.put("link-prev", routes.UserController.list(page - 1, size).toString());
+        if (page * size < count) result.put("link-next", routes.UserController.list(page + 1, size).toString());
         result.put("link-self", routes.UserController.list(page, size).toString());
 
         return jsonResult(ok(result));
@@ -72,7 +72,7 @@ public class UserController extends Controller {
     @Transactional(readOnly = true)
     public Result get(Integer id) {
         User user = UserService.find(id);
-        if (user == null ) {
+        if (user == null) {
             ObjectNode result = Json.newObject();
             result.put("error", "Not found " + id);
             return jsonResult(notFound(result));

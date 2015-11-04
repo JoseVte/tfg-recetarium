@@ -13,28 +13,31 @@ import play.data.validation.Constraints;
 import util.*;
 
 @Entity
-@EntityListeners({
-        TimestampListener.class
-})
+@EntityListeners({ TimestampListener.class })
 @Table(name = "tags")
-@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Tag extends Timestamp implements Serializable {
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	@Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
-    public Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Integer            id;
 
-	@Constraints.Required
-	@Column(nullable = false)
-    public String text;
-    
-    @ManyToMany(mappedBy="tags")
-    public List<Recipe> recipes;
-    
-    public Tag() {}
+    @Constraints.Required
+    @Column(nullable = false)
+    public String             text;
+
+    @ManyToMany(mappedBy = "tags")
+    public List<Recipe>       recipes;
+
+    public Tag() {
+    }
+
     public Tag(String text) {
-    	this.text = text;
+        this.text = text;
+    }
+
+    public void emptyToNull() {
     }
 }

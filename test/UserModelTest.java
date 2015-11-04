@@ -1,16 +1,22 @@
-import models.Employee;
-import models.EmployeeService;
 import org.junit.Test;
 import play.db.jpa.JPA;
+import play.test.FakeApplication;
+import play.test.WithApplication;
 
 import java.util.List;
 
 import static org.junit.Assert.*;
 import static play.test.Helpers.*;
 
-public class ModelTest {
+public class UserModelTest extends WithApplication {
+
+    @Override
+    public FakeApplication provideFakeApplication(){
+        return fakeApplication(inMemoryDatabase());
+    }
+    
     public void initializeData() {
-        String [] list = {"Josrom", "Dantar", "Ericmaster", "xChaco"};
+        String[] list = { "Josrom", "Dantar", "Ericmaster", "xChaco" };
 
         for (String name : list) {
             Employee e = new Employee(name);
@@ -20,7 +26,7 @@ public class ModelTest {
 
     @Test
     public void testFindEmployee() {
-        running (fakeApplication(inMemoryDatabase()), () -> {
+        running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 Employee e = EmployeeService.find(1);
@@ -28,10 +34,10 @@ public class ModelTest {
             });
         });
     }
-
+/*
     @Test
     public void testFindEmployeeNotFound() {
-        running (fakeApplication(inMemoryDatabase()), () -> {
+        running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 Employee e = EmployeeService.find(5);
@@ -42,7 +48,7 @@ public class ModelTest {
 
     @Test
     public void testFindAllEmployees() {
-        running (fakeApplication(inMemoryDatabase()), () -> {
+        running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 List<Employee> e = EmployeeService.all();
@@ -59,7 +65,7 @@ public class ModelTest {
 
     @Test
     public void testPageEmployees() {
-        running (fakeApplication(inMemoryDatabase()), () -> {
+        running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 List<Employee> e = EmployeeService.paginate(0, 3);
@@ -77,7 +83,7 @@ public class ModelTest {
 
     @Test
     public void testCreateEmployee() {
-        running (fakeApplication(inMemoryDatabase()), () -> {
+        running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 Employee create = new Employee("New test");
@@ -89,7 +95,7 @@ public class ModelTest {
 
     @Test
     public void testUpdateEmployee() {
-        running (fakeApplication(inMemoryDatabase()), () -> {
+        running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 Employee create = new Employee("New test");
@@ -103,15 +109,15 @@ public class ModelTest {
 
     @Test
     public void testDeleteEmployee() {
-        running (fakeApplication(inMemoryDatabase()), () -> {
+        running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 Employee create = new Employee("New test");
                 Employee e = EmployeeService.create(create);
-                
+
                 assertTrue(EmployeeService.delete(e.id));
                 assertFalse(EmployeeService.delete(e.id));
             });
         });
-    }
+    }*/
 }
