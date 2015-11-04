@@ -13,7 +13,8 @@ libraryDependencies ++= Seq(
   "org.dbunit" % "dbunit" % "2.4.9",
   cache,
   javaWs,
-  "org.codehaus.jackson" % "jackson-mapper-asl" % "1.8.5"
+  "org.codehaus.jackson" % "jackson-mapper-asl" % "1.8.5",
+  "org.yaml" % "snakeyaml" % "1.16"
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the

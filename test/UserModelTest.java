@@ -1,36 +1,62 @@
+import org.junit.Before;
 import org.junit.Test;
+import org.yaml.snakeyaml.Yaml;
+
+import models.User;
+import models.dao.UserDAO;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
+import util.InitDataLoader;
 
+import java.io.IOException;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 
 import static org.junit.Assert.*;
 import static play.test.Helpers.*;
 
 public class UserModelTest extends WithApplication {
-
+    
     @Override
     public FakeApplication provideFakeApplication(){
         return fakeApplication(inMemoryDatabase());
     }
     
-    public void initializeData() {
-        String[] list = { "Josrom", "Dantar", "Ericmaster", "xChaco" };
+    public void initializeData() throws Exception {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction trx = em.getTransaction();
+        try {
 
-        for (String name : list) {
-            Employee e = new Employee(name);
-            EmployeeService.create(e);
-        }
+            //Start the transaction
+            trx.begin();
+            InitDataLoader.load(em, "test/init-data.yml");
+          //Commit and end the transaction
+            trx.commit();
+        } catch (RuntimeException | IOException e) {
+            if (trx != null && trx.isActive()) {
+                trx.rollback();
+             }
+             throw e;
+          } finally {
+             //Close the manager
+             em.close();
+             emf.close();
+          }
     }
 
     @Test
-    public void testFindEmployee() {
+    public void testDAOFindUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Employee e = EmployeeService.find(1);
-                assertEquals(e.name, "Josrom");
+                User user = UserDAO.find(1);
+                assertEquals(user.username, "test");
             });
         });
     }

@@ -1,0 +1,6 @@
+--- !!models.User
+      username:   test
+      password:   098f6bcd4621d373cade4e832627b4f6    # password: test
+      email:      test@testing.dev
+      type:       COMUN
+ 

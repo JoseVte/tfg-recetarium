@@ -43,8 +43,6 @@ public class RatingDAO {
      * @return Rating
      */
     public static Rating update(Rating model) {
-        Rating aux = JPA.em().getReference(Rating.class, model.id);
-        model.setCreatedAt(aux.getCreatedAt());
         return JPA.em().merge(model);
     }
 
