@@ -2,11 +2,8 @@ package models.dao;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Iterator;
 import java.util.List;
 
-import models.Comment;
-import models.Recipe;
 import models.User;
 import play.db.jpa.JPA;
 import util.Encryptation;

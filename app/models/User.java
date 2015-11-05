@@ -1,8 +1,22 @@
 package models;
 
-import util.*;
+import java.io.Serializable;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -14,12 +28,9 @@ import models.manytomany.Friend;
 import models.manytomany.Rating;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-
-import java.io.Serializable;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.List;
+import util.Encryptation;
+import util.Timestamp;
+import util.TimestampListener;
 
 @Entity
 @EntityListeners({ TimestampListener.class })
@@ -56,22 +67,22 @@ public class User extends Timestamp implements Serializable {
     public TypeUser           type;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Recipe>       recipes;
+    public List<Recipe>       recipes          = new ArrayList<Recipe>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Comment>      comments;
+    public List<Comment>      comments         = new ArrayList<Comment>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Friend>         myFriends;
+    public List<Friend>       myFriends        = new ArrayList<Friend>();
 
     @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Friend>         friends;
+    public List<Friend>       friends          = new ArrayList<Friend>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Favorite>       recipesFavorites;
+    public List<Favorite>     recipesFavorites = new ArrayList<Favorite>();
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Rating>       ratings;
+    public List<Rating>       ratings          = new ArrayList<Rating>();
 
     public User() {
     }

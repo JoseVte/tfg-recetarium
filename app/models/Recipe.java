@@ -1,9 +1,21 @@
 
 package models;
 
-import util.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -15,10 +27,8 @@ import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import util.Timestamp;
+import util.TimestampListener;
 
 @Entity
 @EntityListeners({ TimestampListener.class })
@@ -46,19 +56,19 @@ public class Recipe extends Timestamp implements Serializable {
     public User               user;
 
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Comment>      comments;
+    public List<Comment>      comments         = new ArrayList<Comment>();
 
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Favorite>         favorites;
+    public List<Favorite>     favorites        = new ArrayList<Favorite>();
 
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Rating>       ratings;
+    public List<Rating>       ratings          = new ArrayList<Rating>();
 
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<RecipeTags>          tags;
+    public List<RecipeTags>   tags             = new ArrayList<RecipeTags>();
 
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Media>        media;
+    public List<Media>        media            = new ArrayList<Media>();
 
     public Recipe() {
     }

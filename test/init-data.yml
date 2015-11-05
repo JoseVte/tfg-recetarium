@@ -17,10 +17,6 @@ data:
       slug:        test
       description: Descripcion test
       user:        *user
-      tags:
-        - *tag
-      favorites:
-        - *user
 - &comment !!models.Comment
       text:   test
       recipe: *recipe
@@ -40,3 +36,9 @@ data:
 - &friend !!models.manytomany.Friend
       user:   *user
       friend: *admin
+- &tags !!models.manytomany.RecipeTags
+     tag:    *tag
+     recipe: *recipe
+- &fav !!models.manytomany.Favorite
+      recipe: *recipe
+      user:   *user

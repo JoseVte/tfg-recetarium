@@ -1,15 +1,10 @@
-import org.h2.jdbc.JdbcSQLException;
-import org.junit.Before;
-import org.junit.Test;
-import org.yaml.snakeyaml.Yaml;
+package dao;
 
-import models.TypeUser;
-import models.User;
-import models.dao.UserDAO;
-import play.db.jpa.JPA;
-import play.test.FakeApplication;
-import play.test.WithApplication;
-import util.InitDataLoader;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static play.test.Helpers.fakeApplication;
+import static play.test.Helpers.inMemoryDatabase;
+import static play.test.Helpers.running;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,10 +14,17 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.Persistence;
 
-import static org.junit.Assert.*;
-import static play.test.Helpers.*;
+import org.junit.Test;
 
-public class UserModelTest extends WithApplication {
+import models.TypeUser;
+import models.User;
+import models.dao.UserDAO;
+import play.db.jpa.JPA;
+import play.test.FakeApplication;
+import play.test.WithApplication;
+import util.InitDataLoader;
+
+public class UserModelDAOTest extends WithApplication {
 
     @Override
     public FakeApplication provideFakeApplication() {
