@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import models.manytomany.RecipeTags;
 import play.data.validation.Constraints;
 import util.*;
 
@@ -28,8 +29,8 @@ public class Tag extends Timestamp implements Serializable {
     @Column(nullable = false)
     public String             text;
 
-    @ManyToMany(mappedBy = "tags")
-    public List<Recipe>       recipes;
+    @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY, orphanRemoval = true)
+    public List<RecipeTags>   recipes;
 
     public Tag() {
     }
@@ -38,6 +39,6 @@ public class Tag extends Timestamp implements Serializable {
         this.text = text;
     }
 
-    public void emptyToNull() {
+    public void prePersistData() {
     }
 }

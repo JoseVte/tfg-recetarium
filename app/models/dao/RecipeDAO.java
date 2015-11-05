@@ -16,7 +16,7 @@ public class RecipeDAO {
      * @return Recipe
      */
     public static Recipe create(Recipe model) {
-        model.emptyToNull();
+        model.prePersistData();
         JPA.em().persist(model);
         // Flush and refresh for check
         JPA.em().flush();
@@ -49,10 +49,9 @@ public class RecipeDAO {
     /**
      * Delete an recipe by id
      *
-     * @param Integer id
+     * @param Recipe model
      */
-    public static void delete(Integer id) {
-        Recipe model = JPA.em().getReference(Recipe.class, id);
+    public static void delete(Recipe model) {
         JPA.em().remove(model);
     }
 

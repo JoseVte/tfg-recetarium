@@ -40,7 +40,7 @@ public class Comment extends Timestamp implements Serializable {
     @JoinColumn(name = "parent_comment_id")
     public Comment            parent;
 
-    @OneToMany(mappedBy = "parent")
+    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment>      replies;
 
     public Comment() {
@@ -50,6 +50,6 @@ public class Comment extends Timestamp implements Serializable {
         this.text = text;
     }
 
-    public void emptyToNull() {
+    public void prePersistData() {
     }
 }

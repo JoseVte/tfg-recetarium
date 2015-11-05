@@ -50,6 +50,6 @@ public class Media extends Timestamp implements Serializable {
         return errors.isEmpty() ? null : errors;
     }
 
-    public void emptyToNull() {
+    public void prePersistData() {
     }
 }

@@ -1,6 +1,13 @@
 package controllers;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.representer.Representer;
 
 import play.*;
 import play.mvc.*;
@@ -91,8 +98,15 @@ public class UserController extends Controller {
         if (user.hasErrors()) {
             return jsonResult(badRequest(user.errorsAsJson()));
         }
-        User newUser = UserService.create(user.get());
-        return jsonResult(created(Json.toJson(newUser)));
+        try {
+            User newUser = UserService.create(user.get());
+            return jsonResult(created(Json.toJson(newUser)));
+        } catch (Exception e) {
+            Logger.error(e.getMessage());
+            ObjectNode result = Json.newObject();
+            result.put("error", "Something went wrong");
+            return jsonResult(internalServerError(result));
+        }
     }
 
     /**

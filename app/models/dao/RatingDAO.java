@@ -2,7 +2,7 @@ package models.dao;
 
 import java.util.List;
 
-import models.Rating;
+import models.manytomany.Rating;
 import play.db.jpa.JPA;
 
 public class RatingDAO {
@@ -16,7 +16,7 @@ public class RatingDAO {
      * @return Rating
      */
     public static Rating create(Rating model) {
-        model.emptyToNull();
+        model.prePersistData();
         JPA.em().persist(model);
         // Flush and refresh for check
         JPA.em().flush();

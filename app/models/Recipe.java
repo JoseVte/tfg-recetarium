@@ -10,6 +10,9 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import models.dao.RecipeDAO;
+import models.manytomany.Favorite;
+import models.manytomany.Rating;
+import models.manytomany.RecipeTags;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 
@@ -42,22 +45,19 @@ public class Recipe extends Timestamp implements Serializable {
     @JoinColumn(name = "user_id")
     public User               user;
 
-    @OneToMany(mappedBy = "recipe")
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment>      comments;
 
-    @ManyToMany(mappedBy = "recipesFavorites")
-    public List<User>         favorites;
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    public List<Favorite>         favorites;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Rating>       ratings;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "recipe_tags", joinColumns = { @JoinColumn(name = "recipe_id") }, inverseJoinColumns = {
-            @JoinColumn(name = "tag_id") }, uniqueConstraints = {
-                    @UniqueConstraint(columnNames = { "tag_id", "recipe_id" }) })
-    public List<Tag>          tags;
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    public List<RecipeTags>          tags;
 
-    @OneToMany(mappedBy = "recipe")
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Media>        media;
 
     public Recipe() {
@@ -78,7 +78,7 @@ public class Recipe extends Timestamp implements Serializable {
         return errors.isEmpty() ? null : errors;
     }
 
-    public void emptyToNull() {
+    public void prePersistData() {
         if (description != null && description.isEmpty()) description = null;
     }
 }

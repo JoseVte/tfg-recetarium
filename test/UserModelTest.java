@@ -1,7 +1,9 @@
+import org.h2.jdbc.JdbcSQLException;
 import org.junit.Before;
 import org.junit.Test;
 import org.yaml.snakeyaml.Yaml;
 
+import models.TypeUser;
 import models.User;
 import models.dao.UserDAO;
 import play.db.jpa.JPA;
@@ -21,33 +23,33 @@ import static org.junit.Assert.*;
 import static play.test.Helpers.*;
 
 public class UserModelTest extends WithApplication {
-    
+
     @Override
-    public FakeApplication provideFakeApplication(){
+    public FakeApplication provideFakeApplication() {
         return fakeApplication(inMemoryDatabase());
     }
-    
+
     public void initializeData() throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
         EntityManager em = emf.createEntityManager();
         EntityTransaction trx = em.getTransaction();
         try {
 
-            //Start the transaction
+            // Start the transaction
             trx.begin();
             InitDataLoader.load(em, "test/init-data.yml");
-          //Commit and end the transaction
+            // Commit and end the transaction
             trx.commit();
         } catch (RuntimeException | IOException e) {
             if (trx != null && trx.isActive()) {
                 trx.rollback();
-             }
-             throw e;
-          } finally {
-             //Close the manager
-             em.close();
-             emf.close();
-          }
+            }
+            throw e;
+        } finally {
+            // Close the manager
+            em.close();
+            emf.close();
+        }
     }
 
     @Test
@@ -57,93 +59,112 @@ public class UserModelTest extends WithApplication {
                 initializeData();
                 User user = UserDAO.find(1);
                 assertEquals(user.username, "test");
-            });
-        });
-    }
-/*
-    @Test
-    public void testFindEmployeeNotFound() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                Employee e = EmployeeService.find(5);
-                assertNull(e);
-            });
-        });
-    }
+                assertEquals(user.email, "test@testing.dev");
+                assertEquals(user.type, TypeUser.COMUN);
+                assertEquals(user.recipes.size(), 1);
 
-    @Test
-    public void testFindAllEmployees() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                List<Employee> e = EmployeeService.all();
-                long count = EmployeeService.count();
-                assertEquals(count, 4);
-
-                assertTrue(e.contains(new Employee("Josrom")));
-                assertTrue(e.contains(new Employee("Dantar")));
-                assertTrue(e.contains(new Employee("Ericmaster")));
-                assertTrue(e.contains(new Employee("xChaco")));
+                User admin = UserDAO.find(2);
+                assertEquals(admin.username, "admin");
+                assertEquals(admin.email, "admin@admin.dev");
+                assertEquals(admin.type, TypeUser.ADMIN);
+                assertEquals(admin.recipes.size(), 0);
             });
         });
     }
 
     @Test
-    public void testPageEmployees() {
+    public void testDAONotFoundUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Employee> e = EmployeeService.paginate(0, 3);
-
-                assertTrue(e.contains(new Employee("Josrom")));
-                assertTrue(e.contains(new Employee("Dantar")));
-                assertTrue(e.contains(new Employee("Ericmaster")));
-                assertFalse(e.contains(new Employee("xChaco")));
-
-                e = EmployeeService.paginate(1, 3);
-                assertEquals(e.size(), 1);
+                User user = UserDAO.find(0);
+                assertNull(user);
             });
         });
     }
 
     @Test
-    public void testCreateEmployee() {
+    public void testDAOFindAllUsers() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Employee create = new Employee("New test");
-                Employee e = EmployeeService.create(create);
-                assertEquals(e, create);
+                List<User> users = UserDAO.all();
+                long count = UserDAO.count();
+                assertEquals(count, 2);
+
+                assertEquals(users.get(0).username, "test");
+                assertEquals(users.get(1).username, "admin");
             });
         });
     }
 
     @Test
-    public void testUpdateEmployee() {
+    public void testDAOPageUsers() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Employee create = new Employee("New test");
-                Employee e = EmployeeService.create(create);
-                e.name = "Update test";
-                Employee update = EmployeeService.update(e);
-                assertEquals(update.name, "Update test");
+                List<User> users = UserDAO.paginate(0, 1);
+                assertEquals(users.get(0).username, "test");
+                assertEquals(users.size(), 1);
+
+                users = UserDAO.paginate(1, 1);
+                assertEquals(users.get(0).username, "admin");
+                assertEquals(users.size(), 1);
             });
         });
     }
 
     @Test
-    public void testDeleteEmployee() {
+    public void testDAOCreateUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Employee create = new Employee("New test");
-                Employee e = EmployeeService.create(create);
-
-                assertTrue(EmployeeService.delete(e.id));
-                assertFalse(EmployeeService.delete(e.id));
+                User create = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
+                User user = UserDAO.create(create);
+                assertEquals(user, create);
             });
         });
-    }*/
+    }
+
+    @Test
+    public void testDAOUpdateUser() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                User user = UserDAO.find(1);
+                user.username = "Update test";
+                User update = UserDAO.update(user);
+                assertEquals(update.username, "Update test");
+            });
+        });
+    }
+
+    @Test
+    public void testDAODeleteUser() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                User user = UserDAO.find(1);
+                long count = UserDAO.count();
+                assertEquals(count, 2);
+
+                UserDAO.delete(user);
+
+                count = UserDAO.count();
+                assertEquals(count, 1);
+            });
+        });
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void testDAODeleteNotFoundUser() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                User user = UserDAO.find(0);
+
+                UserDAO.delete(user);
+            });
+        });
+    }
 }

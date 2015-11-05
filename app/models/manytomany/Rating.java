@@ -1,4 +1,4 @@
-package models;
+package models.manytomany;
 
 import java.io.Serializable;
 
@@ -7,6 +7,9 @@ import javax.persistence.*;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+
+import models.Recipe;
+import models.User;
 
 @Entity
 @Table(name = "ratings", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "recipe_id" }) })
@@ -66,6 +69,6 @@ public class Rating implements Serializable {
         return true;
     }
 
-    public void emptyToNull() {
+    public void prePersistData() {
     }
 }

@@ -1,5 +1,7 @@
 package models.service;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import models.User;
@@ -12,8 +14,10 @@ public class UserService {
      * @param User data
      *
      * @return User
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
      */
-    public static User create(User data) {
+    public static User create(User data) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return UserDAO.create(data);
     }
 

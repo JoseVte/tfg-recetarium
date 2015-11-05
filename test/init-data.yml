@@ -1,6 +1,42 @@
---- !!models.User
+---
+data:
+- &user !!models.User
       username:   test
       password:   098f6bcd4621d373cade4e832627b4f6    # password: test
       email:      test@testing.dev
       type:       COMUN
- 
+- &admin  !!models.User
+      username:   admin
+      password:   098f6bcd4621d373cade4e832627b4f6    # password: test
+      email:      admin@admin.dev
+      type:       ADMIN
+- &tag !!models.Tag
+      text: test
+- &recipe !!models.Recipe
+      title:       Test
+      slug:        test
+      description: Descripcion test
+      user:        *user
+      tags:
+        - *tag
+      favorites:
+        - *user
+- &comment !!models.Comment
+      text:   test
+      recipe: *recipe
+      user:   *user
+- &subcomment !!models.Comment
+      text:   test-sub
+      recipe: *recipe
+      user:   *admin
+      parent: *comment
+- &media !!models.Media
+      filename: test
+      recipe:   *recipe
+- &rating !!models.manytomany.Rating
+      rating: 2.5
+      recipe: *recipe
+      user:   *user
+- &friend !!models.manytomany.Friend
+      user:   *user
+      friend: *admin

@@ -16,7 +16,7 @@ public class MediaDAO {
      * @return Media
      */
     public static Media create(Media model) {
-        model.emptyToNull();
+        model.prePersistData();
         JPA.em().persist(model);
         // Flush and refresh for check
         JPA.em().flush();

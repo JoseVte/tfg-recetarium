@@ -1,9 +1,15 @@
 package models.dao;
 
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.Iterator;
 import java.util.List;
 
+import models.Comment;
+import models.Recipe;
 import models.User;
 import play.db.jpa.JPA;
+import util.Encryptation;
 
 public class UserDAO {
     static String TABLE = User.class.getName();
@@ -14,9 +20,11 @@ public class UserDAO {
      * @param User model
      *
      * @return User
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
      */
-    public static User create(User model) {
-        model.emptyToNull();
+    public static User create(User model) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        model.prePersistData();
         JPA.em().persist(model);
         // Flush and refresh for check
         JPA.em().flush();
@@ -117,5 +125,41 @@ public class UserDAO {
      */
     public static List<User> check(String field, Object value, Integer id) {
         return check(field, value, id, "=");
+    }
+
+    /**
+     * Validates a password using a hash.
+     *
+     * @param password the password to check
+     * @param correctHash the hash of the valid password
+     * @return true if the password is correct, false if not
+     */
+    public static boolean validatePassword(String password, String correctHash)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return validatePassword(password.toCharArray(), correctHash);
+    }
+
+    /**
+     * Validates a password using a hash.
+     *
+     * @param password the password to check
+     * @param correctHash the hash of the valid password
+     * @return true if the password is correct, false if not
+     */
+    public static boolean validatePassword(char[] password, String correctHash)
+            throws NoSuchAlgorithmException, InvalidKeySpecException {
+        // Decode the hash into its parameters
+        String[] params = correctHash.split(":");
+        int iterations = Integer.parseInt(params[Encryptation.ITERATION_INDEX]);
+        byte[] salt = Encryptation.fromHex(params[Encryptation.SALT_INDEX]);
+        byte[] hash = Encryptation.fromHex(params[Encryptation.PBKDF2_INDEX]);
+
+        // Compute the hash of the provided password, using the same salt,
+        // iteration count, and hash length
+        byte[] testHash = Encryptation.pbkdf2(password, salt, iterations, hash.length);
+
+        // Compare the hashes in constant time. The password is correct if
+        // both hashes match.
+        return Encryptation.slowEquals(hash, testHash);
     }
 }

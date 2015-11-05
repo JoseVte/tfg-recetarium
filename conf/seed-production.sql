@@ -55,10 +55,10 @@ UNLOCK TABLES;
 LOCK TABLES `favorites` WRITE;
 /*!40000 ALTER TABLE `favorites` DISABLE KEYS */;
 
-INSERT INTO `favorites` (`recipe_id`, `user_id`)
+INSERT INTO `favorites` (`id`, `recipe_id`, `user_id`)
 VALUES
-	(1, 1),
-	(1, 2);
+	(1, 1, 1),
+	(2, 1, 2);
 
 /*!40000 ALTER TABLE `favorites` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -68,10 +68,10 @@ UNLOCK TABLES;
 LOCK TABLES `friends` WRITE;
 /*!40000 ALTER TABLE `friends` DISABLE KEYS */;
 
-INSERT INTO `friends` (`friend_id`, `user_id`)
+INSERT INTO `friends` (`id`, `friend_id`, `user_id`)
 VALUES
-	(2, 1),
-	(1, 2);
+	(1, 2, 1),
+	(2, 1, 2);
 
 /*!40000 ALTER TABLE `friends` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -107,10 +107,10 @@ UNLOCK TABLES;
 LOCK TABLES `recipe_tags` WRITE;
 /*!40000 ALTER TABLE `recipe_tags` DISABLE KEYS */;
 
-INSERT INTO `recipe_tags` (`recipe_id`, `tag_id`)
+INSERT INTO `recipe_tags` (`id`, `recipe_id`, `tag_id`)
 VALUES
-	(1, 1),
-	(1, 2);
+	(1, 1, 1),
+	(2, 1, 2);
 
 /*!40000 ALTER TABLE `recipe_tags` ENABLE KEYS */;
 UNLOCK TABLES;

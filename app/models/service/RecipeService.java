@@ -47,7 +47,7 @@ public class RecipeService {
     public static Boolean delete(Integer id) {
         Recipe recipe = RecipeDAO.find(id);
         if (recipe != null) {
-            RecipeDAO.delete(id);
+            RecipeDAO.delete(recipe);
             return true;
         } else {
             return false;
