@@ -57,8 +57,11 @@ public class Comment extends Timestamp implements Serializable {
     public Comment() {
     }
 
-    public Comment(String text) {
+    public Comment(String text, User user, Recipe recipe, Comment parent) {
         this.text = text;
+        this.user = user;
+        this.recipe = recipe;
+        this.parent = parent;
     }
 
     public void prePersistData() {

@@ -64,7 +64,7 @@ public class CommentDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Comment> all() {
-        return (List<Comment>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
     }
 
     /**
@@ -77,7 +77,7 @@ public class CommentDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Comment> paginate(Integer page, Integer size) {
-        return (List<Comment>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
                 .setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 

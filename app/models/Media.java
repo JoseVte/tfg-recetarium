@@ -49,8 +49,9 @@ public class Media extends Timestamp implements Serializable {
     public Media() {
     }
 
-    public Media(String filename) {
+    public Media(String filename, Recipe recipe) {
         this.filename = filename;
+        this.recipe = recipe;
     }
 
     public List<ValidationError> validate() {

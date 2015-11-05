@@ -69,7 +69,7 @@ public class UserDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<User> all() {
-        return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
     }
 
     /**
@@ -82,7 +82,7 @@ public class UserDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<User> paginate(Integer page, Integer size) {
-        return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
                 .setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
@@ -107,7 +107,7 @@ public class UserDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<User> check(String field, Object value, Integer id, String comparison) {
-        return (List<User>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field
                 + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
 

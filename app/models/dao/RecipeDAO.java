@@ -62,7 +62,7 @@ public class RecipeDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Recipe> all() {
-        return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
     }
 
     /**
@@ -75,7 +75,7 @@ public class RecipeDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Recipe> paginate(Integer page, Integer size) {
-        return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
                 .setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
@@ -100,7 +100,7 @@ public class RecipeDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Recipe> check(String field, Object value, Integer id, String comparison) {
-        return (List<Recipe>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field
                 + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
 

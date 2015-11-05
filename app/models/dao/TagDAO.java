@@ -2,6 +2,7 @@ package models.dao;
 
 import java.util.List;
 
+import models.Recipe;
 import models.Tag;
 import play.db.jpa.JPA;
 
@@ -64,7 +65,7 @@ public class TagDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Tag> all() {
-        return (List<Tag>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
     }
 
     /**
@@ -77,7 +78,7 @@ public class TagDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Tag> paginate(Integer page, Integer size) {
-        return (List<Tag>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
                 .setMaxResults(size).getResultList();
     }
 
@@ -89,19 +90,33 @@ public class TagDAO {
     public static Long count() {
         return (Long) JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m").getSingleResult();
     }
+    
+    /**
+     * Where clause
+     *
+     * @param String field
+     * @param Object value
+     * @param Integer id
+     * @param String comparison
+     *
+     * @return List<Recipe>
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Tag> check(String field, Object value, Integer id, String comparison) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field
+                + " " + comparison + " '" + value + "' ORDER BY id").getResultList();
+    }
 
     /**
      * Where clause
      *
-     * @param Integer recipe_id
-     * @param String filename
+     * @param String field
+     * @param Object value
      * @param Integer id
      *
-     * @return List<Tag>
+     * @return List<Recipe>
      */
-    @SuppressWarnings("unchecked")
-    public static List<Tag> check(Integer recipe_id, String filename, Integer id) {
-        return (List<Tag>) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND (filename = '"
-                + filename + "' AND recipe_id = '" + recipe_id + "') ORDER BY id").getResultList();
+    public static List<Tag> check(String field, Object value, Integer id) {
+        return check(field, value, id, "=");
     }
 }

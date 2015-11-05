@@ -18,8 +18,10 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import models.dao.TagDAO;
 import models.manytomany.RecipeTags;
 import play.data.validation.Constraints;
+import play.data.validation.ValidationError;
 import util.Timestamp;
 import util.TimestampListener;
 
@@ -36,7 +38,7 @@ public class Tag extends Timestamp implements Serializable {
     public Integer            id;
 
     @Constraints.Required
-    @Column(nullable = false)
+    @Column(unique = true, nullable = false)
     public String             text;
 
     @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -49,6 +51,14 @@ public class Tag extends Timestamp implements Serializable {
         this.text = text;
     }
 
+    public List<ValidationError> validate() {
+        List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (!TagDAO.check("text", text, id).isEmpty()) {
+            errors.add(new ValidationError("text", "This tag is already created."));
+        }
+        return errors.isEmpty() ? null : errors;
+    }
+    
     public void prePersistData() {
     }
 }
