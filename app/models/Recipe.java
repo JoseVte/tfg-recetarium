@@ -84,6 +84,14 @@ public class Recipe extends Timestamp implements Serializable {
         this.user = user;
     }
 
+    public Recipe(String slug, String title, String description, User user, Section section) {
+        this.slug = slug;
+        this.title = title;
+        this.description = description;
+        this.user = user;
+        this.section = section;
+    }
+
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
         if (!RecipeDAO.check("slug", slug, id).isEmpty()) {
@@ -104,9 +112,9 @@ public class Recipe extends Timestamp implements Serializable {
     @Override
     public String toString() {
         return "Recipe [id=" + id + ", slug=" + slug + ", title=" + title + ", description=" + description + ", user="
-                + user.id + ", section=" + section.text + ", comments=" + comments.size() + ", favorites="
-                + favorites.size() + ", ratings=" + ratings.size() + ", tags=" + tags.size() + ", media=" + media.size()
-                + "]";
+                + user.id + ", section=" + (section != null ? section.text : "") + ", comments=" + comments.size()
+                + ", favorites=" + favorites.size() + ", ratings=" + ratings.size() + ", tags=" + tags.size()
+                + ", media=" + media.size() + "]";
     }
 
 }

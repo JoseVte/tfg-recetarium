@@ -2,6 +2,7 @@ package models.dao;
 
 import java.util.List;
 
+import models.Recipe;
 import models.Section;
 import play.db.jpa.JPA;
 
@@ -9,7 +10,7 @@ public class SectionDAO {
     static String TABLE = Section.class.getName();
 
     /**
-     * Create an section
+     * Create a section
      *
      * @param Section model
      *
@@ -25,7 +26,7 @@ public class SectionDAO {
     }
 
     /**
-     * Find an section by id
+     * Find a section by id
      *
      * @param Integer id
      *
@@ -36,7 +37,7 @@ public class SectionDAO {
     }
 
     /**
-     * Update an section
+     * Update a section
      *
      * @param Section model
      *
@@ -49,7 +50,7 @@ public class SectionDAO {
     }
 
     /**
-     * Delete an section by id
+     * Delete a section by id
      *
      * @param Section section
      */

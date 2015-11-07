@@ -101,9 +101,9 @@ public class UserService {
      *
      * @return boolean
      */
-    public static boolean addFriend(Integer id, Integer friendId) {
-        if (id != friendId) {
-            User user = UserDAO.find(id);
+    public static boolean addFriend(Integer userId, Integer friendId) {
+        if (userId != friendId) {
+            User user = UserDAO.find(userId);
             User friend = UserDAO.find(friendId);
             if (user != null && friend != null) {
                 Friend friendship = new Friend(user, friend);
@@ -124,9 +124,9 @@ public class UserService {
      *
      * @return boolean
      */
-    public static boolean deleteFriend(Integer id, Integer friendId) {
-        if (id != friendId) {
-            User user = UserDAO.find(id);
+    public static boolean deleteFriend(Integer userId, Integer friendId) {
+        if (userId != friendId) {
+            User user = UserDAO.find(userId);
             User friend = UserDAO.find(friendId);
             if (user != null && friend != null) {
                 Friend friendship = new Friend(user, friend);
@@ -147,8 +147,8 @@ public class UserService {
      *
      * @return boolean
      */
-    public static boolean addFavorite(Integer id, Integer recipeId) {
-        User user = UserDAO.find(id);
+    public static boolean addFavorite(Integer userId, Integer recipeId) {
+        User user = UserDAO.find(userId);
         Recipe recipe = RecipeDAO.find(recipeId);
         if (user != null && recipe != null) {
             Favorite fav = new Favorite(user, recipe);
@@ -168,8 +168,8 @@ public class UserService {
      *
      * @return boolean
      */
-    public static boolean deleteFavorite(Integer id, Integer recipeId) {
-        User user = UserDAO.find(id);
+    public static boolean deleteFavorite(Integer userId, Integer recipeId) {
+        User user = UserDAO.find(userId);
         Recipe recipe = RecipeDAO.find(recipeId);
         if (user != null && recipe != null) {
             Favorite fav = new Favorite(user, recipe);
@@ -190,8 +190,8 @@ public class UserService {
      *
      * @return boolean
      */
-    public static boolean addRating(Integer id, Integer recipeId, double value) {
-        User user = UserDAO.find(id);
+    public static boolean addRating(Integer userId, Integer recipeId, double value) {
+        User user = UserDAO.find(userId);
         Recipe recipe = RecipeDAO.find(recipeId);
         if (user != null && recipe != null && value >= 0.0 && value <= 5.0) {
             Rating fav = new Rating(user, recipe);
@@ -212,8 +212,8 @@ public class UserService {
      *
      * @return boolean
      */
-    public static boolean updateRating(Integer id, Integer recipeId, double value) {
-        User user = UserDAO.find(id);
+    public static boolean updateRating(Integer userId, Integer recipeId, double value) {
+        User user = UserDAO.find(userId);
         Recipe recipe = RecipeDAO.find(recipeId);
         if (user != null && recipe != null && value >= 0.0 && value <= 5.0) {
             Rating fav = new Rating(user, recipe);
@@ -233,8 +233,8 @@ public class UserService {
      *
      * @return boolean
      */
-    public static boolean deleteRating(Integer id, Integer recipeId) {
-        User user = UserDAO.find(id);
+    public static boolean deleteRating(Integer userId, Integer recipeId) {
+        User user = UserDAO.find(userId);
         Recipe recipe = RecipeDAO.find(recipeId);
         if (user != null && recipe != null) {
             Rating fav = new Rating(user, recipe);

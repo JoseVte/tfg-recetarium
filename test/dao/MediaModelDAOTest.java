@@ -82,11 +82,11 @@ public class MediaModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Media> medias = MediaDAO.all();
+                List<Media> media = MediaDAO.all();
                 long count = MediaDAO.count();
                 assertEquals(count, 1);
 
-                assertEquals(medias.get(0).filename, "test");
+                assertEquals(media.get(0).filename, "test");
             });
         });
     }
@@ -96,12 +96,12 @@ public class MediaModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Media> medias = MediaDAO.paginate(0, 1);
-                assertEquals(medias.get(0).filename, "test");
-                assertEquals(medias.size(), 1);
+                List<Media> media = MediaDAO.paginate(0, 1);
+                assertEquals(media.get(0).filename, "test");
+                assertEquals(media.size(), 1);
 
-                medias = MediaDAO.paginate(1, 1);
-                assertEquals(medias.size(), 0);
+                media = MediaDAO.paginate(1, 1);
+                assertEquals(media.size(), 0);
             });
         });
     }

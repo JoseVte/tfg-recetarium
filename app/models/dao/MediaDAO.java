@@ -9,7 +9,7 @@ public class MediaDAO {
     static String TABLE = Media.class.getName();
 
     /**
-     * Create an media
+     * Create a media
      *
      * @param Media model
      *
@@ -25,7 +25,7 @@ public class MediaDAO {
     }
 
     /**
-     * Find an media by id
+     * Find a media by id
      *
      * @param Integer id
      *
@@ -36,7 +36,7 @@ public class MediaDAO {
     }
 
     /**
-     * Update an media
+     * Update a media
      *
      * @param Media model
      *
@@ -49,7 +49,7 @@ public class MediaDAO {
     }
 
     /**
-     * Delete an media by id
+     * Delete a media by id
      *
      * @param Media media
      */
@@ -58,7 +58,7 @@ public class MediaDAO {
     }
 
     /**
-     * Get all medias
+     * Get all media
      *
      * @return List<Media>
      */
@@ -68,7 +68,7 @@ public class MediaDAO {
     }
 
     /**
-     * Get the page of medias
+     * Get the page of media
      *
      * @param Integer page
      * @param Integer size

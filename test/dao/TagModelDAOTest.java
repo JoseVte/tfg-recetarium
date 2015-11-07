@@ -174,7 +174,7 @@ public class TagModelDAOTest extends WithApplication {
                 assertEquals(tag.recipes.size(), 0);
                 assertEquals(recipe.tags.size(), 1);
 
-                TagDAO.addTag(tag, recipe);
+                TagDAO.addRecipe(tag, recipe);
 
                 assertEquals(tag.recipes.size(), 1);
                 assertEquals(recipe.tags.size(), 2);
@@ -193,7 +193,7 @@ public class TagModelDAOTest extends WithApplication {
                 assertEquals(tag.recipes.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
 
-                TagDAO.deleteTag(tag, recipe);
+                TagDAO.deleteRecipe(tag, recipe);
 
                 assertEquals(tag.recipes.size(), 0);
                 assertEquals(recipe.tags.size(), 0);

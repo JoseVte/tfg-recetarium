@@ -11,7 +11,7 @@ public class TagDAO {
     static String TABLE = Tag.class.getName();
 
     /**
-     * Create an tag
+     * Create a tag
      *
      * @param Tag model
      *
@@ -27,7 +27,7 @@ public class TagDAO {
     }
 
     /**
-     * Find an tag by id
+     * Find a tag by id
      *
      * @param Integer id
      *
@@ -38,7 +38,7 @@ public class TagDAO {
     }
 
     /**
-     * Update an tag
+     * Update a tag
      *
      * @param Tag model
      *
@@ -51,7 +51,7 @@ public class TagDAO {
     }
 
     /**
-     * Delete an tag by id
+     * Delete a tag by id
      *
      * @param Tag tag
      */
@@ -127,7 +127,7 @@ public class TagDAO {
      * @param tag
      * @param recipe
      */
-    public static void addTag(Tag tag, Recipe recipe) {
+    public static void addRecipe(Tag tag, Recipe recipe) {
         RecipeTags tagged = new RecipeTags(tag, recipe);
         JPA.em().persist(tagged);
         // Reload entities
@@ -142,7 +142,7 @@ public class TagDAO {
      * @param tag
      * @param recipe
      */
-    public static void deleteTag(Tag tag, Recipe recipe) {
+    public static void deleteRecipe(Tag tag, Recipe recipe) {
         RecipeTags tagged = (RecipeTags) JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName()
                 + " m WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id).getSingleResult();
         JPA.em().remove(tagged);

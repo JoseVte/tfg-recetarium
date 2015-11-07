@@ -3,6 +3,7 @@ package models.dao;
 import java.util.List;
 
 import models.Recipe;
+import models.Section;
 import models.Tag;
 import models.User;
 import models.manytomany.Favorite;
@@ -14,7 +15,7 @@ public class RecipeDAO {
     static String TABLE = Recipe.class.getName();
 
     /**
-     * Create an recipe
+     * Create a recipe
      *
      * @param Recipe model
      *
@@ -30,7 +31,7 @@ public class RecipeDAO {
     }
 
     /**
-     * Find an recipe by id
+     * Find a recipe by id
      *
      * @param Integer id
      *
@@ -41,7 +42,7 @@ public class RecipeDAO {
     }
 
     /**
-     * Update an recipe
+     * Update a recipe
      *
      * @param Recipe model
      *
@@ -52,7 +53,7 @@ public class RecipeDAO {
     }
 
     /**
-     * Delete an recipe by id
+     * Delete a recipe by id
      *
      * @param Recipe model
      */
@@ -229,6 +230,36 @@ public class RecipeDAO {
         // Reload entities
         JPA.em().flush();
         JPA.em().refresh(user);
+        JPA.em().refresh(recipe);
+    }
+
+    /**
+     * Add section to a recipe
+     *
+     * @param section
+     * @param recipe
+     */
+    public static void addOrUpdateSection(Section section, Recipe recipe) {
+        recipe.section = section;
+        JPA.em().merge(recipe);
+        // Reload entities
+        JPA.em().flush();
+        JPA.em().refresh(section);
+        JPA.em().refresh(recipe);
+    }
+
+    /**
+     * Delete the section of a recipe
+     *
+     * @param recipe
+     */
+    public static void deleteSection(Recipe recipe) {
+        Section section = recipe.section;
+        recipe.section = null;
+        JPA.em().merge(recipe);
+        // Reload entities
+        JPA.em().flush();
+        JPA.em().refresh(section);
         JPA.em().refresh(recipe);
     }
 }

@@ -9,7 +9,7 @@ public class CommentDAO {
     static String TABLE = Comment.class.getName();
 
     /**
-     * Create an comment
+     * Create a comment
      *
      * @param Comment model
      *
@@ -25,7 +25,7 @@ public class CommentDAO {
     }
 
     /**
-     * Find an comment by id
+     * Find a comment by id
      *
      * @param Integer id
      *
@@ -36,7 +36,7 @@ public class CommentDAO {
     }
 
     /**
-     * Update an comment
+     * Update a comment
      *
      * @param Comment model
      *
@@ -49,7 +49,7 @@ public class CommentDAO {
     }
 
     /**
-     * Delete an comment by id
+     * Delete a comment by id
      *
      * @param Comment comment
      */
