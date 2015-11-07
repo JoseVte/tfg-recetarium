@@ -40,6 +40,11 @@ public class Favorite implements Serializable {
     public Favorite() {
     }
 
+    public Favorite(User user, Recipe recipe) {
+        this.user = user;
+        this.recipe = recipe;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -66,5 +71,15 @@ public class Favorite implements Serializable {
     }
 
     public void prePersistData() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Favorite [id=" + id + ", user=" + user.id + ", recipe=" + recipe.id + "]";
     }
 }

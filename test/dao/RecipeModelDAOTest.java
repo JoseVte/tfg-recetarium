@@ -17,7 +17,11 @@ import javax.persistence.Persistence;
 import org.junit.Test;
 
 import models.Recipe;
+import models.Tag;
+import models.TypeUser;
+import models.User;
 import models.dao.RecipeDAO;
+import models.dao.TagDAO;
 import models.dao.UserDAO;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
@@ -64,6 +68,7 @@ public class RecipeModelDAOTest extends WithApplication {
                 assertEquals(recipe.slug, "test");
                 assertEquals(recipe.description, "Descripcion test");
                 assertEquals(recipe.user.id.intValue(), 1);
+                assertEquals(recipe.section.text.toString(), "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
@@ -162,6 +167,140 @@ public class RecipeModelDAOTest extends WithApplication {
                 Recipe recipe = RecipeDAO.find(0);
 
                 RecipeDAO.delete(recipe);
+            });
+        });
+    }
+
+    @Test
+    public void testDAOAddTag() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                recipe = RecipeDAO.create(recipe);
+                Tag tag = TagDAO.find(1);
+
+                assertEquals(tag.recipes.size(), 1);
+                assertEquals(recipe.tags.size(), 0);
+
+                RecipeDAO.addTag(tag, recipe);
+
+                assertEquals(tag.recipes.size(), 2);
+                assertEquals(recipe.tags.size(), 1);
+            });
+        });
+    }
+
+    @Test
+    public void testDAODeleteTag() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Recipe recipe = RecipeDAO.find(1);
+                Tag tag = TagDAO.find(1);
+
+                assertEquals(tag.recipes.size(), 1);
+                assertEquals(recipe.tags.size(), 1);
+
+                RecipeDAO.deleteTag(tag, recipe);
+
+                assertEquals(tag.recipes.size(), 0);
+                assertEquals(recipe.tags.size(), 0);
+            });
+        });
+    }
+
+    @Test
+    public void testDAOAddFavorite() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                User user = UserDAO.find(1);
+                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                recipe = RecipeDAO.create(recipe);
+
+                assertEquals(user.recipesFavorites.size(), 1);
+                assertEquals(recipe.favorites.size(), 0);
+
+                UserDAO.addFavorite(user, recipe);
+
+                assertEquals(user.recipesFavorites.size(), 2);
+                assertEquals(recipe.favorites.size(), 1);
+            });
+        });
+    }
+
+    @Test
+    public void testDAODeleteFavorite() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                User user = UserDAO.find(1);
+                Recipe recipe = RecipeDAO.find(1);
+
+                assertEquals(user.recipesFavorites.size(), 1);
+                assertEquals(recipe.favorites.size(), 1);
+
+                RecipeDAO.deleteFavorite(user, recipe);
+
+                assertEquals(user.recipesFavorites.size(), 0);
+                assertEquals(recipe.favorites.size(), 0);
+            });
+        });
+    }
+
+    @Test
+    public void testDAOAddRating() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                User user = UserDAO.find(1);
+                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                recipe = RecipeDAO.create(recipe);
+
+                assertEquals(user.ratings.size(), 1);
+                assertEquals(recipe.ratings.size(), 0);
+
+                UserDAO.addRating(user, recipe, 4.3);
+
+                assertEquals(user.ratings.size(), 2);
+                assertEquals(recipe.ratings.size(), 1);
+            });
+        });
+    }
+
+    @Test
+    public void testDAOUpdateRating() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                User user = UserDAO.find(1);
+                Recipe recipe = RecipeDAO.find(1);
+
+                assertEquals(recipe.ratings.get(0).rating, new Double(2.5));
+
+                RecipeDAO.updateRating(user, recipe, 4.3);
+
+                assertEquals(recipe.ratings.get(0).rating, new Double(4.3));
+            });
+        });
+    }
+
+    @Test
+    public void testDAODeleteRating() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                User user = UserDAO.find(1);
+                Recipe recipe = RecipeDAO.find(1);
+
+                assertEquals(user.ratings.size(), 1);
+                assertEquals(recipe.favorites.size(), 1);
+
+                RecipeDAO.deleteRating(user, recipe);
+
+                assertEquals(user.ratings.size(), 0);
+                assertEquals(recipe.ratings.size(), 0);
             });
         });
     }

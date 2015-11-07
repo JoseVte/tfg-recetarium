@@ -11,16 +11,14 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import models.dao.MediaDAO;
+import models.dao.SectionDAO;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import util.Timestamp;
@@ -28,10 +26,10 @@ import util.TimestampListener;
 
 @Entity
 @EntityListeners({ TimestampListener.class })
-@Table(name = "media", uniqueConstraints = { @UniqueConstraint(columnNames = { "filename", "recipe_id" }) })
+@Table(name = "sections")
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
 @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Media extends Timestamp implements Serializable {
+public class Section extends Timestamp implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -39,25 +37,23 @@ public class Media extends Timestamp implements Serializable {
     public Integer            id;
 
     @Constraints.Required
-    @Column(nullable = false)
-    public String             filename;
+    @Column(unique = true, nullable = false)
+    public String             text;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id")
-    public Recipe             recipe;
+    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, orphanRemoval = true)
+    public List<Recipe>       recipes          = new ArrayList<Recipe>();
 
-    public Media() {
+    public Section() {
     }
 
-    public Media(String filename, Recipe recipe) {
-        this.filename = filename;
-        this.recipe = recipe;
+    public Section(String text) {
+        this.text = text;
     }
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!MediaDAO.check(recipe.id, filename, id).isEmpty()) {
-            errors.add(new ValidationError("filename", "This filename is already used for this recipe."));
+        if (!SectionDAO.check("text", text, id).isEmpty()) {
+            errors.add(new ValidationError("text", "This section is already created."));
         }
         return errors.isEmpty() ? null : errors;
     }
@@ -72,6 +68,7 @@ public class Media extends Timestamp implements Serializable {
      */
     @Override
     public String toString() {
-        return "Media [id=" + id + ", filename=" + filename + ", recipe=" + recipe.id + "]";
+        return "Section [id=" + id + ", text=" + text + ", recipes=" + recipes.size() + "]";
     }
+
 }

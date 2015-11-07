@@ -16,17 +16,14 @@ import javax.persistence.Persistence;
 
 import org.junit.Test;
 
-import models.Recipe;
-import models.Tag;
-import models.dao.RecipeDAO;
-import models.dao.TagDAO;
-import models.dao.UserDAO;
+import models.Section;
+import models.dao.SectionDAO;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
 import util.InitDataLoader;
 
-public class TagModelDAOTest extends WithApplication {
+public class SectionModelDAOTest extends WithApplication {
 
     @Override
     public FakeApplication provideFakeApplication() {
@@ -57,146 +54,107 @@ public class TagModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAOFindTag() {
+    public void testDAOFindSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(1);
-                assertEquals(tag.text, "test");
-                assertEquals(tag.recipes.size(), 1);
+                Section section = SectionDAO.find(1);
+                assertEquals(section.text, "test");
+                assertEquals(section.recipes.size(), 1);
             });
         });
     }
 
     @Test
-    public void testDAONotFoundTag() {
+    public void testDAONotFoundSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(0);
-                assertNull(tag);
+                Section section = SectionDAO.find(0);
+                assertNull(section);
             });
         });
     }
 
     @Test
-    public void testDAOFindAllTags() {
+    public void testDAOFindAllSections() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Tag> tags = TagDAO.all();
-                long count = TagDAO.count();
+                List<Section> sections = SectionDAO.all();
+                long count = SectionDAO.count();
                 assertEquals(count, 1);
 
-                assertEquals(tags.get(0).text, "test");
+                assertEquals(sections.get(0).text, "test");
             });
         });
     }
 
     @Test
-    public void testDAOPageTags() {
+    public void testDAOPageSections() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Tag> tags = TagDAO.paginate(0, 1);
-                assertEquals(tags.get(0).text, "test");
-                assertEquals(tags.size(), 1);
+                List<Section> sections = SectionDAO.paginate(0, 1);
+                assertEquals(sections.get(0).text, "test");
+                assertEquals(sections.size(), 1);
 
-                tags = TagDAO.paginate(1, 1);
-                assertEquals(tags.size(), 0);
+                sections = SectionDAO.paginate(1, 1);
+                assertEquals(sections.size(), 0);
             });
         });
     }
 
     @Test
-    public void testDAOCreateTag() {
+    public void testDAOCreateSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag create = new Tag("test2");
-                Tag tag = TagDAO.create(create);
-                assertEquals(tag, create);
+                Section create = new Section("test2");
+                Section section = SectionDAO.create(create);
+                assertEquals(section, create);
             });
         });
     }
 
     @Test
-    public void testDAOUpdateTag() {
+    public void testDAOUpdateSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(1);
-                tag.text = "Update test";
-                Tag update = TagDAO.update(tag);
+                Section section = SectionDAO.find(1);
+                section.text = "Update test";
+                Section update = SectionDAO.update(section);
                 assertEquals(update.text, "Update test");
             });
         });
     }
 
     @Test
-    public void testDAODeleteTag() {
+    public void testDAODeleteSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(1);
-                long count = TagDAO.count();
+                Section section = SectionDAO.find(1);
+                long count = SectionDAO.count();
                 assertEquals(count, 1);
 
-                TagDAO.delete(tag);
+                SectionDAO.delete(section);
 
-                count = TagDAO.count();
+                count = SectionDAO.count();
                 assertEquals(count, 0);
             });
         });
     }
 
     @Test(expected = RuntimeException.class)
-    public void testDAODeleteNotFoundTag() {
+    public void testDAODeleteNotFoundSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(0);
+                Section section = SectionDAO.find(0);
 
-                TagDAO.delete(tag);
-            });
-        });
-    }
-
-    @Test
-    public void testDAOAddRecipeTag() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                Tag tag = new Tag("test2");
-                tag = TagDAO.create(tag);
-                Recipe recipe = RecipeDAO.find(1);
-
-                assertEquals(tag.recipes.size(), 0);
-                assertEquals(recipe.tags.size(), 1);
-
-                TagDAO.addTag(tag, recipe);
-
-                assertEquals(tag.recipes.size(), 1);
-                assertEquals(recipe.tags.size(), 2);
-            });
-        });
-    }
-
-    @Test
-    public void testDAODeleteRecipeTag() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                Recipe recipe = RecipeDAO.find(1);
-                Tag tag = TagDAO.find(1);
-
-                assertEquals(tag.recipes.size(), 1);
-                assertEquals(recipe.tags.size(), 1);
-
-                TagDAO.deleteTag(tag, recipe);
-
-                assertEquals(tag.recipes.size(), 0);
-                assertEquals(recipe.tags.size(), 0);
+                SectionDAO.delete(section);
             });
         });
     }

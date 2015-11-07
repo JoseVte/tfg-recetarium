@@ -55,6 +55,10 @@ public class Recipe extends Timestamp implements Serializable {
     @JoinColumn(name = "user_id")
     public User               user;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "section_id")
+    public Section            section;
+
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment>      comments         = new ArrayList<Comment>();
 
@@ -91,4 +95,18 @@ public class Recipe extends Timestamp implements Serializable {
     public void prePersistData() {
         if (description != null && description.isEmpty()) description = null;
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Recipe [id=" + id + ", slug=" + slug + ", title=" + title + ", description=" + description + ", user="
+                + user.id + ", section=" + section.text + ", comments=" + comments.size() + ", favorites="
+                + favorites.size() + ", ratings=" + ratings.size() + ", tags=" + tags.size() + ", media=" + media.size()
+                + "]";
+    }
+
 }

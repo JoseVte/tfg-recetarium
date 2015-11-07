@@ -44,7 +44,14 @@ public class Rating implements Serializable {
     public Rating() {
     }
 
-    public Rating(Double rating) {
+    public Rating(User user, Recipe recipe) {
+        this.user = user;
+        this.recipe = recipe;
+    }
+
+    public Rating(User user, Recipe recipe, Double rating) {
+        this.user = user;
+        this.recipe = recipe;
         this.rating = rating;
     }
 
@@ -65,9 +72,6 @@ public class Rating implements Serializable {
         if (obj == null) return false;
         if (getClass() != obj.getClass()) return false;
         Rating other = (Rating) obj;
-        if (rating == null) {
-            if (other.rating != null) return false;
-        } else if (!rating.equals(other.rating)) return false;
         if (recipe == null) {
             if (other.recipe != null) return false;
         } else if (!recipe.equals(other.recipe)) return false;
@@ -79,4 +83,15 @@ public class Rating implements Serializable {
 
     public void prePersistData() {
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Rating [id=" + id + ", user=" + user.id + ", recipe=" + recipe.id + ", rating=" + rating + "]";
+    }
+
 }

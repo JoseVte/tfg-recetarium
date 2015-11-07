@@ -77,8 +77,8 @@ public class CommentDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Comment> paginate(Integer page, Integer size) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
-                .setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
+                .setMaxResults(size).getResultList();
     }
 
     /**

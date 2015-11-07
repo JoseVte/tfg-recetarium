@@ -58,7 +58,17 @@ public class Tag extends Timestamp implements Serializable {
         }
         return errors.isEmpty() ? null : errors;
     }
-    
+
     public void prePersistData() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Tag [id=" + id + ", text=" + text + ", recipes=" + recipes.size() + "]";
     }
 }

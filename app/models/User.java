@@ -185,4 +185,17 @@ public class User extends Timestamp implements Serializable {
         return true;
     }
 
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "User [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
+                + ", firstName=" + firstName + ", lastName=" + lastName + ", type=" + type.toString() + ", recipes="
+                + recipes.size() + ", comments=" + comments.size() + ", myFriends=" + myFriends.size() + ", friends="
+                + friends.size() + ", recipesFavorites=" + recipesFavorites.size() + ", ratings=" + ratings.size()
+                + "]";
+    }
 }

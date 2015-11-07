@@ -77,8 +77,8 @@ public class MediaDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Media> paginate(Integer page, Integer size) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id")
-                .setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
+                .setMaxResults(size).getResultList();
     }
 
     /**
@@ -101,8 +101,7 @@ public class MediaDAO {
      */
     @SuppressWarnings("unchecked")
     public static List<Media> check(Integer recipe_id, String filename, Integer id) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id
-                + " AND (filename = '" + filename + "' AND recipe_id = '" + recipe_id + "') ORDER BY id")
-                .getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND (filename = '" + filename
+                + "' AND recipe_id = '" + recipe_id + "') ORDER BY id").getResultList();
     }
 }

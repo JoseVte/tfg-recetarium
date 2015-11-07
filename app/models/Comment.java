@@ -66,4 +66,15 @@ public class Comment extends Timestamp implements Serializable {
 
     public void prePersistData() {
     }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Comment [id=" + id + ", text=" + text + ", recipe=" + recipe.id + ", user=" + user.id + ", parent="
+                + (parent != null ? parent.id : "false") + ", replies=" + replies.size() + "]";
+    }
 }

@@ -19,7 +19,6 @@ import org.junit.Test;
 import models.Media;
 import models.dao.MediaDAO;
 import models.dao.RecipeDAO;
-import models.dao.UserDAO;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;

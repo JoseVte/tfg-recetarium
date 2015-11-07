@@ -40,6 +40,11 @@ public class RecipeTags implements Serializable {
     public RecipeTags() {
     }
 
+    public RecipeTags(Tag tag, Recipe recipe) {
+        this.tag = tag;
+        this.recipe = recipe;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -66,5 +71,15 @@ public class RecipeTags implements Serializable {
     }
 
     public void prePersistData() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "RecipeTags [id=" + id + ", tag=" + tag.id + ", recipe=" + recipe.id + "]";
     }
 }

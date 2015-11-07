@@ -39,6 +39,11 @@ public class Friend implements Serializable {
     public Friend() {
     }
 
+    public Friend(User user, User friend) {
+        this.user = user;
+        this.friend = friend;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -65,5 +70,15 @@ public class Friend implements Serializable {
     }
 
     public void prePersistData() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Friend [id=" + id + ", user=" + user.id + ", friend=" + friend.id + "]";
     }
 }
