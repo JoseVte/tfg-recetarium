@@ -98,7 +98,7 @@ public class TagService {
     public static boolean addRecipe(Integer tagId, Integer recipeId) {
         Tag tag = TagDAO.find(tagId);
         Recipe recipe = RecipeDAO.find(recipeId);
-        if (tag != null && tag != null) {
+        if (tag != null && recipe != null) {
             RecipeTags tagged = new RecipeTags(tag, recipe);
             if (!tag.recipes.contains(tagged)) {
                 TagDAO.addRecipe(tag, recipe);
@@ -119,7 +119,7 @@ public class TagService {
     public static boolean deleteRecipe(Integer tagId, Integer recipeId) {
         Tag tag = TagDAO.find(tagId);
         Recipe recipe = RecipeDAO.find(recipeId);
-        if (tag != null && tag != null) {
+        if (tag != null && recipe != null) {
             RecipeTags tagged = new RecipeTags(tag, recipe);
             if (tag.recipes.contains(tagged)) {
                 TagDAO.deleteRecipe(tag, recipe);

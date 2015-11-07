@@ -1,9 +1,9 @@
 package service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
@@ -19,8 +19,8 @@ import javax.persistence.Persistence;
 import org.junit.Test;
 
 import models.Recipe;
-import models.dao.UserDAO;
 import models.service.RecipeService;
+import models.service.UserService;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
@@ -120,7 +120,7 @@ public class RecipeServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Recipe create = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                Recipe create = new Recipe("test2", "Test2", null, UserService.find(1));
                 Recipe recipe = RecipeService.create(create);
                 assertEquals(recipe, create);
             });
@@ -170,7 +170,7 @@ public class RecipeServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                Recipe recipe = new Recipe("test2", "Test2", null, UserService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addTag(1, recipe.id));
@@ -229,7 +229,7 @@ public class RecipeServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                Recipe recipe = new Recipe("test2", "Test2", null, UserService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertFalse(RecipeService.deleteTag(1, recipe.id));
@@ -242,7 +242,7 @@ public class RecipeServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                Recipe recipe = new Recipe("test2", "Test2", null, UserService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addFavorite(recipe.id, 1));
@@ -312,7 +312,7 @@ public class RecipeServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                Recipe recipe = new Recipe("test2", "Test2", null, UserService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addRating(recipe.id, 1, 4.3));
@@ -409,6 +409,89 @@ public class RecipeServiceTest extends WithApplication {
 
                 assertFalse(RecipeService.deleteRating(1, 0));
                 assertFalse(RecipeService.deleteRating(0, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceAddSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Recipe recipe = new Recipe("test2", "Test2", null, UserService.find(1));
+                recipe = RecipeService.create(recipe);
+
+                assertTrue(RecipeService.addSection(recipe.id, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceAddSectionNotFound() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+
+                assertFalse(RecipeService.addSection(1, 0));
+                assertFalse(RecipeService.addSection(0, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceAddSectionAlredySection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+
+                assertFalse(RecipeService.addSection(1, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceUpdateSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+
+                assertTrue(RecipeService.updateSection(1, 1));
+                assertTrue(RecipeService.updateSection(2, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceUpdateSectionNotFound() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+
+                assertFalse(RecipeService.updateSection(1, 0));
+                assertFalse(RecipeService.updateSection(0, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceDeleteSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+
+                assertTrue(RecipeService.deleteSection(1, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceDeleteSectionNotFound() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+
+                assertFalse(RecipeService.deleteSection(1, 0));
+                assertFalse(RecipeService.deleteSection(0, 1));
             });
         });
     }

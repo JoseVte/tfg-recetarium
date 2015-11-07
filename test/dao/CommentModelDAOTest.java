@@ -64,6 +64,7 @@ public class CommentModelDAOTest extends WithApplication {
                 assertEquals(comment.text, "test");
                 assertEquals(comment.user.id.intValue(), 1);
                 assertEquals(comment.recipe.id.intValue(), 1);
+                assertEquals(comment.replies.size(), 1);
                 assertNull(comment.parent);
             });
         });

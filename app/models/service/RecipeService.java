@@ -250,10 +250,10 @@ public class RecipeService {
      *
      * @return boolean
      */
-    public static boolean addRecipe(Integer sectionId, Integer recipeId) {
+    public static boolean addSection(Integer sectionId, Integer recipeId) {
         Section section = SectionDAO.find(sectionId);
         Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && section != null) {
+        if (section != null && recipe != null) {
             if (!section.recipes.contains(recipe)) {
                 RecipeDAO.addOrUpdateSection(section, recipe);
                 return true;
@@ -270,14 +270,12 @@ public class RecipeService {
      *
      * @return boolean
      */
-    public static boolean updateRecipe(Integer sectionId, Integer recipeId) {
+    public static boolean updateSection(Integer sectionId, Integer recipeId) {
         Section section = SectionDAO.find(sectionId);
         Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && section != null) {
-            if (section.recipes.contains(recipe)) {
-                RecipeDAO.addOrUpdateSection(section, recipe);
-                return true;
-            }
+        if (section != null && recipe != null) {
+            RecipeDAO.addOrUpdateSection(section, recipe);
+            return true;
         }
         return false;
     }
@@ -290,10 +288,10 @@ public class RecipeService {
      *
      * @return boolean
      */
-    public static boolean deleteRecipe(Integer sectionId, Integer recipeId) {
+    public static boolean deleteSection(Integer sectionId, Integer recipeId) {
         Section section = SectionDAO.find(sectionId);
         Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && section != null) {
+        if (section != null && recipe != null) {
             if (section.recipes.contains(recipe)) {
                 RecipeDAO.deleteSection(recipe);
                 return true;

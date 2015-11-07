@@ -17,10 +17,11 @@ import javax.persistence.Persistence;
 import org.junit.Test;
 
 import models.Recipe;
+import models.Section;
 import models.Tag;
-import models.TypeUser;
 import models.User;
 import models.dao.RecipeDAO;
+import models.dao.SectionDAO;
 import models.dao.TagDAO;
 import models.dao.UserDAO;
 import play.db.jpa.JPA;
@@ -222,7 +223,7 @@ public class RecipeModelDAOTest extends WithApplication {
                 assertEquals(user.recipesFavorites.size(), 1);
                 assertEquals(recipe.favorites.size(), 0);
 
-                UserDAO.addFavorite(user, recipe);
+                RecipeDAO.addFavorite(user, recipe);
 
                 assertEquals(user.recipesFavorites.size(), 2);
                 assertEquals(recipe.favorites.size(), 1);
@@ -261,7 +262,7 @@ public class RecipeModelDAOTest extends WithApplication {
                 assertEquals(user.ratings.size(), 1);
                 assertEquals(recipe.ratings.size(), 0);
 
-                UserDAO.addRating(user, recipe, 4.3);
+                RecipeDAO.addRating(user, recipe, 4.3);
 
                 assertEquals(user.ratings.size(), 2);
                 assertEquals(recipe.ratings.size(), 1);
@@ -301,6 +302,66 @@ public class RecipeModelDAOTest extends WithApplication {
 
                 assertEquals(user.ratings.size(), 0);
                 assertEquals(recipe.ratings.size(), 0);
+            });
+        });
+    }
+
+    @Test
+    public void testDAOAddSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Section section = SectionDAO.find(1);
+                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
+                recipe = RecipeDAO.create(recipe);
+
+                assertEquals(section.recipes.size(), 1);
+                assertNull(recipe.section);
+
+                RecipeDAO.addOrUpdateSection(section, recipe);
+
+                assertEquals(section.recipes.size(), 2);
+                assertEquals(recipe.section.text, "test");
+            });
+        });
+    }
+
+    @Test
+    public void testDAOUpdateSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Section section = SectionDAO.find(1);
+                Section newSection = SectionDAO.find(2);
+                Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1), section);
+                recipe = RecipeDAO.create(recipe);
+
+                assertEquals(section.recipes.size(), 2);
+                assertEquals(recipe.section.text, "test");
+
+                RecipeDAO.addOrUpdateSection(newSection, recipe);
+
+                assertEquals(newSection.recipes.size(), 1);
+                assertEquals(recipe.section.text, "test-new");
+            });
+        });
+    }
+
+    @Test
+    public void testDAODeleteSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Section section = SectionDAO.find(1);
+                Recipe recipe = RecipeDAO.find(1);
+
+                assertEquals(section.recipes.size(), 1);
+                assertEquals(recipe.section.text, "test");
+
+                RecipeDAO.deleteSection(recipe);
+
+                assertEquals(section.recipes.size(), 0);
+                assertNull(recipe.section);
             });
         });
     }

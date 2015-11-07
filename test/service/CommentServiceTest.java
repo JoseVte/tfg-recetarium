@@ -1,7 +1,9 @@
-package dao;
+package service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
@@ -16,14 +18,16 @@ import javax.persistence.Persistence;
 
 import org.junit.Test;
 
-import models.Section;
-import models.dao.SectionDAO;
+import models.Comment;
+import models.service.CommentService;
+import models.service.RecipeService;
+import models.service.UserService;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
 import util.InitDataLoader;
 
-public class SectionModelDAOTest extends WithApplication {
+public class CommentServiceTest extends WithApplication {
 
     @Override
     public FakeApplication provideFakeApplication() {
@@ -54,107 +58,105 @@ public class SectionModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAOFindSection() {
+    public void testServiceFindComment() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
-                assertEquals(section.text, "test");
-                assertEquals(section.recipes.size(), 1);
+                Comment comment = CommentService.find(1);
+                assertEquals(comment.text, "test");
+                assertEquals(comment.user.id.intValue(), 1);
+                assertEquals(comment.recipe.id.intValue(), 1);
+                assertEquals(comment.replies.size(), 1);
             });
         });
     }
 
     @Test
-    public void testDAONotFoundSection() {
+    public void testServiceNotFoundComment() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(0);
-                assertNull(section);
+                Comment comment = CommentService.find(0);
+                assertNull(comment);
             });
         });
     }
 
     @Test
-    public void testDAOFindAllSections() {
+    public void testServiceFindAllComments() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionDAO.all();
-                long count = SectionDAO.count();
+                List<Comment> comments = CommentService.all();
+                long count = CommentService.count();
                 assertEquals(count, 2);
 
-                assertEquals(sections.get(0).text, "test");
+                assertEquals(comments.get(0).text, "test");
             });
         });
     }
 
     @Test
-    public void testDAOPageSections() {
+    public void testServicePageComments() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionDAO.paginate(0, 1);
-                assertEquals(sections.get(0).text, "test");
-                assertEquals(sections.size(), 1);
+                List<Comment> comments = CommentService.paginate(0, 1);
+                assertEquals(comments.get(0).text, "test");
+                assertEquals(comments.size(), 1);
 
-                sections = SectionDAO.paginate(1, 1);
-                assertEquals(sections.size(), 1);
+                comments = CommentService.paginate(1, 1);
+                assertEquals(comments.size(), 1);
             });
         });
     }
 
     @Test
-    public void testDAOCreateSection() {
+    public void testServiceCreateComment() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section create = new Section("test2");
-                Section section = SectionDAO.create(create);
-                assertEquals(section, create);
+                Comment create = new Comment("test2", UserService.find(1), RecipeService.find(1), null);
+                Comment comment = CommentService.create(create);
+                assertEquals(comment, create);
             });
         });
     }
 
     @Test
-    public void testDAOUpdateSection() {
+    public void testServiceUpdateComment() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
-                section.text = "Update test";
-                Section update = SectionDAO.update(section);
+                Comment comment = CommentService.find(1);
+                comment.text = "Update test";
+                Comment update = CommentService.update(comment);
                 assertEquals(update.text, "Update test");
             });
         });
     }
 
     @Test
-    public void testDAODeleteSection() {
+    public void testServiceDeleteComment() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
-                long count = SectionDAO.count();
+                long count = CommentService.count();
                 assertEquals(count, 2);
 
-                SectionDAO.delete(section);
+                assertTrue(CommentService.delete(1));
 
-                count = SectionDAO.count();
-                assertEquals(count, 1);
+                count = CommentService.count();
+                assertEquals(count, 0);
             });
         });
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testDAODeleteNotFoundSection() {
+    public void testServiceDeleteNotFoundComment() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(0);
-
-                SectionDAO.delete(section);
+                assertFalse(CommentService.delete(0));
             });
         });
     }

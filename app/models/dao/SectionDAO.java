@@ -2,7 +2,6 @@ package models.dao;
 
 import java.util.List;
 
-import models.Recipe;
 import models.Section;
 import play.db.jpa.JPA;
 

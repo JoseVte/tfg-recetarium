@@ -14,6 +14,8 @@ data:
       text: test
 - &section !!models.Section
       text: test
+- &sectionnew !!models.Section
+      text: test-new
 - &recipe !!models.Recipe
       title:       Test
       slug:        test

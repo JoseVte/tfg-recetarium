@@ -1,7 +1,9 @@
-package dao;
+package service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
@@ -16,14 +18,15 @@ import javax.persistence.Persistence;
 
 import org.junit.Test;
 
-import models.Section;
-import models.dao.SectionDAO;
+import models.Media;
+import models.service.MediaService;
+import models.service.RecipeService;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
 import util.InitDataLoader;
 
-public class SectionModelDAOTest extends WithApplication {
+public class MediaServiceTest extends WithApplication {
 
     @Override
     public FakeApplication provideFakeApplication() {
@@ -54,107 +57,103 @@ public class SectionModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAOFindSection() {
+    public void testServiceFindMedia() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
-                assertEquals(section.text, "test");
-                assertEquals(section.recipes.size(), 1);
+                Media media = MediaService.find(1);
+                assertEquals(media.filename, "test");
+                assertEquals(media.recipe.id.intValue(), 1);
             });
         });
     }
 
     @Test
-    public void testDAONotFoundSection() {
+    public void testServiceNotFoundMedia() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(0);
-                assertNull(section);
+                Media media = MediaService.find(0);
+                assertNull(media);
             });
         });
     }
 
     @Test
-    public void testDAOFindAllSections() {
+    public void testServiceFindAllMedias() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionDAO.all();
-                long count = SectionDAO.count();
-                assertEquals(count, 2);
-
-                assertEquals(sections.get(0).text, "test");
-            });
-        });
-    }
-
-    @Test
-    public void testDAOPageSections() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                List<Section> sections = SectionDAO.paginate(0, 1);
-                assertEquals(sections.get(0).text, "test");
-                assertEquals(sections.size(), 1);
-
-                sections = SectionDAO.paginate(1, 1);
-                assertEquals(sections.size(), 1);
-            });
-        });
-    }
-
-    @Test
-    public void testDAOCreateSection() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                Section create = new Section("test2");
-                Section section = SectionDAO.create(create);
-                assertEquals(section, create);
-            });
-        });
-    }
-
-    @Test
-    public void testDAOUpdateSection() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                Section section = SectionDAO.find(1);
-                section.text = "Update test";
-                Section update = SectionDAO.update(section);
-                assertEquals(update.text, "Update test");
-            });
-        });
-    }
-
-    @Test
-    public void testDAODeleteSection() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                Section section = SectionDAO.find(1);
-                long count = SectionDAO.count();
-                assertEquals(count, 2);
-
-                SectionDAO.delete(section);
-
-                count = SectionDAO.count();
+                List<Media> media = MediaService.all();
+                long count = MediaService.count();
                 assertEquals(count, 1);
+
+                assertEquals(media.get(0).filename, "test");
             });
         });
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testDAODeleteNotFoundSection() {
+    @Test
+    public void testServicePageMedias() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(0);
+                List<Media> media = MediaService.paginate(0, 1);
+                assertEquals(media.get(0).filename, "test");
+                assertEquals(media.size(), 1);
 
-                SectionDAO.delete(section);
+                media = MediaService.paginate(1, 1);
+                assertEquals(media.size(), 0);
+            });
+        });
+    }
+
+    @Test
+    public void testServiceCreateMedia() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Media create = new Media("test2", RecipeService.find(1));
+                Media media = MediaService.create(create);
+                assertEquals(media, create);
+            });
+        });
+    }
+
+    @Test
+    public void testServiceUpdateMedia() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Media media = MediaService.find(1);
+                media.filename = "Update test";
+                Media update = MediaService.update(media);
+                assertEquals(update.filename, "Update test");
+            });
+        });
+    }
+
+    @Test
+    public void testServiceDeleteMedia() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                long count = MediaService.count();
+                assertEquals(count, 1);
+
+                assertTrue(MediaService.delete(1));
+
+                count = MediaService.count();
+                assertEquals(count, 0);
+            });
+        });
+    }
+
+    public void testServiceDeleteNotFoundMedia() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                assertFalse(MediaService.delete(0));
             });
         });
     }

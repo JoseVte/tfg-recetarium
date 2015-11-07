@@ -1,7 +1,9 @@
-package dao;
+package service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
@@ -17,13 +19,13 @@ import javax.persistence.Persistence;
 import org.junit.Test;
 
 import models.Section;
-import models.dao.SectionDAO;
+import models.service.SectionService;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
 import util.InitDataLoader;
 
-public class SectionModelDAOTest extends WithApplication {
+public class SectionServiceTest extends WithApplication {
 
     @Override
     public FakeApplication provideFakeApplication() {
@@ -54,11 +56,11 @@ public class SectionModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAOFindSection() {
+    public void testServiceFindSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
+                Section section = SectionService.find(1);
                 assertEquals(section.text, "test");
                 assertEquals(section.recipes.size(), 1);
             });
@@ -66,23 +68,23 @@ public class SectionModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAONotFoundSection() {
+    public void testServiceNotFoundSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(0);
+                Section section = SectionService.find(0);
                 assertNull(section);
             });
         });
     }
 
     @Test
-    public void testDAOFindAllSections() {
+    public void testServiceFindAllSections() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionDAO.all();
-                long count = SectionDAO.count();
+                List<Section> sections = SectionService.all();
+                long count = SectionService.count();
                 assertEquals(count, 2);
 
                 assertEquals(sections.get(0).text, "test");
@@ -91,70 +93,66 @@ public class SectionModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAOPageSections() {
+    public void testServicePageSections() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionDAO.paginate(0, 1);
+                List<Section> sections = SectionService.paginate(0, 1);
                 assertEquals(sections.get(0).text, "test");
                 assertEquals(sections.size(), 1);
 
-                sections = SectionDAO.paginate(1, 1);
+                sections = SectionService.paginate(1, 1);
                 assertEquals(sections.size(), 1);
             });
         });
     }
 
     @Test
-    public void testDAOCreateSection() {
+    public void testServiceCreateSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 Section create = new Section("test2");
-                Section section = SectionDAO.create(create);
+                Section section = SectionService.create(create);
                 assertEquals(section, create);
             });
         });
     }
 
     @Test
-    public void testDAOUpdateSection() {
+    public void testServiceUpdateSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
+                Section section = SectionService.find(1);
                 section.text = "Update test";
-                Section update = SectionDAO.update(section);
+                Section update = SectionService.update(section);
                 assertEquals(update.text, "Update test");
             });
         });
     }
 
     @Test
-    public void testDAODeleteSection() {
+    public void testServiceDeleteSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
-                long count = SectionDAO.count();
+                long count = SectionService.count();
                 assertEquals(count, 2);
 
-                SectionDAO.delete(section);
+                assertTrue(SectionService.delete(1));
 
-                count = SectionDAO.count();
+                count = SectionService.count();
                 assertEquals(count, 1);
             });
         });
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testDAODeleteNotFoundSection() {
+    public void testServiceDeleteNotFoundSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(0);
-
-                SectionDAO.delete(section);
+                assertFalse(SectionService.delete(0));
             });
         });
     }

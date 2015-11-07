@@ -1,7 +1,9 @@
-package dao;
+package service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
@@ -16,16 +18,14 @@ import javax.persistence.Persistence;
 
 import org.junit.Test;
 
-import models.Recipe;
 import models.Tag;
-import models.dao.RecipeDAO;
-import models.dao.TagDAO;
+import models.service.TagService;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
 import util.InitDataLoader;
 
-public class TagModelDAOTest extends WithApplication {
+public class TagServiceTest extends WithApplication {
 
     @Override
     public FakeApplication provideFakeApplication() {
@@ -56,11 +56,11 @@ public class TagModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAOFindTag() {
+    public void testServiceFindTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(1);
+                Tag tag = TagService.find(1);
                 assertEquals(tag.text, "test");
                 assertEquals(tag.recipes.size(), 1);
             });
@@ -68,23 +68,23 @@ public class TagModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAONotFoundTag() {
+    public void testServiceNotFoundTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(0);
+                Tag tag = TagService.find(0);
                 assertNull(tag);
             });
         });
     }
 
     @Test
-    public void testDAOFindAllTags() {
+    public void testServiceFindAllTags() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Tag> tags = TagDAO.all();
-                long count = TagDAO.count();
+                List<Tag> tags = TagService.all();
+                long count = TagService.count();
                 assertEquals(count, 1);
 
                 assertEquals(tags.get(0).text, "test");
@@ -93,109 +93,138 @@ public class TagModelDAOTest extends WithApplication {
     }
 
     @Test
-    public void testDAOPageTags() {
+    public void testServicePageTags() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Tag> tags = TagDAO.paginate(0, 1);
+                List<Tag> tags = TagService.paginate(0, 1);
                 assertEquals(tags.get(0).text, "test");
                 assertEquals(tags.size(), 1);
 
-                tags = TagDAO.paginate(1, 1);
+                tags = TagService.paginate(1, 1);
                 assertEquals(tags.size(), 0);
             });
         });
     }
 
     @Test
-    public void testDAOCreateTag() {
+    public void testServiceCreateTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 Tag create = new Tag("test2");
-                Tag tag = TagDAO.create(create);
+                Tag tag = TagService.create(create);
                 assertEquals(tag, create);
             });
         });
     }
 
     @Test
-    public void testDAOUpdateTag() {
+    public void testServiceUpdateTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(1);
+                Tag tag = TagService.find(1);
                 tag.text = "Update test";
-                Tag update = TagDAO.update(tag);
+                Tag update = TagService.update(tag);
                 assertEquals(update.text, "Update test");
             });
         });
     }
 
     @Test
-    public void testDAODeleteTag() {
+    public void testServiceDeleteTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(1);
-                long count = TagDAO.count();
+                long count = TagService.count();
                 assertEquals(count, 1);
 
-                TagDAO.delete(tag);
+                assertTrue(TagService.delete(1));
 
-                count = TagDAO.count();
+                count = TagService.count();
                 assertEquals(count, 0);
             });
         });
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testDAODeleteNotFoundTag() {
+    public void testServiceDeleteNotFoundTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Tag tag = TagDAO.find(0);
-
-                TagDAO.delete(tag);
+                assertFalse(TagService.delete(0));
             });
         });
     }
 
     @Test
-    public void testDAOAddRecipeTag() {
+    public void testServiceAddTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
                 Tag tag = new Tag("test2");
-                tag = TagDAO.create(tag);
-                Recipe recipe = RecipeDAO.find(1);
+                tag = TagService.create(tag);
 
-                assertEquals(tag.recipes.size(), 0);
-                assertEquals(recipe.tags.size(), 1);
-
-                TagDAO.addRecipe(tag, recipe);
-
-                assertEquals(tag.recipes.size(), 1);
-                assertEquals(recipe.tags.size(), 2);
+                assertTrue(TagService.addRecipe(tag.id, 1));
             });
         });
     }
 
     @Test
-    public void testDAODeleteRecipeTag() {
+    public void testServiceAddTagNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Recipe recipe = RecipeDAO.find(1);
-                Tag tag = TagDAO.find(1);
 
-                assertEquals(tag.recipes.size(), 1);
-                assertEquals(recipe.tags.size(), 1);
+                assertFalse(TagService.addRecipe(1, 0));
+                assertFalse(TagService.addRecipe(0, 1));
+            });
+        });
+    }
 
-                TagDAO.deleteRecipe(tag, recipe);
+    @Test
+    public void testServiceAddTagAlreadyTagged() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
 
-                assertEquals(tag.recipes.size(), 0);
-                assertEquals(recipe.tags.size(), 0);
+                assertFalse(TagService.addRecipe(1, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceDeleteRecipeTag() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+
+                assertTrue(TagService.deleteRecipe(1, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceDeleteRecipeTagNotFound() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+
+                assertFalse(TagService.deleteRecipe(1, 0));
+                assertFalse(TagService.deleteRecipe(0, 1));
+            });
+        });
+    }
+
+    @Test
+    public void testServiceDeleteRecipeTagNotExist() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeData();
+                Tag tag = new Tag("test2");
+                tag = TagService.create(tag);
+
+                assertFalse(TagService.deleteRecipe(tag.id, 1));
             });
         });
     }
