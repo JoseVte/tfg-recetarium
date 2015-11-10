@@ -11,7 +11,7 @@ Vagrant.configure(2) do |config|
   config.hostmanager.manage_host = true
   config.hostmanager.ignore_private_ip = true
   config.hostmanager.include_offline = true
-  config.hostmanager.aliases = %w(api.recetario.com)
+  config.hostmanager.aliases = %w(api.recetarium.com)
   config.hostmanager.ip_resolver = proc do |machine|
     if machine.communicate.ready?
       result = ""

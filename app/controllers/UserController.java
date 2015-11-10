@@ -1,6 +1,13 @@
 package controllers;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
+
+import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.representer.Representer;
 
 import play.*;
 import play.mvc.*;
@@ -10,12 +17,13 @@ import play.data.Form;
 import play.db.jpa.*;
 
 import models.*;
+import models.service.UserService;
 import views.html.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class EmployeeController extends Controller {
-    static Form<Employee> employeeForm = Form.form(Employee.class);
+public class UserController extends Controller {
+    static Form<User> userForm = Form.form(User.class);
 
     /**
      * Add the content-type json to response
@@ -39,7 +47,7 @@ public class EmployeeController extends Controller {
     }
 
     /**
-     * Get the employees with pagination
+     * Get the users with pagination
      *
      * @param Integer page
      * @param Integer size
@@ -48,21 +56,21 @@ public class EmployeeController extends Controller {
      */
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size) {
-        List models = EmployeeService.paginate(page-1, size);
-        Long count = EmployeeService.count();
+        List<User> models = UserService.paginate(page - 1, size);
+        Long count = UserService.count();
 
         ObjectNode result = Json.newObject();
         result.put("data", Json.toJson(models));
         result.put("total", count);
-        if (page > 1) result.put("link-prev", routes.EmployeeController.list(page-1, size).toString());
-        if (page*size < count) result.put("link-next", routes.EmployeeController.list(page+1, size).toString());
-        result.put("link-self", routes.EmployeeController.list(page, size).toString());
+        if (page > 1) result.put("link-prev", routes.UserController.list(page - 1, size).toString());
+        if (page * size < count) result.put("link-next", routes.UserController.list(page + 1, size).toString());
+        result.put("link-self", routes.UserController.list(page, size).toString());
 
         return jsonResult(ok(result));
     }
 
     /**
-     * Get one employee by id
+     * Get one user by id
      *
      * @param Integer id
      *
@@ -70,47 +78,54 @@ public class EmployeeController extends Controller {
      */
     @Transactional(readOnly = true)
     public Result get(Integer id) {
-        Employee employee = EmployeeService.find(id);
-        if (employee == null ) {
+        User user = UserService.find(id);
+        if (user == null) {
             ObjectNode result = Json.newObject();
             result.put("error", "Not found " + id);
             return jsonResult(notFound(result));
         }
-        return jsonResult(ok(Json.toJson(employee)));
+        return jsonResult(ok(Json.toJson(user)));
     }
 
     /**
-     * Create an employee with the data of request
+     * Create an user with the data of request
      *
      * @return Result
      */
     @Transactional
     public Result create() {
-        Form<Employee> employee = employeeForm.bindFromRequest();
-        if (employee.hasErrors()) {
-            return jsonResult(badRequest(employee.errorsAsJson()));
+        Form<User> user = userForm.bindFromRequest();
+        if (user.hasErrors()) {
+            return jsonResult(badRequest(user.errorsAsJson()));
         }
-        Employee newEmployee = EmployeeService.create(employee.get());
-        return jsonResult(created(Json.toJson(newEmployee)));
+        try {
+            User newUser = UserService.create(user.get());
+            return jsonResult(created(Json.toJson(newUser)));
+        } catch (Exception e) {
+            Logger.error(e.getMessage());
+            ObjectNode result = Json.newObject();
+            result.put("error", "Something went wrong");
+            return jsonResult(internalServerError(result));
+        }
     }
 
     /**
-     * Update an employee with the data of request
+     * Update an user with the data of request
      *
      * @return Result
      */
     @Transactional
     public Result update() {
-        Form<Employee> employee = employeeForm.bindFromRequest();
-        if (employee.hasErrors()) {
-            return jsonResult(badRequest(employee.errorsAsJson()));
+        Form<User> user = userForm.bindFromRequest();
+        if (user.hasErrors()) {
+            return jsonResult(badRequest(user.errorsAsJson()));
         }
-        Employee updatedEmployee = EmployeeService.update(employee.get());
-        return jsonResult(ok(Json.toJson(updatedEmployee)));
+        User updatedUser = UserService.update(user.get());
+        return jsonResult(ok(Json.toJson(updatedUser)));
     }
 
     /**
-     * Delete an employee by id
+     * Delete an user by id
      *
      * @param Integer id
      *
@@ -118,7 +133,7 @@ public class EmployeeController extends Controller {
      */
     @Transactional
     public Result delete(Integer id) {
-        if (EmployeeService.delete(id)) {
+        if (UserService.delete(id)) {
             ObjectNode result = Json.newObject();
             result.put("msg", "Deleted " + id);
             return jsonResult(ok(result));
