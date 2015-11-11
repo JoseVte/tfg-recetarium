@@ -1,15 +1,13 @@
 SET FOREIGN_KEY_CHECKS=0;
-TRUNCATE TABLE play.comments;
-TRUNCATE TABLE play.favorites;
-TRUNCATE TABLE play.friends;
-TRUNCATE TABLE play.ratings;
-TRUNCATE TABLE play.recipe_tags;
-TRUNCATE TABLE play.recipes;
-TRUNCATE TABLE play.tags;
-TRUNCATE TABLE play.users;
+TRUNCATE TABLE comments;
+TRUNCATE TABLE favorites;
+TRUNCATE TABLE friends;
+TRUNCATE TABLE ratings;
+TRUNCATE TABLE recipe_tags;
+TRUNCATE TABLE recipes;
+TRUNCATE TABLE tags;
+TRUNCATE TABLE users;
 SET FOREIGN_KEY_CHECKS=1;
-
-use play;
 
 ## USERS ##
 
