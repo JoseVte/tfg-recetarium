@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/recetarium -Dhttp.port=${PORT} -Ddb.default.url=${DATABASE_URL} -Dconfig.file=${CONFIGURATION_FILE}
+web: target/universal/stage/bin/recetarium -Dconfig.file=conf/prod.conf
