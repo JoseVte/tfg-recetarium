@@ -1,1 +1,1 @@
-web: target/universal/stage/bin/recetarium -Dhttp.port=$PORT -Dconfig.file="conf/prod.conf" $PLAY_OPTS
+web: target/universal/stage/bin/recetarium -Dhttp.port=$PORT -Dconfig.resource=prod.conf $PLAY_OPTS
