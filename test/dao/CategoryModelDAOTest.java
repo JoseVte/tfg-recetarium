@@ -16,14 +16,14 @@ import javax.persistence.Persistence;
 
 import org.junit.Test;
 
-import models.Section;
-import models.dao.SectionDAO;
+import models.Category;
+import models.dao.CategoryDAO;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
 import util.InitDataLoader;
 
-public class SectionModelDAOTest extends WithApplication {
+public class CategoryModelDAOTest extends WithApplication {
 
     @Override
     public FakeApplication provideFakeApplication() {
@@ -58,7 +58,7 @@ public class SectionModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
+                Category section = CategoryDAO.find(1);
                 assertEquals(section.text, "test");
                 assertEquals(section.recipes.size(), 1);
             });
@@ -70,7 +70,7 @@ public class SectionModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(0);
+                Category section = CategoryDAO.find(0);
                 assertNull(section);
             });
         });
@@ -81,8 +81,8 @@ public class SectionModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionDAO.all();
-                long count = SectionDAO.count();
+                List<Category> sections = CategoryDAO.all();
+                long count = CategoryDAO.count();
                 assertEquals(count, 2);
 
                 assertEquals(sections.get(0).text, "test");
@@ -95,11 +95,11 @@ public class SectionModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionDAO.paginate(0, 1);
+                List<Category> sections = CategoryDAO.paginate(0, 1);
                 assertEquals(sections.get(0).text, "test");
                 assertEquals(sections.size(), 1);
 
-                sections = SectionDAO.paginate(1, 1);
+                sections = CategoryDAO.paginate(1, 1);
                 assertEquals(sections.size(), 1);
             });
         });
@@ -110,8 +110,8 @@ public class SectionModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section create = new Section("test2");
-                Section section = SectionDAO.create(create);
+                Category create = new Category("test2");
+                Category section = CategoryDAO.create(create);
                 assertEquals(section, create);
             });
         });
@@ -122,9 +122,9 @@ public class SectionModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
+                Category section = CategoryDAO.find(1);
                 section.text = "Update test";
-                Section update = SectionDAO.update(section);
+                Category update = CategoryDAO.update(section);
                 assertEquals(update.text, "Update test");
             });
         });
@@ -135,13 +135,13 @@ public class SectionModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
-                long count = SectionDAO.count();
+                Category section = CategoryDAO.find(1);
+                long count = CategoryDAO.count();
                 assertEquals(count, 2);
 
-                SectionDAO.delete(section);
+                CategoryDAO.delete(section);
 
-                count = SectionDAO.count();
+                count = CategoryDAO.count();
                 assertEquals(count, 1);
             });
         });
@@ -152,9 +152,9 @@ public class SectionModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(0);
+                Category section = CategoryDAO.find(0);
 
-                SectionDAO.delete(section);
+                CategoryDAO.delete(section);
             });
         });
     }

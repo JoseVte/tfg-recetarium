@@ -3,11 +3,11 @@ package models.service;
 import java.util.List;
 
 import models.Recipe;
-import models.Section;
+import models.Category;
 import models.Tag;
 import models.User;
 import models.dao.RecipeDAO;
-import models.dao.SectionDAO;
+import models.dao.CategoryDAO;
 import models.dao.TagDAO;
 import models.dao.UserDAO;
 import models.manytomany.Favorite;
@@ -251,7 +251,7 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean addSection(Integer sectionId, Integer recipeId) {
-        Section section = SectionDAO.find(sectionId);
+        Category section = CategoryDAO.find(sectionId);
         Recipe recipe = RecipeDAO.find(recipeId);
         if (section != null && recipe != null) {
             if (!section.recipes.contains(recipe)) {
@@ -271,7 +271,7 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean updateSection(Integer sectionId, Integer recipeId) {
-        Section section = SectionDAO.find(sectionId);
+        Category section = CategoryDAO.find(sectionId);
         Recipe recipe = RecipeDAO.find(recipeId);
         if (section != null && recipe != null) {
             RecipeDAO.addOrUpdateSection(section, recipe);
@@ -289,7 +289,7 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean deleteSection(Integer sectionId, Integer recipeId) {
-        Section section = SectionDAO.find(sectionId);
+        Category section = CategoryDAO.find(sectionId);
         Recipe recipe = RecipeDAO.find(recipeId);
         if (section != null && recipe != null) {
             if (section.recipes.contains(recipe)) {

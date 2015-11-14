@@ -17,11 +17,11 @@ import javax.persistence.Persistence;
 import org.junit.Test;
 
 import models.Recipe;
-import models.Section;
+import models.Category;
 import models.Tag;
 import models.User;
 import models.dao.RecipeDAO;
-import models.dao.SectionDAO;
+import models.dao.CategoryDAO;
 import models.dao.TagDAO;
 import models.dao.UserDAO;
 import play.db.jpa.JPA;
@@ -311,7 +311,7 @@ public class RecipeModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
+                Category section = CategoryDAO.find(1);
                 Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1));
                 recipe = RecipeDAO.create(recipe);
 
@@ -331,8 +331,8 @@ public class RecipeModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
-                Section newSection = SectionDAO.find(2);
+                Category section = CategoryDAO.find(1);
+                Category newSection = CategoryDAO.find(2);
                 Recipe recipe = new Recipe("test2", "Test2", null, UserDAO.find(1), section);
                 recipe = RecipeDAO.create(recipe);
 
@@ -352,7 +352,7 @@ public class RecipeModelDAOTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionDAO.find(1);
+                Category section = CategoryDAO.find(1);
                 Recipe recipe = RecipeDAO.find(1);
 
                 assertEquals(section.recipes.size(), 1);

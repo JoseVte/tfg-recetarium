@@ -18,14 +18,14 @@ import javax.persistence.Persistence;
 
 import org.junit.Test;
 
-import models.Section;
-import models.service.SectionService;
+import models.Category;
+import models.service.CategoryService;
 import play.db.jpa.JPA;
 import play.test.FakeApplication;
 import play.test.WithApplication;
 import util.InitDataLoader;
 
-public class SectionServiceTest extends WithApplication {
+public class CategoryServiceTest extends WithApplication {
 
     @Override
     public FakeApplication provideFakeApplication() {
@@ -60,7 +60,7 @@ public class SectionServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionService.find(1);
+                Category section = CategoryService.find(1);
                 assertEquals(section.text, "test");
                 assertEquals(section.recipes.size(), 1);
             });
@@ -72,7 +72,7 @@ public class SectionServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionService.find(0);
+                Category section = CategoryService.find(0);
                 assertNull(section);
             });
         });
@@ -83,8 +83,8 @@ public class SectionServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionService.all();
-                long count = SectionService.count();
+                List<Category> sections = CategoryService.all();
+                long count = CategoryService.count();
                 assertEquals(count, 2);
 
                 assertEquals(sections.get(0).text, "test");
@@ -97,11 +97,11 @@ public class SectionServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                List<Section> sections = SectionService.paginate(0, 1);
+                List<Category> sections = CategoryService.paginate(0, 1);
                 assertEquals(sections.get(0).text, "test");
                 assertEquals(sections.size(), 1);
 
-                sections = SectionService.paginate(1, 1);
+                sections = CategoryService.paginate(1, 1);
                 assertEquals(sections.size(), 1);
             });
         });
@@ -112,8 +112,8 @@ public class SectionServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section create = new Section("test2");
-                Section section = SectionService.create(create);
+                Category create = new Category("test2");
+                Category section = CategoryService.create(create);
                 assertEquals(section, create);
             });
         });
@@ -124,9 +124,9 @@ public class SectionServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                Section section = SectionService.find(1);
+                Category section = CategoryService.find(1);
                 section.text = "Update test";
-                Section update = SectionService.update(section);
+                Category update = CategoryService.update(section);
                 assertEquals(update.text, "Update test");
             });
         });
@@ -137,12 +137,12 @@ public class SectionServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                long count = SectionService.count();
+                long count = CategoryService.count();
                 assertEquals(count, 2);
 
-                assertTrue(SectionService.delete(1));
+                assertTrue(CategoryService.delete(1));
 
-                count = SectionService.count();
+                count = CategoryService.count();
                 assertEquals(count, 1);
             });
         });
@@ -152,7 +152,7 @@ public class SectionServiceTest extends WithApplication {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeData();
-                assertFalse(SectionService.delete(0));
+                assertFalse(CategoryService.delete(0));
             });
         });
     }

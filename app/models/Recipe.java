@@ -57,7 +57,7 @@ public class Recipe extends Timestamp implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "section_id")
-    public Section            section;
+    public Category            section;
 
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment>      comments         = new ArrayList<Comment>();
@@ -84,7 +84,7 @@ public class Recipe extends Timestamp implements Serializable {
         this.user = user;
     }
 
-    public Recipe(String slug, String title, String description, User user, Section section) {
+    public Recipe(String slug, String title, String description, User user, Category section) {
         this.slug = slug;
         this.title = title;
         this.description = description;

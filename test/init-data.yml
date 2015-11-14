@@ -12,9 +12,9 @@ data:
       type:       ADMIN
 - &tag !!models.Tag
       text: test
-- &section !!models.Section
+- &section !!models.Category
       text: test
-- &sectionnew !!models.Section
+- &sectionnew !!models.Category
       text: test-new
 - &recipe !!models.Recipe
       title:       Test

@@ -2,30 +2,30 @@ package models.service;
 
 import java.util.List;
 
-import models.Section;
-import models.dao.SectionDAO;
+import models.Category;
+import models.dao.CategoryDAO;
 
-public class SectionService {
+public class CategoryService {
     /**
      * Create a section
      *
-     * @param Section data
+     * @param Category data
      *
      * @return Section
      */
-    public static Section create(Section data) {
-        return SectionDAO.create(data);
+    public static Category create(Category data) {
+        return CategoryDAO.create(data);
     }
 
     /**
      * Update a section
      *
-     * @param Section data
+     * @param Category data
      *
      * @return Section
      */
-    public static Section update(Section data) {
-        return SectionDAO.update(data);
+    public static Category update(Category data) {
+        return CategoryDAO.update(data);
     }
 
     /**
@@ -35,8 +35,8 @@ public class SectionService {
      *
      * @return Section
      */
-    public static Section find(Integer id) {
-        return SectionDAO.find(id);
+    public static Category find(Integer id) {
+        return CategoryDAO.find(id);
     }
 
     /**
@@ -45,9 +45,9 @@ public class SectionService {
      * @param Integer id
      */
     public static Boolean delete(Integer id) {
-        Section section = SectionDAO.find(id);
+        Category section = CategoryDAO.find(id);
         if (section != null) {
-            SectionDAO.delete(section);
+            CategoryDAO.delete(section);
             return true;
         } else {
             return false;
@@ -59,8 +59,8 @@ public class SectionService {
      *
      * @return List<Section>
      */
-    public static List<Section> all() {
-        return SectionDAO.all();
+    public static List<Category> all() {
+        return CategoryDAO.all();
     }
 
     /**
@@ -71,8 +71,8 @@ public class SectionService {
      *
      * @return List<Section>
      */
-    public static List<Section> paginate(Integer page, Integer size) {
-        return SectionDAO.paginate(page, size);
+    public static List<Category> paginate(Integer page, Integer size) {
+        return CategoryDAO.paginate(page, size);
     }
 
     /**
@@ -81,6 +81,6 @@ public class SectionService {
      * @return Long
      */
     public static Long count() {
-        return SectionDAO.count();
+        return CategoryDAO.count();
     }
 }

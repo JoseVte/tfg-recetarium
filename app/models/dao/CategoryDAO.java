@@ -2,20 +2,20 @@ package models.dao;
 
 import java.util.List;
 
-import models.Section;
+import models.Category;
 import play.db.jpa.JPA;
 
-public class SectionDAO {
-    static String TABLE = Section.class.getName();
+public class CategoryDAO {
+    static String TABLE = Category.class.getName();
 
     /**
      * Create a section
      *
-     * @param Section model
+     * @param Category model
      *
      * @return Section
      */
-    public static Section create(Section model) {
+    public static Category create(Category model) {
         model.prePersistData();
         JPA.em().persist(model);
         // Flush and refresh for check
@@ -31,19 +31,19 @@ public class SectionDAO {
      *
      * @return Section
      */
-    public static Section find(Integer id) {
-        return JPA.em().find(Section.class, id);
+    public static Category find(Integer id) {
+        return JPA.em().find(Category.class, id);
     }
 
     /**
      * Update a section
      *
-     * @param Section model
+     * @param Category model
      *
      * @return Section
      */
-    public static Section update(Section model) {
-        Section aux = JPA.em().getReference(Section.class, model.id);
+    public static Category update(Category model) {
+        Category aux = JPA.em().getReference(Category.class, model.id);
         model.setCreatedAt(aux.getCreatedAt());
         return JPA.em().merge(model);
     }
@@ -51,9 +51,9 @@ public class SectionDAO {
     /**
      * Delete a section by id
      *
-     * @param Section section
+     * @param Category section
      */
-    public static void delete(Section section) {
+    public static void delete(Category section) {
         JPA.em().remove(section);
     }
 
@@ -63,7 +63,7 @@ public class SectionDAO {
      * @return List<Section>
      */
     @SuppressWarnings("unchecked")
-    public static List<Section> all() {
+    public static List<Category> all() {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
     }
 
@@ -76,7 +76,7 @@ public class SectionDAO {
      * @return List<Section>
      */
     @SuppressWarnings("unchecked")
-    public static List<Section> paginate(Integer page, Integer size) {
+    public static List<Category> paginate(Integer page, Integer size) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
                 .setMaxResults(size).getResultList();
     }
@@ -101,7 +101,7 @@ public class SectionDAO {
      * @return List<Recipe>
      */
     @SuppressWarnings("unchecked")
-    public static List<Section> check(String field, Object value, Integer id, String comparison) {
+    public static List<Category> check(String field, Object value, Integer id, String comparison) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
                 + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
@@ -115,7 +115,7 @@ public class SectionDAO {
      *
      * @return List<Recipe>
      */
-    public static List<Section> check(String field, Object value, Integer id) {
+    public static List<Category> check(String field, Object value, Integer id) {
         return check(field, value, id, "=");
     }
 }

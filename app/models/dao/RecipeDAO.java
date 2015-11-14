@@ -3,7 +3,7 @@ package models.dao;
 import java.util.List;
 
 import models.Recipe;
-import models.Section;
+import models.Category;
 import models.Tag;
 import models.User;
 import models.manytomany.Favorite;
@@ -239,7 +239,7 @@ public class RecipeDAO {
      * @param section
      * @param recipe
      */
-    public static void addOrUpdateSection(Section section, Recipe recipe) {
+    public static void addOrUpdateSection(Category section, Recipe recipe) {
         recipe.section = section;
         JPA.em().merge(recipe);
         // Reload entities
@@ -254,7 +254,7 @@ public class RecipeDAO {
      * @param recipe
      */
     public static void deleteSection(Recipe recipe) {
-        Section section = recipe.section;
+        Category section = recipe.section;
         recipe.section = null;
         JPA.em().merge(recipe);
         // Reload entities

@@ -3,10 +3,13 @@ package util;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+
+@EntityListeners({ TimestampListener.class })
 @MappedSuperclass
 public class Timestamp {
     @Column(name = "created_at")
