@@ -8,135 +8,111 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import org.junit.Test;
 
 import models.Category;
 import models.service.CategoryService;
 import play.db.jpa.JPA;
-import play.test.FakeApplication;
-import play.test.WithApplication;
-import util.InitDataLoader;
+import util.AbstractTest;
 
-public class CategoryServiceTest extends WithApplication {
-
-    @Override
-    public FakeApplication provideFakeApplication() {
-        return fakeApplication(inMemoryDatabase());
-    }
-
-    public void initializeData() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction trx = em.getTransaction();
-        try {
-
-            // Start the transaction
-            trx.begin();
-            InitDataLoader.load(em, "test/init-data.yml");
-            // Commit and end the transaction
-            trx.commit();
-        } catch (RuntimeException | IOException e) {
-            if (trx != null && trx.isActive()) {
-                trx.rollback();
-            }
-            throw e;
-        } finally {
-            // Close the manager
-            em.close();
-            emf.close();
-        }
-    }
+public class CategoryServiceTest extends AbstractTest {
 
     @Test
-    public void testServiceFindSection() {
+    public void testCategoryServiceFindSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Category section = CategoryService.find(1);
-                assertEquals(section.text, "test");
-                assertEquals(section.recipes.size(), 1);
+                initializeDataModel();
+                Category category = CategoryService.find(1);
+                assertEquals(category.text, "test");
+                assertEquals(category.recipes.size(), 1);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceNotFoundSection() {
+    public void testCategoryServiceNotFoundSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Category section = CategoryService.find(0);
-                assertNull(section);
+                initializeDataModel();
+                Category category = CategoryService.find(0);
+                assertNull(category);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceFindAllSections() {
+    public void testCategoryServiceFindAllSections() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                List<Category> sections = CategoryService.all();
+                initializeDataModel();
+                List<Category> categorys = CategoryService.all();
                 long count = CategoryService.count();
                 assertEquals(count, 2);
 
-                assertEquals(sections.get(0).text, "test");
+                assertEquals(categorys.get(0).text, "test");
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServicePageSections() {
+    public void testCategoryServicePageSections() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                List<Category> sections = CategoryService.paginate(0, 1);
-                assertEquals(sections.get(0).text, "test");
-                assertEquals(sections.size(), 1);
+                initializeDataModel();
+                List<Category> categorys = CategoryService.paginate(0, 1);
+                assertEquals(categorys.get(0).text, "test");
+                assertEquals(categorys.size(), 1);
 
-                sections = CategoryService.paginate(1, 1);
-                assertEquals(sections.size(), 1);
+                categorys = CategoryService.paginate(1, 1);
+                assertEquals(categorys.size(), 1);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceCreateSection() {
+    public void testCategoryServiceCreateSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 Category create = new Category("test2");
-                Category section = CategoryService.create(create);
-                assertEquals(section, create);
+                Category category = CategoryService.create(create);
+                assertEquals(category, create);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceUpdateSection() {
+    public void testCategoryServiceUpdateSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Category section = CategoryService.find(1);
-                section.text = "Update test";
-                Category update = CategoryService.update(section);
+                initializeDataModel();
+                Category category = CategoryService.find(1);
+                category.text = "Update test";
+                Category update = CategoryService.update(category);
                 assertEquals(update.text, "Update test");
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteSection() {
+    public void testCategoryServiceDeleteSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 long count = CategoryService.count();
                 assertEquals(count, 2);
 
@@ -144,15 +120,20 @@ public class CategoryServiceTest extends WithApplication {
 
                 count = CategoryService.count();
                 assertEquals(count, 1);
+            
+                successTest();
             });
         });
     }
 
-    public void testServiceDeleteNotFoundSection() {
+    @Test
+    public void testCategoryServiceDeleteNotFoundSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 assertFalse(CategoryService.delete(0));
+            
+                successTest();
             });
         });
     }

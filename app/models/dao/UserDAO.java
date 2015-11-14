@@ -52,7 +52,7 @@ public class UserDAO {
      * @return User
      */
     public static User update(User model) {
-        User aux = JPA.em().getReference(User.class, model.id);
+        User aux = find(model.id);
         model.handleRelations(aux);
         model.prePersistData();
         return JPA.em().merge(model);

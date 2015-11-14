@@ -21,9 +21,14 @@ public abstract class AbstractTest extends WithApplication {
         return fakeApplication(inMemoryDatabase());
     }
     
-    public void initializeData() {
+    public void initializeDataController() {
         InitDataLoader.initializeData();
         System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE + Thread.currentThread().getStackTrace()[4].getMethodName() + ANSI_RESET + "\t\t");
+    }
+    
+    public void initializeDataModel() {
+        InitDataLoader.initializeData();
+        System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE + Thread.currentThread().getStackTrace()[9].getMethodName() + ANSI_RESET + "\t\t");
     }
     
     public void successTest() {

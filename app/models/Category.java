@@ -27,7 +27,7 @@ public class Category extends Model implements Serializable {
     public String             text;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Recipe>       recipes          = new ArrayList<Recipe>();
 
     public Category() {

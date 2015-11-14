@@ -6,155 +6,137 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import org.junit.Test;
 
 import models.Category;
 import models.dao.CategoryDAO;
 import play.db.jpa.JPA;
-import play.test.FakeApplication;
-import play.test.WithApplication;
-import util.InitDataLoader;
+import util.AbstractTest;
 
-public class CategoryModelDAOTest extends WithApplication {
-
-    @Override
-    public FakeApplication provideFakeApplication() {
-        return fakeApplication(inMemoryDatabase());
-    }
-
-    public void initializeData() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction trx = em.getTransaction();
-        try {
-
-            // Start the transaction
-            trx.begin();
-            InitDataLoader.load(em, "test/init-data.yml");
-            // Commit and end the transaction
-            trx.commit();
-        } catch (RuntimeException | IOException e) {
-            if (trx != null && trx.isActive()) {
-                trx.rollback();
-            }
-            throw e;
-        } finally {
-            // Close the manager
-            em.close();
-            emf.close();
-        }
-    }
+public class CategoryModelDAOTest extends AbstractTest {
 
     @Test
-    public void testDAOFindSection() {
+    public void testCategoryDAOFindCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Category section = CategoryDAO.find(1);
-                assertEquals(section.text, "test");
-                assertEquals(section.recipes.size(), 1);
+                initializeDataModel();
+                Category category = CategoryDAO.find(1);
+                assertEquals(category.text, "test");
+                assertEquals(category.recipes.size(), 1);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAONotFoundSection() {
+    public void testCategoryDAONotFoundCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Category section = CategoryDAO.find(0);
-                assertNull(section);
+                initializeDataModel();
+                Category category = CategoryDAO.find(0);
+                assertNull(category);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOFindAllSections() {
+    public void testCategoryDAOFindAllCategories() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                List<Category> sections = CategoryDAO.all();
+                initializeDataModel();
+                List<Category> categories = CategoryDAO.all();
                 long count = CategoryDAO.count();
                 assertEquals(count, 2);
 
-                assertEquals(sections.get(0).text, "test");
+                assertEquals(categories.get(0).text, "test");
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOPageSections() {
+    public void testCategoryDAOPageCategories() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                List<Category> sections = CategoryDAO.paginate(0, 1);
-                assertEquals(sections.get(0).text, "test");
-                assertEquals(sections.size(), 1);
+                initializeDataModel();
+                List<Category> categories = CategoryDAO.paginate(0, 1);
+                assertEquals(categories.get(0).text, "test");
+                assertEquals(categories.size(), 1);
 
-                sections = CategoryDAO.paginate(1, 1);
-                assertEquals(sections.size(), 1);
+                categories = CategoryDAO.paginate(1, 1);
+                assertEquals(categories.size(), 1);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOCreateSection() {
+    public void testCategoryDAOCreateCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 Category create = new Category("test2");
-                Category section = CategoryDAO.create(create);
-                assertEquals(section, create);
+                Category category = CategoryDAO.create(create);
+                assertEquals(category, create);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOUpdateSection() {
+    public void testCategoryDAOUpdateCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Category section = CategoryDAO.find(1);
-                section.text = "Update test";
-                Category update = CategoryDAO.update(section);
+                initializeDataModel();
+                Category category = CategoryDAO.find(1);
+                category.text = "Update test";
+                Category update = CategoryDAO.update(category);
                 assertEquals(update.text, "Update test");
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAODeleteSection() {
+    public void testCategoryDAODeleteCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Category section = CategoryDAO.find(1);
+                initializeDataModel();
+                Category category = CategoryDAO.find(1);
                 long count = CategoryDAO.count();
                 assertEquals(count, 2);
 
-                CategoryDAO.delete(section);
+                CategoryDAO.delete(category);
 
                 count = CategoryDAO.count();
                 assertEquals(count, 1);
+            
+                successTest();
             });
         });
     }
 
-    @Test(expected = RuntimeException.class)
-    public void testDAODeleteNotFoundSection() {
+    @Test
+    public void testCategoryDAODeleteNotFoundCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Category section = CategoryDAO.find(0);
+                initializeDataModel();
+                Category category = CategoryDAO.find(0);
 
-                CategoryDAO.delete(section);
+                try {
+                    CategoryDAO.delete(category);
+                } catch (Exception e) {}
+            
+                successTest();
             });
         });
     }

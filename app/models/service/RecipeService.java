@@ -245,17 +245,17 @@ public class RecipeService {
     /**
      * Add a section to a recipe
      *
-     * @param section
+     * @param category
      * @param recipe
      *
      * @return boolean
      */
-    public static boolean addSection(Integer sectionId, Integer recipeId) {
-        Category section = CategoryDAO.find(sectionId);
+    public static boolean addCategory(Integer categoryId, Integer recipeId) {
+        Category category = CategoryDAO.find(categoryId);
         Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && recipe != null) {
-            if (!section.recipes.contains(recipe)) {
-                RecipeDAO.addOrUpdateSection(section, recipe);
+        if (category != null && recipe != null) {
+            if (!category.recipes.contains(recipe)) {
+                RecipeDAO.addOrUpdateCategory(category, recipe);
                 return true;
             }
         }
@@ -265,16 +265,16 @@ public class RecipeService {
     /**
      * Update a section to a recipe
      *
-     * @param section
+     * @param category
      * @param recipe
      *
      * @return boolean
      */
-    public static boolean updateSection(Integer sectionId, Integer recipeId) {
-        Category section = CategoryDAO.find(sectionId);
+    public static boolean updateCategory(Integer categoryId, Integer recipeId) {
+        Category category = CategoryDAO.find(categoryId);
         Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && recipe != null) {
-            RecipeDAO.addOrUpdateSection(section, recipe);
+        if (category != null && recipe != null) {
+            RecipeDAO.addOrUpdateCategory(category, recipe);
             return true;
         }
         return false;
@@ -283,17 +283,17 @@ public class RecipeService {
     /**
      * Delete a section of a recipe
      *
-     * @param section
+     * @param category
      * @param recipe
      *
      * @return boolean
      */
-    public static boolean deleteSection(Integer sectionId, Integer recipeId) {
-        Category section = CategoryDAO.find(sectionId);
+    public static boolean deleteCategory(Integer categoryId, Integer recipeId) {
+        Category category = CategoryDAO.find(categoryId);
         Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && recipe != null) {
-            if (section.recipes.contains(recipe)) {
-                RecipeDAO.deleteSection(recipe);
+        if (category != null && recipe != null) {
+            if (category.recipes.contains(recipe)) {
+                RecipeDAO.deleteCategory(recipe);
                 return true;
             }
         }

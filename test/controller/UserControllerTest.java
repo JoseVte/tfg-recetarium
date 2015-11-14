@@ -86,9 +86,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testFindAnUserOkRequest() {
+    public void testUserControllerFindAnUserOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users/1").get().get(timeout);
 
             assertEquals(OK, response.getStatus());
@@ -105,9 +105,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testFindAnUserNotFound() {
+    public void testUserControllerFindAnUserNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users/5").get().get(timeout);
 
             assertEquals(NOT_FOUND, response.getStatus());
@@ -122,9 +122,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testPageUsersOkRequest() {
+    public void testUserControllerPageUsersOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users?page=1&size=1").get().get(timeout);
 
             assertEquals(OK, response.getStatus());
@@ -144,9 +144,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateUserOkRequest() {
+    public void testUserControllerCreateUserOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users").post(dataOk).get(timeout);
 
             assertEquals(CREATED, response.getStatus());
@@ -162,9 +162,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateUserBadRequest1() {
+    public void testUserControllerCreateUserBadRequest1() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users").post(dataError1).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -179,9 +179,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateUserBadRequest2() {
+    public void testUserControllerCreateUserBadRequest2() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users").post(dataError2).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -196,9 +196,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateUserBadRequest3() {
+    public void testUserControllerCreateUserBadRequest3() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users").post(dataError3).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -213,9 +213,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateUserBadRequest4() {
+    public void testUserControllerCreateUserBadRequest4() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users").post(dataError4).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -230,9 +230,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateUserBadRequest5() {
+    public void testUserControllerCreateUserBadRequest5() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users").post(dataError5).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -247,9 +247,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateUserBadRequest6() {
+    public void testUserControllerCreateUserBadRequest6() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users").post(dataError6).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -264,9 +264,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testCreateUserBadRequest7() {
+    public void testUserControllerCreateUserBadRequest7() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users").post(dataError7).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -281,9 +281,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testUpdateUserOkRequest() {
+    public void testUserControllerUpdateUserOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users/1").put(dataOk.put("id", 1)).get(timeout);
 
             assertEquals(OK, response.getStatus());
@@ -299,9 +299,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testUpdateUserBadRequest1() {
+    public void testUserControllerUpdateUserBadRequest1() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users/1").put(dataError1.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -316,9 +316,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testUpdateUserBadRequest2() {
+    public void testUserControllerUpdateUserBadRequest2() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users/1").put(dataError2.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -333,9 +333,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testUpdateUserNotFound() {
+    public void testUserControllerUpdateUserNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users/5").put(dataOk.put("id", 5)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
@@ -350,9 +350,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testDeleteUserOkRequest() {
+    public void testUserControllerDeleteUserOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users/1").delete().get(timeout);
 
             assertEquals(OK, response.getStatus());
@@ -367,9 +367,9 @@ public class UserControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testDeleteUserNotFound() {
+    public void testUserControllerDeleteUserNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
-            initializeData();
+            initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/users/5").delete().get(timeout);
 
             assertEquals(NOT_FOUND, response.getStatus());

@@ -49,6 +49,9 @@ public class RecipeDAO {
      * @return Recipe
      */
     public static Recipe update(Recipe model) {
+        Recipe aux = find(model.id);
+        model.handleRelations(aux);
+        model.prePersistData();
         return JPA.em().merge(model);
     }
 
@@ -236,15 +239,15 @@ public class RecipeDAO {
     /**
      * Add section to a recipe
      *
-     * @param section
+     * @param category
      * @param recipe
      */
-    public static void addOrUpdateSection(Category section, Recipe recipe) {
-        recipe.section = section;
+    public static void addOrUpdateCategory(Category category, Recipe recipe) {
+        recipe.category = category;
         JPA.em().merge(recipe);
         // Reload entities
         JPA.em().flush();
-        JPA.em().refresh(section);
+        JPA.em().refresh(category);
         JPA.em().refresh(recipe);
     }
 
@@ -253,9 +256,9 @@ public class RecipeDAO {
      *
      * @param recipe
      */
-    public static void deleteSection(Recipe recipe) {
-        Category section = recipe.section;
-        recipe.section = null;
+    public static void deleteCategory(Recipe recipe) {
+        Category section = recipe.category;
+        recipe.category = null;
         JPA.em().merge(recipe);
         // Reload entities
         JPA.em().flush();
