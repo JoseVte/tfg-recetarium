@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.representer.Representer;
@@ -80,9 +82,7 @@ public class UserController extends Controller {
     public Result get(Integer id) {
         User user = UserService.find(id);
         if (user == null) {
-            ObjectNode result = Json.newObject();
-            result.put("error", "Not found " + id);
-            return jsonResult(notFound(result));
+            return jsonResult(notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
         }
         return jsonResult(ok(Json.toJson(user)));
     }
@@ -103,25 +103,26 @@ public class UserController extends Controller {
             return jsonResult(created(Json.toJson(newUser)));
         } catch (Exception e) {
             Logger.error(e.getMessage());
-            ObjectNode result = Json.newObject();
-            result.put("error", "Something went wrong");
-            return jsonResult(internalServerError(result));
+            return jsonResult(internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
     }
 
     /**
      * Update an user with the data of request
      *
+     * @param Integer id
+     *
      * @return Result
      */
     @Transactional
-    public Result update() {
+    public Result update(Integer id) {
         Form<User> user = userForm.bindFromRequest();
         if (user.hasErrors()) {
             return jsonResult(badRequest(user.errorsAsJson()));
         }
-        User updatedUser = UserService.update(user.get());
-        return jsonResult(ok(Json.toJson(updatedUser)));
+        User userModel = user.get();
+        userModel = UserService.update(userModel);
+        return jsonResult(ok(Json.toJson(userModel)));
     }
 
     /**
@@ -134,12 +135,8 @@ public class UserController extends Controller {
     @Transactional
     public Result delete(Integer id) {
         if (UserService.delete(id)) {
-            ObjectNode result = Json.newObject();
-            result.put("msg", "Deleted " + id);
-            return jsonResult(ok(result));
+            return jsonResult(ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
         }
-        ObjectNode result = Json.newObject();
-        result.put("error", "Not found " + id);
-        return jsonResult(notFound(result));
+        return jsonResult(notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
     }
 }

@@ -10,16 +10,16 @@ GET     /                           controllers.UserController.index()
 GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3)
 GET     /users/$id<[0-9]+>      controllers.UserController.get(id: Integer)
 POST    /users                  controllers.UserController.create()
-PUT     /users                  controllers.UserController.update()
-PATCH   /users                  controllers.UserController.update()
+PUT     /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
+PATCH   /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
 
 ## Recipes
 GET     /recipes                  controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3)
 GET     /recipes/$id<[0-9]+>      controllers.RecipeController.get(id: Integer)
 POST    /recipes                  controllers.RecipeController.create()
-PUT     /recipes                  controllers.RecipeController.update()
-PATCH   /recipes                  controllers.RecipeController.update()
+PUT     /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)
+PATCH   /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)
 DELETE  /recipes/$id<[0-9]+>      controllers.RecipeController.delete(id: Integer)
 
 # Map static resources from the /public folder to the /assets URL path

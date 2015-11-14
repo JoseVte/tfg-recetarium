@@ -89,16 +89,20 @@ public class RecipeController extends Controller {
     /**
      * Update an recipe with the data of request
      *
+     * @param Integer id
+     *
      * @return Result
      */
     @Transactional
-    public Result update() {
+    public Result update(Integer id) {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
             return jsonResult(badRequest(recipe.errorsAsJson()));
         }
-        Recipe updatedRecipe = RecipeService.update(recipe.get());
-        return jsonResult(ok(Json.toJson(updatedRecipe)));
+        Recipe recipeModel = recipe.get();
+        recipeModel.id = id;
+        recipeModel = RecipeService.update(recipeModel);
+        return jsonResult(ok(Json.toJson(recipeModel)));
     }
 
     /**
