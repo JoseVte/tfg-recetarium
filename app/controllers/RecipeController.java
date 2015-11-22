@@ -2,10 +2,8 @@ package controllers;
 
 import java.util.List;
 
-import play.*;
 import play.mvc.*;
 import play.libs.Json;
-import play.libs.Json.*;
 import play.data.Form;
 import play.db.jpa.*;
 
@@ -15,7 +13,7 @@ import views.html.*;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class RecipeController extends Controller {
+public class RecipeController extends AbstractController {
     static Form<Recipe> recipeForm = Form.form(Recipe.class);
 
     /**
