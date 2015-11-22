@@ -6,13 +6,17 @@ import java.util.List;
 
 import models.Recipe;
 import models.User;
-import models.dao.RecipeDAO;
 import models.dao.UserDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
 
 public class UserService {
+    private static UserDAO userDAO;
+    static {
+        userDAO = new UserDAO();
+    }
+
     /**
      * Create an user
      *
@@ -23,7 +27,7 @@ public class UserService {
      * @throws NoSuchAlgorithmException
      */
     public static User create(User data) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return UserDAO.create(data);
+        return userDAO.create(data);
     }
 
     /**
@@ -34,7 +38,7 @@ public class UserService {
      * @return User
      */
     public static User update(User data) {
-        return UserDAO.update(data);
+        return userDAO.update(data);
     }
 
     /**
@@ -45,7 +49,7 @@ public class UserService {
      * @return User
      */
     public static User find(Integer id) {
-        return UserDAO.find(id);
+        return userDAO.find(id);
     }
 
     /**
@@ -54,9 +58,9 @@ public class UserService {
      * @param Integer id
      */
     public static Boolean delete(Integer id) {
-        User user = UserDAO.find(id);
+        User user = userDAO.find(id);
         if (user != null) {
-            UserDAO.delete(user);
+            userDAO.delete(user);
             return true;
         } else {
             return false;
@@ -69,7 +73,7 @@ public class UserService {
      * @return List<User>
      */
     public static List<User> all() {
-        return UserDAO.all();
+        return userDAO.all();
     }
 
     /**
@@ -81,7 +85,7 @@ public class UserService {
      * @return List<User>
      */
     public static List<User> paginate(Integer page, Integer size) {
-        return UserDAO.paginate(page, size);
+        return userDAO.paginate(page, size);
     }
 
     /**
@@ -90,7 +94,7 @@ public class UserService {
      * @return Long
      */
     public static Long count() {
-        return UserDAO.count();
+        return userDAO.count();
     }
 
     /**
@@ -103,8 +107,8 @@ public class UserService {
      */
     public static boolean addFriend(Integer userId, Integer friendId) {
         if (userId != friendId) {
-            User user = UserDAO.find(userId);
-            User friend = UserDAO.find(friendId);
+            User user = userDAO.find(userId);
+            User friend = userDAO.find(friendId);
             if (user != null && friend != null) {
                 Friend friendship = new Friend(user, friend);
                 if (!user.myFriends.contains(friendship)) {
@@ -126,8 +130,8 @@ public class UserService {
      */
     public static boolean deleteFriend(Integer userId, Integer friendId) {
         if (userId != friendId) {
-            User user = UserDAO.find(userId);
-            User friend = UserDAO.find(friendId);
+            User user = userDAO.find(userId);
+            User friend = userDAO.find(friendId);
             if (user != null && friend != null) {
                 Friend friendship = new Friend(user, friend);
                 if (user.myFriends.contains(friendship)) {
@@ -148,8 +152,8 @@ public class UserService {
      * @return boolean
      */
     public static boolean addFavorite(Integer userId, Integer recipeId) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = userDAO.find(userId);
+        Recipe recipe = RecipeService.find(recipeId);
         if (user != null && recipe != null) {
             Favorite fav = new Favorite(user, recipe);
             if (!user.recipesFavorites.contains(fav)) {
@@ -169,8 +173,8 @@ public class UserService {
      * @return boolean
      */
     public static boolean deleteFavorite(Integer userId, Integer recipeId) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = userDAO.find(userId);
+        Recipe recipe = RecipeService.find(recipeId);
         if (user != null && recipe != null) {
             Favorite fav = new Favorite(user, recipe);
             if (user.recipesFavorites.contains(fav)) {
@@ -191,8 +195,8 @@ public class UserService {
      * @return boolean
      */
     public static boolean addRating(Integer userId, Integer recipeId, double value) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = userDAO.find(userId);
+        Recipe recipe = RecipeService.find(recipeId);
         if (user != null && recipe != null && value >= 0.0 && value <= 5.0) {
             Rating fav = new Rating(user, recipe);
             if (!user.ratings.contains(fav)) {
@@ -213,8 +217,8 @@ public class UserService {
      * @return boolean
      */
     public static boolean updateRating(Integer userId, Integer recipeId, double value) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = userDAO.find(userId);
+        Recipe recipe = RecipeService.find(recipeId);
         if (user != null && recipe != null && value >= 0.0 && value <= 5.0) {
             Rating fav = new Rating(user, recipe);
             if (user.ratings.contains(fav)) {
@@ -234,8 +238,8 @@ public class UserService {
      * @return boolean
      */
     public static boolean deleteRating(Integer userId, Integer recipeId) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = userDAO.find(userId);
+        Recipe recipe = RecipeService.find(recipeId);
         if (user != null && recipe != null) {
             Rating fav = new Rating(user, recipe);
             if (user.ratings.contains(fav)) {

@@ -14,6 +14,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import models.dao.RecipeDAO;
 import models.manytomany.Favorite;
@@ -25,6 +26,7 @@ import util.Model;
 
 @Entity
 @Table(name = "recipes")
+@JsonPropertyOrder({ "id", "slug", "title", "description", "user", "category", "created_at", "updated_at" })
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -43,7 +45,7 @@ public class Recipe extends Model implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "category_id")
-    public Category            category;
+    public Category           category;
 
     @JsonIgnore
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -66,9 +68,11 @@ public class Recipe extends Model implements Serializable {
     public List<Media>        media            = new ArrayList<Media>();
 
     public Recipe() {
+        dao = new RecipeDAO();
     }
 
     public Recipe(String slug, String title, String description, User user) {
+        dao = new RecipeDAO();
         this.slug = slug;
         this.title = title;
         this.description = description;
@@ -85,19 +89,30 @@ public class Recipe extends Model implements Serializable {
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!RecipeDAO.check("slug", slug, id).isEmpty()) {
+        if (!((RecipeDAO) dao).check("slug", slug, id).isEmpty()) {
             errors.add(new ValidationError("slug", "This slug is already used."));
         }
         return errors.isEmpty() ? null : errors;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#prePersistData()
+     */
+    @Override
     public void prePersistData() {
         if (description != null && description.isEmpty()) description = null;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#handleRelations(util.Model old)
+     */
     @Override
     public void handleRelations(Model old) {
-        Recipe recipe = (Recipe)old;
+        Recipe recipe = (Recipe) old;
         comments = recipe.comments;
         favorites = recipe.favorites;
         ratings = recipe.ratings;

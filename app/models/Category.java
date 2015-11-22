@@ -11,6 +11,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import models.dao.CategoryDAO;
 import play.data.validation.Constraints;
@@ -19,6 +20,7 @@ import util.Model;
 
 @Entity
 @Table(name = "categories")
+@JsonPropertyOrder({ "id", "text", "created_at", "updated_at" })
 public class Category extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -31,63 +33,41 @@ public class Category extends Model implements Serializable {
     public List<Recipe>       recipes          = new ArrayList<Recipe>();
 
     public Category() {
+        dao = new CategoryDAO();
     }
 
     public Category(String text) {
+        dao = new CategoryDAO();
         this.text = text;
     }
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!CategoryDAO.check("text", text, id).isEmpty()) {
+        if (!((CategoryDAO) dao).check("text", text, id).isEmpty()) {
             errors.add(new ValidationError("text", "This section is already created."));
         }
         return errors.isEmpty() ? null : errors;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see util.Model#prePersistData()
      */
+    @Override
     public void prePersistData() {
     }
-    
-    /* (non-Javadoc)
+
+    /*
+     * (non-Javadoc)
+     * 
      * @see util.Model#handleRelations(util.Model old)
      */
+    @Override
     public void handleRelations(Model old) {
-        Category category = ((Category)old);
+        Category category = ((Category) old);
         this.setCreatedAt(category.getCreatedAt());
         this.recipes = category.recipes;
-    }
-    
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((text == null) ? 0 : text.hashCode());
-        return result;
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null) return false;
-        if (!(obj instanceof Category)) return false;
-        Category other = (Category) obj;
-        if (id == null) {
-            if (other.id != null) return false;
-        } else if (!id.equals(other.id)) return false;
-        if (text == null) {
-            if (other.text != null) return false;
-        } else if (!text.equals(other.text)) return false;
-        return true;
     }
 
     /*

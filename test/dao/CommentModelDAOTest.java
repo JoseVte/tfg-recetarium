@@ -11,9 +11,7 @@ import java.util.List;
 import org.junit.Test;
 
 import models.Comment;
-import models.dao.CommentDAO;
-import models.dao.RecipeDAO;
-import models.dao.UserDAO;
+import models.User;
 import play.db.jpa.JPA;
 import util.AbstractTest;
 
@@ -24,7 +22,7 @@ public class CommentModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = CommentDAO.find(1);
+                Comment comment = commentDAO.find(1);
                 assertEquals(comment.text, "test");
                 assertEquals(comment.user.id.intValue(), 1);
                 assertEquals(comment.recipe.id.intValue(), 1);
@@ -41,7 +39,7 @@ public class CommentModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = CommentDAO.find(0);
+                Comment comment = commentDAO.find(0);
                 assertNull(comment);
             
                 successTest();
@@ -54,8 +52,8 @@ public class CommentModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Comment> comments = CommentDAO.all();
-                long count = CommentDAO.count();
+                List<Comment> comments = commentDAO.all();
+                long count = commentDAO.count();
                 assertEquals(count, 2);
 
                 assertEquals(comments.get(0).text, "test");
@@ -70,11 +68,11 @@ public class CommentModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Comment> comments = CommentDAO.paginate(0, 1);
+                List<Comment> comments = commentDAO.paginate(0, 1);
                 assertEquals(comments.get(0).text, "test");
                 assertEquals(comments.size(), 1);
 
-                comments = CommentDAO.paginate(1, 1);
+                comments = commentDAO.paginate(1, 1);
                 assertEquals(comments.size(), 1);
             
                 successTest();
@@ -87,8 +85,8 @@ public class CommentModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment create = new Comment("test2", UserDAO.find(1), RecipeDAO.find(1), null);
-                Comment comment = CommentDAO.create(create);
+                Comment create = new Comment("test2", userDAO.find(1), recipeDAO.find(1), null);
+                Comment comment = commentDAO.create(create);
                 assertEquals(comment, create);
             
                 successTest();
@@ -101,9 +99,9 @@ public class CommentModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = CommentDAO.find(1);
+                Comment comment = commentDAO.find(1);
                 comment.text = "Update test";
-                Comment update = CommentDAO.update(comment);
+                Comment update = commentDAO.update(comment);
                 assertEquals(update.text, "Update test");
             
                 successTest();
@@ -116,13 +114,13 @@ public class CommentModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = CommentDAO.find(1);
-                long count = CommentDAO.count();
+                Comment comment = commentDAO.find(1);
+                long count = commentDAO.count();
                 assertEquals(count, 2);
 
-                CommentDAO.delete(comment);
+                commentDAO.delete(comment);
 
-                count = CommentDAO.count();
+                count = commentDAO.count();
                 assertEquals(count, 0);
             
                 successTest();
@@ -135,10 +133,10 @@ public class CommentModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = CommentDAO.find(0);
+                Comment comment = commentDAO.find(0);
 
                 try {
-                    CommentDAO.delete(comment);
+                    commentDAO.delete(comment);
                 } catch (Exception e) {}
             
                 successTest();

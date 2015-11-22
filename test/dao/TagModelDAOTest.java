@@ -12,7 +12,6 @@ import org.junit.Test;
 
 import models.Recipe;
 import models.Tag;
-import models.dao.RecipeDAO;
 import models.dao.TagDAO;
 import play.db.jpa.JPA;
 import util.AbstractTest;
@@ -24,7 +23,7 @@ public class TagModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Tag tag = TagDAO.find(1);
+                Tag tag = tagDAO.find(1);
                 assertEquals(tag.text, "test");
                 assertEquals(tag.recipes.size(), 1);
             
@@ -38,7 +37,7 @@ public class TagModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Tag tag = TagDAO.find(0);
+                Tag tag = tagDAO.find(0);
                 assertNull(tag);
             
                 successTest();
@@ -51,8 +50,8 @@ public class TagModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Tag> tags = TagDAO.all();
-                long count = TagDAO.count();
+                List<Tag> tags = tagDAO.all();
+                long count = tagDAO.count();
                 assertEquals(count, 1);
 
                 assertEquals(tags.get(0).text, "test");
@@ -67,11 +66,11 @@ public class TagModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Tag> tags = TagDAO.paginate(0, 1);
+                List<Tag> tags = tagDAO.paginate(0, 1);
                 assertEquals(tags.get(0).text, "test");
                 assertEquals(tags.size(), 1);
 
-                tags = TagDAO.paginate(1, 1);
+                tags = tagDAO.paginate(1, 1);
                 assertEquals(tags.size(), 0);
             
                 successTest();
@@ -85,7 +84,7 @@ public class TagModelDAOTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Tag create = new Tag("test2");
-                Tag tag = TagDAO.create(create);
+                Tag tag = tagDAO.create(create);
                 assertEquals(tag, create);
             
                 successTest();
@@ -98,9 +97,9 @@ public class TagModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Tag tag = TagDAO.find(1);
+                Tag tag = tagDAO.find(1);
                 tag.text = "Update test";
-                Tag update = TagDAO.update(tag);
+                Tag update = tagDAO.update(tag);
                 assertEquals(update.text, "Update test");
             
                 successTest();
@@ -113,13 +112,13 @@ public class TagModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Tag tag = TagDAO.find(1);
-                long count = TagDAO.count();
+                Tag tag = tagDAO.find(1);
+                long count = tagDAO.count();
                 assertEquals(count, 1);
 
-                TagDAO.delete(tag);
+                tagDAO.delete(tag);
 
-                count = TagDAO.count();
+                count = tagDAO.count();
                 assertEquals(count, 0);
             
                 successTest();
@@ -132,10 +131,10 @@ public class TagModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Tag tag = TagDAO.find(0);
+                Tag tag = tagDAO.find(0);
 
                 try {
-                    TagDAO.delete(tag);
+                    tagDAO.delete(tag);
                 } catch (Exception e) {}
             
                 successTest();
@@ -149,8 +148,8 @@ public class TagModelDAOTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Tag tag = new Tag("test2");
-                tag = TagDAO.create(tag);
-                Recipe recipe = RecipeDAO.find(1);
+                tag = tagDAO.create(tag);
+                Recipe recipe = recipeDAO.find(1);
 
                 assertEquals(tag.recipes.size(), 0);
                 assertEquals(recipe.tags.size(), 1);
@@ -170,8 +169,8 @@ public class TagModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = RecipeDAO.find(1);
-                Tag tag = TagDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
+                Tag tag = tagDAO.find(1);
 
                 assertEquals(tag.recipes.size(), 1);
                 assertEquals(recipe.tags.size(), 1);

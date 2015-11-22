@@ -11,8 +11,6 @@ import java.util.List;
 import org.junit.Test;
 
 import models.Media;
-import models.dao.MediaDAO;
-import models.dao.RecipeDAO;
 import play.db.jpa.JPA;
 import util.AbstractTest;
 
@@ -23,7 +21,7 @@ public class MediaModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = MediaDAO.find(1);
+                Media media = mediaDAO.find(1);
                 assertEquals(media.filename, "test");
                 assertEquals(media.recipe.id.intValue(), 1);
             
@@ -37,7 +35,7 @@ public class MediaModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = MediaDAO.find(0);
+                Media media = mediaDAO.find(0);
                 assertNull(media);
             
                 successTest();
@@ -50,8 +48,8 @@ public class MediaModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Media> media = MediaDAO.all();
-                long count = MediaDAO.count();
+                List<Media> media = mediaDAO.all();
+                long count = mediaDAO.count();
                 assertEquals(count, 1);
 
                 assertEquals(media.get(0).filename, "test");
@@ -66,11 +64,11 @@ public class MediaModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Media> media = MediaDAO.paginate(0, 1);
+                List<Media> media = mediaDAO.paginate(0, 1);
                 assertEquals(media.get(0).filename, "test");
                 assertEquals(media.size(), 1);
 
-                media = MediaDAO.paginate(1, 1);
+                media = mediaDAO.paginate(1, 1);
                 assertEquals(media.size(), 0);
             
                 successTest();
@@ -83,8 +81,8 @@ public class MediaModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media create = new Media("test2", RecipeDAO.find(1));
-                Media media = MediaDAO.create(create);
+                Media create = new Media("test2", recipeDAO.find(1));
+                Media media = mediaDAO.create(create);
                 assertEquals(media, create);
             
                 successTest();
@@ -97,9 +95,9 @@ public class MediaModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = MediaDAO.find(1);
+                Media media = mediaDAO.find(1);
                 media.filename = "Update test";
-                Media update = MediaDAO.update(media);
+                Media update = mediaDAO.update(media);
                 assertEquals(update.filename, "Update test");
             
                 successTest();
@@ -112,13 +110,13 @@ public class MediaModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = MediaDAO.find(1);
-                long count = MediaDAO.count();
+                Media media = mediaDAO.find(1);
+                long count = mediaDAO.count();
                 assertEquals(count, 1);
 
-                MediaDAO.delete(media);
+                mediaDAO.delete(media);
 
-                count = MediaDAO.count();
+                count = mediaDAO.count();
                 assertEquals(count, 0);
             
                 successTest();
@@ -131,10 +129,10 @@ public class MediaModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = MediaDAO.find(0);
+                Media media = mediaDAO.find(0);
 
                 try {
-                    MediaDAO.delete(media);
+                    mediaDAO.delete(media);
                 } catch (Exception e) {}
             
                 successTest();

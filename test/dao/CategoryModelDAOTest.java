@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 
 import models.Category;
-import models.dao.CategoryDAO;
 import play.db.jpa.JPA;
 import util.AbstractTest;
 
@@ -22,7 +21,7 @@ public class CategoryModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Category category = CategoryDAO.find(1);
+                Category category = categoryDAO.find(1);
                 assertEquals(category.text, "test");
                 assertEquals(category.recipes.size(), 1);
             
@@ -36,7 +35,7 @@ public class CategoryModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Category category = CategoryDAO.find(0);
+                Category category = categoryDAO.find(0);
                 assertNull(category);
             
                 successTest();
@@ -49,8 +48,8 @@ public class CategoryModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Category> categories = CategoryDAO.all();
-                long count = CategoryDAO.count();
+                List<Category> categories = categoryDAO.all();
+                long count = categoryDAO.count();
                 assertEquals(count, 2);
 
                 assertEquals(categories.get(0).text, "test");
@@ -65,11 +64,11 @@ public class CategoryModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Category> categories = CategoryDAO.paginate(0, 1);
+                List<Category> categories = categoryDAO.paginate(0, 1);
                 assertEquals(categories.get(0).text, "test");
                 assertEquals(categories.size(), 1);
 
-                categories = CategoryDAO.paginate(1, 1);
+                categories = categoryDAO.paginate(1, 1);
                 assertEquals(categories.size(), 1);
             
                 successTest();
@@ -83,7 +82,7 @@ public class CategoryModelDAOTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Category create = new Category("test2");
-                Category category = CategoryDAO.create(create);
+                Category category = categoryDAO.create(create);
                 assertEquals(category, create);
             
                 successTest();
@@ -96,9 +95,9 @@ public class CategoryModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Category category = CategoryDAO.find(1);
+                Category category = categoryDAO.find(1);
                 category.text = "Update test";
-                Category update = CategoryDAO.update(category);
+                Category update = categoryDAO.update(category);
                 assertEquals(update.text, "Update test");
             
                 successTest();
@@ -111,13 +110,13 @@ public class CategoryModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Category category = CategoryDAO.find(1);
-                long count = CategoryDAO.count();
+                Category category = categoryDAO.find(1);
+                long count = categoryDAO.count();
                 assertEquals(count, 2);
 
-                CategoryDAO.delete(category);
+                categoryDAO.delete(category);
 
-                count = CategoryDAO.count();
+                count = categoryDAO.count();
                 assertEquals(count, 1);
             
                 successTest();
@@ -130,10 +129,10 @@ public class CategoryModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Category category = CategoryDAO.find(0);
+                Category category = categoryDAO.find(0);
 
                 try {
-                    CategoryDAO.delete(category);
+                    categoryDAO.delete(category);
                 } catch (Exception e) {}
             
                 successTest();

@@ -6,6 +6,11 @@ import models.Category;
 import models.dao.CategoryDAO;
 
 public class CategoryService {
+    private static CategoryDAO dao;
+    static {
+        dao = new CategoryDAO();
+    }
+    
     /**
      * Create a section
      *
@@ -14,7 +19,7 @@ public class CategoryService {
      * @return Section
      */
     public static Category create(Category data) {
-        return CategoryDAO.create(data);
+        return dao.create(data);
     }
 
     /**
@@ -25,7 +30,7 @@ public class CategoryService {
      * @return Section
      */
     public static Category update(Category data) {
-        return CategoryDAO.update(data);
+        return dao.update(data);
     }
 
     /**
@@ -36,7 +41,7 @@ public class CategoryService {
      * @return Section
      */
     public static Category find(Integer id) {
-        return CategoryDAO.find(id);
+        return dao.find(id);
     }
 
     /**
@@ -45,9 +50,9 @@ public class CategoryService {
      * @param Integer id
      */
     public static Boolean delete(Integer id) {
-        Category section = CategoryDAO.find(id);
+        Category section = dao.find(id);
         if (section != null) {
-            CategoryDAO.delete(section);
+            dao.delete(section);
             return true;
         } else {
             return false;
@@ -60,7 +65,7 @@ public class CategoryService {
      * @return List<Section>
      */
     public static List<Category> all() {
-        return CategoryDAO.all();
+        return dao.all();
     }
 
     /**
@@ -72,7 +77,7 @@ public class CategoryService {
      * @return List<Section>
      */
     public static List<Category> paginate(Integer page, Integer size) {
-        return CategoryDAO.paginate(page, size);
+        return dao.paginate(page, size);
     }
 
     /**
@@ -81,6 +86,6 @@ public class CategoryService {
      * @return Long
      */
     public static Long count() {
-        return CategoryDAO.count();
+        return dao.count();
     }
 }

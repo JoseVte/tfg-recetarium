@@ -12,92 +12,9 @@ import models.manytomany.Rating;
 import play.db.jpa.JPA;
 import util.Encryptation;
 
-public class UserDAO {
-    static String TABLE = User.class.getName();
-
-    /**
-     * Create an user
-     *
-     * @param User model
-     *
-     * @return User
-     * @throws InvalidKeySpecException
-     * @throws NoSuchAlgorithmException
-     */
-    public static User create(User model) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        model.prePersistData();
-        JPA.em().persist(model);
-        // Flush and refresh for check
-        JPA.em().flush();
-        JPA.em().refresh(model);
-        return model;
-    }
-
-    /**
-     * Find an user by id
-     *
-     * @param Integer id
-     *
-     * @return User
-     */
-    public static User find(Integer id) {
-        return JPA.em().find(User.class, id);
-    }
-
-    /**
-     * Update an user
-     *
-     * @param User model
-     *
-     * @return User
-     */
-    public static User update(User model) {
-        User aux = find(model.id);
-        model.handleRelations(aux);
-        model.prePersistData();
-        return JPA.em().merge(model);
-    }
-
-    /**
-     * Delete an user by id
-     *
-     * @param User user
-     */
-    public static void delete(User user) {
-        JPA.em().remove(user);
-    }
-
-    /**
-     * Get all users
-     *
-     * @return List<User>
-     */
-    @SuppressWarnings("unchecked")
-    public static List<User> all() {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
-    }
-
-    /**
-     * Get the page of users
-     *
-     * @param Integer page
-     * @param Integer size
-     *
-     * @return List<User>
-     */
-    @SuppressWarnings("unchecked")
-    public static List<User> paginate(Integer page, Integer size) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
-                .setMaxResults(size).getResultList();
-    }
-
-    /**
-     * Get the number of total row
-     *
-     * @return Long
-     */
-    public static Long count() {
-        return (Long) JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m").getSingleResult();
+public class UserDAO extends CrudDAO<User> {
+    public UserDAO() {
+        super(User.class);
     }
 
     /**
@@ -111,7 +28,7 @@ public class UserDAO {
      * @return List<User>
      */
     @SuppressWarnings("unchecked")
-    public static List<User> check(String field, Object value, Integer id, String comparison) {
+    public List<User> check(String field, Object value, Integer id, String comparison) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
                 + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
@@ -125,7 +42,7 @@ public class UserDAO {
      *
      * @return List<User>
      */
-    public static List<User> check(String field, Object value, Integer id) {
+    public List<User> check(String field, Object value, Integer id) {
         return check(field, value, id, "=");
     }
 

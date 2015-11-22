@@ -25,13 +25,13 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(1);
+                User user = userDAO.find(1);
                 assertEquals(user.username, "test");
                 assertEquals(user.email, "test@testing.dev");
                 assertEquals(user.type, TypeUser.COMUN);
                 assertEquals(user.recipes.size(), 1);
 
-                User admin = UserDAO.find(2);
+                User admin = userDAO.find(2);
                 assertEquals(admin.username, "admin");
                 assertEquals(admin.email, "admin@admin.dev");
                 assertEquals(admin.type, TypeUser.ADMIN);
@@ -47,7 +47,7 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(0);
+                User user = userDAO.find(0);
                 assertNull(user);
             
                 successTest();
@@ -60,8 +60,8 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<User> users = UserDAO.all();
-                long count = UserDAO.count();
+                List<User> users = userDAO.all();
+                long count = userDAO.count();
                 assertEquals(count, 2);
 
                 assertEquals(users.get(0).username, "test");
@@ -77,11 +77,11 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<User> users = UserDAO.paginate(0, 1);
+                List<User> users = userDAO.paginate(0, 1);
                 assertEquals(users.get(0).username, "test");
                 assertEquals(users.size(), 1);
 
-                users = UserDAO.paginate(1, 1);
+                users = userDAO.paginate(1, 1);
                 assertEquals(users.get(0).username, "admin");
                 assertEquals(users.size(), 1);
             
@@ -96,7 +96,7 @@ public class UserModelDAOTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 User create = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
-                User user = UserDAO.create(create);
+                User user = userDAO.create(create);
                 assertEquals(user, create);
             
                 successTest();
@@ -109,9 +109,9 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(1);
+                User user = userDAO.find(1);
                 user.username = "Update test";
-                User update = UserDAO.update(user);
+                User update = userDAO.update(user);
                 assertEquals(update.username, "Update test");
             
                 successTest();
@@ -124,13 +124,13 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(1);
-                long count = UserDAO.count();
+                User user = userDAO.find(1);
+                long count = userDAO.count();
                 assertEquals(count, 2);
 
-                UserDAO.delete(user);
+                userDAO.delete(user);
 
-                count = UserDAO.count();
+                count = userDAO.count();
                 assertEquals(count, 1);
             
                 successTest();
@@ -143,10 +143,10 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(0);
+                User user = userDAO.find(0);
 
                 try {
-                    UserDAO.delete(user);
+                    userDAO.delete(user);
                 } catch (Exception e) {}
             
                 successTest();
@@ -159,9 +159,9 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(1);
+                User user = userDAO.find(1);
                 User friend = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
-                friend = UserDAO.create(friend);
+                friend = userDAO.create(friend);
 
                 assertEquals(user.myFriends.size(), 1);
                 assertEquals(friend.friends.size(), 0);
@@ -181,8 +181,8 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(1);
-                User admin = UserDAO.find(2);
+                User user = userDAO.find(1);
+                User admin = userDAO.find(2);
 
                 assertEquals(user.myFriends.size(), 1);
                 assertEquals(admin.friends.size(), 1);
@@ -202,9 +202,9 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = RecipeDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
                 User user = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
-                user = UserDAO.create(user);
+                user = userDAO.create(user);
 
                 assertEquals(user.recipesFavorites.size(), 0);
                 assertEquals(recipe.favorites.size(), 1);
@@ -224,8 +224,8 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(1);
-                Recipe recipe = RecipeDAO.find(1);
+                User user = userDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
 
                 assertEquals(user.recipesFavorites.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
@@ -245,9 +245,9 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = RecipeDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
                 User user = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
-                user = UserDAO.create(user);
+                user = userDAO.create(user);
 
                 assertEquals(user.ratings.size(), 0);
                 assertEquals(recipe.ratings.size(), 1);
@@ -267,8 +267,8 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(1);
-                Recipe recipe = RecipeDAO.find(1);
+                User user = userDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
 
                 assertEquals(recipe.ratings.get(0).rating, new Double(2.5));
 
@@ -286,8 +286,8 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = UserDAO.find(1);
-                Recipe recipe = RecipeDAO.find(1);
+                User user = userDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
 
                 assertEquals(user.ratings.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);

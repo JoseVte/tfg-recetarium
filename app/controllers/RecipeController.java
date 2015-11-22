@@ -42,15 +42,14 @@ public class RecipeController extends Controller {
     public Result list(Integer page, Integer size) {
         List<Recipe> models = RecipeService.paginate(page - 1, size);
         Long count = RecipeService.count();
+        String[] routesString = new String[3];
+        routesString[0] = routes.RecipeController.list(page - 1, size).toString();
+        routesString[1] = routes.RecipeController.list(page + 1, size).toString();
+        routesString[2] = routes.RecipeController.list(page, size).toString();
+        
+        ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString);
 
-        ObjectNode result = Json.newObject();
-        result.put("data", Json.toJson(models));
-        result.put("total", count);
-        if (page > 1) result.put("link-prev", routes.RecipeController.list(page - 1, size).toString());
-        if (page * size < count) result.put("link-next", routes.RecipeController.list(page + 1, size).toString());
-        result.put("link-self", routes.RecipeController.list(page, size).toString());
-
-        return jsonResult(ok(result));
+        return util.Json.jsonResult(response(), ok(result));
     }
 
     /**
