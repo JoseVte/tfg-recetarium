@@ -17,18 +17,6 @@ public class RecipeController extends AbstractController {
     static Form<Recipe> recipeForm = Form.form(Recipe.class);
 
     /**
-     * Add the content-type json to response
-     *
-     * @param Result httpResponse
-     *
-     * @return Result
-     */
-    public Result jsonResult(Result httpResponse) {
-        response().setContentType("application/json; charset=utf-8");
-        return httpResponse;
-    }
-
-    /**
      * Get the recipes with pagination
      *
      * @param Integer page
@@ -63,9 +51,9 @@ public class RecipeController extends AbstractController {
         if (recipe == null) {
             ObjectNode result = Json.newObject();
             result.put("error", "Not found " + id);
-            return jsonResult(notFound(result));
+            return util.Json.jsonResult(response(), notFound(result));
         }
-        return jsonResult(ok(Json.toJson(recipe)));
+        return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
     }
 
     /**
@@ -77,10 +65,10 @@ public class RecipeController extends AbstractController {
     public Result create() {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
-            return jsonResult(badRequest(recipe.errorsAsJson()));
+            return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
         Recipe newRecipe = RecipeService.create(recipe.get());
-        return jsonResult(created(Json.toJson(newRecipe)));
+        return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
 
     /**
@@ -94,12 +82,12 @@ public class RecipeController extends AbstractController {
     public Result update(Integer id) {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
-            return jsonResult(badRequest(recipe.errorsAsJson()));
+            return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
         Recipe recipeModel = recipe.get();
         recipeModel.id = id;
         recipeModel = RecipeService.update(recipeModel);
-        return jsonResult(ok(Json.toJson(recipeModel)));
+        return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
     }
 
     /**
@@ -114,10 +102,10 @@ public class RecipeController extends AbstractController {
         if (RecipeService.delete(id)) {
             ObjectNode result = Json.newObject();
             result.put("msg", "Deleted " + id);
-            return jsonResult(ok(result));
+            return util.Json.jsonResult(response(), ok(result));
         }
         ObjectNode result = Json.newObject();
         result.put("error", "Not found " + id);
-        return jsonResult(notFound(result));
+        return util.Json.jsonResult(response(), notFound(result));
     }
 }
