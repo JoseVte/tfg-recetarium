@@ -4,11 +4,15 @@ import java.util.List;
 
 import models.Recipe;
 import models.Tag;
-import models.dao.RecipeDAO;
 import models.dao.TagDAO;
 import models.manytomany.RecipeTags;
 
 public class TagService {
+    private static TagDAO dao;
+    static {
+        dao = new TagDAO();
+    }
+
     /**
      * Create a tag
      *
@@ -17,7 +21,7 @@ public class TagService {
      * @return Tag
      */
     public static Tag create(Tag data) {
-        return TagDAO.create(data);
+        return dao.create(data);
     }
 
     /**
@@ -28,7 +32,7 @@ public class TagService {
      * @return Tag
      */
     public static Tag update(Tag data) {
-        return TagDAO.update(data);
+        return dao.update(data);
     }
 
     /**
@@ -39,7 +43,7 @@ public class TagService {
      * @return Tag
      */
     public static Tag find(Integer id) {
-        return TagDAO.find(id);
+        return dao.find(id);
     }
 
     /**
@@ -48,9 +52,9 @@ public class TagService {
      * @param Integer id
      */
     public static Boolean delete(Integer id) {
-        Tag tag = TagDAO.find(id);
+        Tag tag = dao.find(id);
         if (tag != null) {
-            TagDAO.delete(tag);
+            dao.delete(tag);
             return true;
         } else {
             return false;
@@ -63,7 +67,7 @@ public class TagService {
      * @return List<Tag>
      */
     public static List<Tag> all() {
-        return TagDAO.all();
+        return dao.all();
     }
 
     /**
@@ -75,7 +79,7 @@ public class TagService {
      * @return List<Tag>
      */
     public static List<Tag> paginate(Integer page, Integer size) {
-        return TagDAO.paginate(page, size);
+        return dao.paginate(page, size);
     }
 
     /**
@@ -84,7 +88,7 @@ public class TagService {
      * @return Long
      */
     public static Long count() {
-        return TagDAO.count();
+        return dao.count();
     }
 
     /**
@@ -96,8 +100,8 @@ public class TagService {
      * @return boolean
      */
     public static boolean addRecipe(Integer tagId, Integer recipeId) {
-        Tag tag = TagDAO.find(tagId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        Tag tag = dao.find(tagId);
+        Recipe recipe = RecipeService.find(recipeId);
         if (tag != null && recipe != null) {
             RecipeTags tagged = new RecipeTags(tag, recipe);
             if (!tag.recipes.contains(tagged)) {
@@ -117,8 +121,8 @@ public class TagService {
      * @return boolean
      */
     public static boolean deleteRecipe(Integer tagId, Integer recipeId) {
-        Tag tag = TagDAO.find(tagId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        Tag tag = dao.find(tagId);
+        Recipe recipe = RecipeService.find(recipeId);
         if (tag != null && recipe != null) {
             RecipeTags tagged = new RecipeTags(tag, recipe);
             if (tag.recipes.contains(tagged)) {

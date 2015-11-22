@@ -12,16 +12,16 @@ data:
       type:       ADMIN
 - &tag !!models.Tag
       text: test
-- &section !!models.Section
+- &category !!models.Category
       text: test
-- &sectionnew !!models.Section
+- &categorynew !!models.Category
       text: test-new
 - &recipe !!models.Recipe
       title:       Test
       slug:        test
       description: Descripcion test
       user:        *user
-      section:     *section
+      category:     *category
 - &comment !!models.Comment
       text:   test
       recipe: *recipe

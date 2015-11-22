@@ -3,7 +3,7 @@ package models.dao;
 import java.util.List;
 
 import models.Recipe;
-import models.Section;
+import models.Category;
 import models.Tag;
 import models.User;
 import models.manytomany.Favorite;
@@ -11,87 +11,9 @@ import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 import play.db.jpa.JPA;
 
-public class RecipeDAO {
-    static String TABLE = Recipe.class.getName();
-
-    /**
-     * Create a recipe
-     *
-     * @param Recipe model
-     *
-     * @return Recipe
-     */
-    public static Recipe create(Recipe model) {
-        model.prePersistData();
-        JPA.em().persist(model);
-        // Flush and refresh for check
-        JPA.em().flush();
-        JPA.em().refresh(model);
-        return model;
-    }
-
-    /**
-     * Find a recipe by id
-     *
-     * @param Integer id
-     *
-     * @return Recipe
-     */
-    public static Recipe find(Integer id) {
-        return JPA.em().find(Recipe.class, id);
-    }
-
-    /**
-     * Update a recipe
-     *
-     * @param Recipe model
-     *
-     * @return Recipe
-     */
-    public static Recipe update(Recipe model) {
-        return JPA.em().merge(model);
-    }
-
-    /**
-     * Delete a recipe by id
-     *
-     * @param Recipe model
-     */
-    public static void delete(Recipe model) {
-        JPA.em().remove(model);
-    }
-
-    /**
-     * Get all recipes
-     *
-     * @return List<Recipe>
-     */
-    @SuppressWarnings("unchecked")
-    public static List<Recipe> all() {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
-    }
-
-    /**
-     * Get the page of recipes
-     *
-     * @param Integer page
-     * @param Integer size
-     *
-     * @return List<Recipe>
-     */
-    @SuppressWarnings("unchecked")
-    public static List<Recipe> paginate(Integer page, Integer size) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
-                .setMaxResults(size).getResultList();
-    }
-
-    /**
-     * Get the number of total row
-     *
-     * @return Long
-     */
-    public static Long count() {
-        return (Long) JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m").getSingleResult();
+public class RecipeDAO extends CrudDAO<Recipe> {
+    public RecipeDAO() {
+        super(Recipe.class);
     }
 
     /**
@@ -105,7 +27,7 @@ public class RecipeDAO {
      * @return List<Recipe>
      */
     @SuppressWarnings("unchecked")
-    public static List<Recipe> check(String field, Object value, Integer id, String comparison) {
+    public List<Recipe> check(String field, Object value, Integer id, String comparison) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
                 + comparison + " '" + value + "' ORDER BY id").getResultList();
     }
@@ -119,7 +41,7 @@ public class RecipeDAO {
      *
      * @return List<Recipe>
      */
-    public static List<Recipe> check(String field, Object value, Integer id) {
+    public List<Recipe> check(String field, Object value, Integer id) {
         return check(field, value, id, "=");
     }
 
@@ -236,15 +158,15 @@ public class RecipeDAO {
     /**
      * Add section to a recipe
      *
-     * @param section
+     * @param category
      * @param recipe
      */
-    public static void addOrUpdateSection(Section section, Recipe recipe) {
-        recipe.section = section;
+    public static void addOrUpdateCategory(Category category, Recipe recipe) {
+        recipe.category = category;
         JPA.em().merge(recipe);
         // Reload entities
         JPA.em().flush();
-        JPA.em().refresh(section);
+        JPA.em().refresh(category);
         JPA.em().refresh(recipe);
     }
 
@@ -253,9 +175,9 @@ public class RecipeDAO {
      *
      * @param recipe
      */
-    public static void deleteSection(Recipe recipe) {
-        Section section = recipe.section;
-        recipe.section = null;
+    public static void deleteCategory(Recipe recipe) {
+        Category section = recipe.category;
+        recipe.category = null;
         JPA.em().merge(recipe);
         // Reload entities
         JPA.em().flush();

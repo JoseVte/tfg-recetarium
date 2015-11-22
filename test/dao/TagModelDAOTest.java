@@ -6,169 +6,150 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import org.junit.Test;
 
 import models.Recipe;
 import models.Tag;
-import models.dao.RecipeDAO;
 import models.dao.TagDAO;
 import play.db.jpa.JPA;
-import play.test.FakeApplication;
-import play.test.WithApplication;
-import util.InitDataLoader;
+import util.AbstractTest;
 
-public class TagModelDAOTest extends WithApplication {
-
-    @Override
-    public FakeApplication provideFakeApplication() {
-        return fakeApplication(inMemoryDatabase());
-    }
-
-    public void initializeData() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction trx = em.getTransaction();
-        try {
-
-            // Start the transaction
-            trx.begin();
-            InitDataLoader.load(em, "test/init-data.yml");
-            // Commit and end the transaction
-            trx.commit();
-        } catch (RuntimeException | IOException e) {
-            if (trx != null && trx.isActive()) {
-                trx.rollback();
-            }
-            throw e;
-        } finally {
-            // Close the manager
-            em.close();
-            emf.close();
-        }
-    }
+public class TagModelDAOTest extends AbstractTest {
 
     @Test
-    public void testDAOFindTag() {
+    public void testTagDAOFindTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Tag tag = TagDAO.find(1);
+                initializeDataModel();
+                Tag tag = tagDAO.find(1);
                 assertEquals(tag.text, "test");
                 assertEquals(tag.recipes.size(), 1);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAONotFoundTag() {
+    public void testTagDAONotFoundTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Tag tag = TagDAO.find(0);
+                initializeDataModel();
+                Tag tag = tagDAO.find(0);
                 assertNull(tag);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOFindAllTags() {
+    public void testTagDAOFindAllTags() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                List<Tag> tags = TagDAO.all();
-                long count = TagDAO.count();
+                initializeDataModel();
+                List<Tag> tags = tagDAO.all();
+                long count = tagDAO.count();
                 assertEquals(count, 1);
 
                 assertEquals(tags.get(0).text, "test");
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOPageTags() {
+    public void testTagDAOPageTags() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                List<Tag> tags = TagDAO.paginate(0, 1);
+                initializeDataModel();
+                List<Tag> tags = tagDAO.paginate(0, 1);
                 assertEquals(tags.get(0).text, "test");
                 assertEquals(tags.size(), 1);
 
-                tags = TagDAO.paginate(1, 1);
+                tags = tagDAO.paginate(1, 1);
                 assertEquals(tags.size(), 0);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOCreateTag() {
+    public void testTagDAOCreateTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 Tag create = new Tag("test2");
-                Tag tag = TagDAO.create(create);
+                Tag tag = tagDAO.create(create);
                 assertEquals(tag, create);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOUpdateTag() {
+    public void testTagDAOUpdateTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Tag tag = TagDAO.find(1);
+                initializeDataModel();
+                Tag tag = tagDAO.find(1);
                 tag.text = "Update test";
-                Tag update = TagDAO.update(tag);
+                Tag update = tagDAO.update(tag);
                 assertEquals(update.text, "Update test");
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAODeleteTag() {
+    public void testTagDAODeleteTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Tag tag = TagDAO.find(1);
-                long count = TagDAO.count();
+                initializeDataModel();
+                Tag tag = tagDAO.find(1);
+                long count = tagDAO.count();
                 assertEquals(count, 1);
 
-                TagDAO.delete(tag);
+                tagDAO.delete(tag);
 
-                count = TagDAO.count();
+                count = tagDAO.count();
                 assertEquals(count, 0);
-            });
-        });
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void testDAODeleteNotFoundTag() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                Tag tag = TagDAO.find(0);
-
-                TagDAO.delete(tag);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOAddRecipeTag() {
+    public void testTagDAODeleteNotFoundTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
+                Tag tag = tagDAO.find(0);
+
+                try {
+                    tagDAO.delete(tag);
+                } catch (Exception e) {}
+            
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testTagDAOAddRecipeTag() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
                 Tag tag = new Tag("test2");
-                tag = TagDAO.create(tag);
-                Recipe recipe = RecipeDAO.find(1);
+                tag = tagDAO.create(tag);
+                Recipe recipe = recipeDAO.find(1);
 
                 assertEquals(tag.recipes.size(), 0);
                 assertEquals(recipe.tags.size(), 1);
@@ -177,17 +158,19 @@ public class TagModelDAOTest extends WithApplication {
 
                 assertEquals(tag.recipes.size(), 1);
                 assertEquals(recipe.tags.size(), 2);
+            
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAODeleteRecipeTag() {
+    public void testTagDAODeleteRecipeTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Recipe recipe = RecipeDAO.find(1);
-                Tag tag = TagDAO.find(1);
+                initializeDataModel();
+                Recipe recipe = recipeDAO.find(1);
+                Tag tag = tagDAO.find(1);
 
                 assertEquals(tag.recipes.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
@@ -196,6 +179,8 @@ public class TagModelDAOTest extends WithApplication {
 
                 assertEquals(tag.recipes.size(), 0);
                 assertEquals(recipe.tags.size(), 0);
+            
+                successTest();
             });
         });
     }

@@ -6,6 +6,11 @@ import models.Media;
 import models.dao.MediaDAO;
 
 public class MediaService {
+    private static MediaDAO dao;
+    static {
+        dao = new MediaDAO();
+    }
+
     /**
      * Create a media
      *
@@ -14,7 +19,7 @@ public class MediaService {
      * @return Media
      */
     public static Media create(Media data) {
-        return MediaDAO.create(data);
+        return dao.create(data);
     }
 
     /**
@@ -25,7 +30,7 @@ public class MediaService {
      * @return Media
      */
     public static Media update(Media data) {
-        return MediaDAO.update(data);
+        return dao.update(data);
     }
 
     /**
@@ -36,7 +41,7 @@ public class MediaService {
      * @return Media
      */
     public static Media find(Integer id) {
-        return MediaDAO.find(id);
+        return dao.find(id);
     }
 
     /**
@@ -45,9 +50,9 @@ public class MediaService {
      * @param Integer id
      */
     public static Boolean delete(Integer id) {
-        Media media = MediaDAO.find(id);
+        Media media = dao.find(id);
         if (media != null) {
-            MediaDAO.delete(media);
+            dao.delete(media);
             return true;
         } else {
             return false;
@@ -60,7 +65,7 @@ public class MediaService {
      * @return List<Media>
      */
     public static List<Media> all() {
-        return MediaDAO.all();
+        return dao.all();
     }
 
     /**
@@ -72,7 +77,7 @@ public class MediaService {
      * @return List<Media>
      */
     public static List<Media> paginate(Integer page, Integer size) {
-        return MediaDAO.paginate(page, size);
+        return dao.paginate(page, size);
     }
 
     /**
@@ -81,6 +86,6 @@ public class MediaService {
      * @return Long
      */
     public static Long count() {
-        return MediaDAO.count();
+        return dao.count();
     }
 }

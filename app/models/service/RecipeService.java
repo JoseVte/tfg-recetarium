@@ -3,18 +3,21 @@ package models.service;
 import java.util.List;
 
 import models.Recipe;
-import models.Section;
+import models.Category;
 import models.Tag;
 import models.User;
 import models.dao.RecipeDAO;
-import models.dao.SectionDAO;
-import models.dao.TagDAO;
-import models.dao.UserDAO;
+import models.service.UserService;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 
 public class RecipeService {
+    private static RecipeDAO recipeDAO;
+    static {
+        recipeDAO = new RecipeDAO();
+    }
+
     /**
      * Create a recipe
      *
@@ -23,7 +26,7 @@ public class RecipeService {
      * @return Recipe
      */
     public static Recipe create(Recipe data) {
-        return RecipeDAO.create(data);
+        return recipeDAO.create(data);
     }
 
     /**
@@ -34,7 +37,7 @@ public class RecipeService {
      * @return Recipe
      */
     public static Recipe update(Recipe data) {
-        return RecipeDAO.update(data);
+        return recipeDAO.update(data);
     }
 
     /**
@@ -45,7 +48,7 @@ public class RecipeService {
      * @return Recipe
      */
     public static Recipe find(Integer id) {
-        return RecipeDAO.find(id);
+        return recipeDAO.find(id);
     }
 
     /**
@@ -54,9 +57,9 @@ public class RecipeService {
      * @param Integer id
      */
     public static Boolean delete(Integer id) {
-        Recipe recipe = RecipeDAO.find(id);
+        Recipe recipe = recipeDAO.find(id);
         if (recipe != null) {
-            RecipeDAO.delete(recipe);
+            recipeDAO.delete(recipe);
             return true;
         } else {
             return false;
@@ -69,7 +72,7 @@ public class RecipeService {
      * @return List<Recipe>
      */
     public static List<Recipe> all() {
-        return RecipeDAO.all();
+        return recipeDAO.all();
     }
 
     /**
@@ -81,7 +84,7 @@ public class RecipeService {
      * @return List<Recipe>
      */
     public static List<Recipe> paginate(Integer page, Integer size) {
-        return RecipeDAO.paginate(page, size);
+        return recipeDAO.paginate(page, size);
     }
 
     /**
@@ -90,7 +93,7 @@ public class RecipeService {
      * @return Long
      */
     public static Long count() {
-        return RecipeDAO.count();
+        return recipeDAO.count();
     }
 
     /**
@@ -102,8 +105,8 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean addTag(Integer tagId, Integer recipeId) {
-        Tag tag = TagDAO.find(tagId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        Tag tag = TagService.find(tagId);
+        Recipe recipe = recipeDAO.find(recipeId);
         if (tag != null && recipe != null) {
             RecipeTags tagged = new RecipeTags(tag, recipe);
             if (!recipe.tags.contains(tagged)) {
@@ -123,8 +126,8 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean deleteTag(Integer tagId, Integer recipeId) {
-        Tag tag = TagDAO.find(tagId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        Tag tag = TagService.find(tagId);
+        Recipe recipe = recipeDAO.find(recipeId);
         if (tag != null && recipe != null) {
             RecipeTags tagged = new RecipeTags(tag, recipe);
             if (recipe.tags.contains(tagged)) {
@@ -144,8 +147,8 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean addFavorite(Integer userId, Integer recipeId) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = UserService.find(userId);
+        Recipe recipe = recipeDAO.find(recipeId);
         if (user != null && recipe != null) {
             Favorite fav = new Favorite(user, recipe);
             if (!user.recipesFavorites.contains(fav)) {
@@ -165,8 +168,8 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean deleteFavorite(Integer userId, Integer recipeId) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = UserService.find(userId);
+        Recipe recipe = recipeDAO.find(recipeId);
         if (user != null && recipe != null) {
             Favorite fav = new Favorite(user, recipe);
             if (user.recipesFavorites.contains(fav)) {
@@ -187,8 +190,8 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean addRating(Integer userId, Integer recipeId, double value) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = UserService.find(userId);
+        Recipe recipe = recipeDAO.find(recipeId);
         if (user != null && recipe != null && value >= 0.0 && value <= 5.0) {
             Rating fav = new Rating(user, recipe);
             if (!user.ratings.contains(fav)) {
@@ -209,8 +212,8 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean updateRating(Integer userId, Integer recipeId, double value) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = UserService.find(userId);
+        Recipe recipe = recipeDAO.find(recipeId);
         if (user != null && recipe != null && value >= 0.0 && value <= 5.0) {
             Rating fav = new Rating(user, recipe);
             if (user.ratings.contains(fav)) {
@@ -230,8 +233,8 @@ public class RecipeService {
      * @return boolean
      */
     public static boolean deleteRating(Integer userId, Integer recipeId) {
-        User user = UserDAO.find(userId);
-        Recipe recipe = RecipeDAO.find(recipeId);
+        User user = UserService.find(userId);
+        Recipe recipe = recipeDAO.find(recipeId);
         if (user != null && recipe != null) {
             Rating fav = new Rating(user, recipe);
             if (user.ratings.contains(fav)) {
@@ -245,17 +248,17 @@ public class RecipeService {
     /**
      * Add a section to a recipe
      *
-     * @param section
+     * @param category
      * @param recipe
      *
      * @return boolean
      */
-    public static boolean addSection(Integer sectionId, Integer recipeId) {
-        Section section = SectionDAO.find(sectionId);
-        Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && recipe != null) {
-            if (!section.recipes.contains(recipe)) {
-                RecipeDAO.addOrUpdateSection(section, recipe);
+    public static boolean addCategory(Integer categoryId, Integer recipeId) {
+        Category category = CategoryService.find(categoryId);
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (category != null && recipe != null) {
+            if (!category.recipes.contains(recipe)) {
+                RecipeDAO.addOrUpdateCategory(category, recipe);
                 return true;
             }
         }
@@ -265,16 +268,16 @@ public class RecipeService {
     /**
      * Update a section to a recipe
      *
-     * @param section
+     * @param category
      * @param recipe
      *
      * @return boolean
      */
-    public static boolean updateSection(Integer sectionId, Integer recipeId) {
-        Section section = SectionDAO.find(sectionId);
-        Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && recipe != null) {
-            RecipeDAO.addOrUpdateSection(section, recipe);
+    public static boolean updateCategory(Integer categoryId, Integer recipeId) {
+        Category category = CategoryService.find(categoryId);
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (category != null && recipe != null) {
+            RecipeDAO.addOrUpdateCategory(category, recipe);
             return true;
         }
         return false;
@@ -283,17 +286,17 @@ public class RecipeService {
     /**
      * Delete a section of a recipe
      *
-     * @param section
+     * @param category
      * @param recipe
      *
      * @return boolean
      */
-    public static boolean deleteSection(Integer sectionId, Integer recipeId) {
-        Section section = SectionDAO.find(sectionId);
-        Recipe recipe = RecipeDAO.find(recipeId);
-        if (section != null && recipe != null) {
-            if (section.recipes.contains(recipe)) {
-                RecipeDAO.deleteSection(recipe);
+    public static boolean deleteCategory(Integer categoryId, Integer recipeId) {
+        Category category = CategoryService.find(categoryId);
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (category != null && recipe != null) {
+            if (category.recipes.contains(recipe)) {
+                RecipeDAO.deleteCategory(recipe);
                 return true;
             }
         }

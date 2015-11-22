@@ -12,22 +12,21 @@ import java.util.List;
 
 import org.junit.Test;
 
-import models.Media;
-import models.service.MediaService;
-import models.service.RecipeService;
+import models.Category;
+import models.service.CategoryService;
 import play.db.jpa.JPA;
 import util.AbstractTest;
 
-public class MediaServiceTest extends AbstractTest {
+public class CategoryServiceTest extends AbstractTest {
 
     @Test
-    public void testMediaServiceFindMedia() {
+    public void testCategoryServiceFindSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = MediaService.find(1);
-                assertEquals(media.filename, "test");
-                assertEquals(media.recipe.id.intValue(), 1);
+                Category category = CategoryService.find(1);
+                assertEquals(category.text, "test");
+                assertEquals(category.recipes.size(), 1);
             
                 successTest();
             });
@@ -35,12 +34,12 @@ public class MediaServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaServiceNotFoundMedia() {
+    public void testCategoryServiceNotFoundSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = MediaService.find(0);
-                assertNull(media);
+                Category category = CategoryService.find(0);
+                assertNull(category);
             
                 successTest();
             });
@@ -48,15 +47,79 @@ public class MediaServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaServiceFindAllMedias() {
+    public void testCategoryServiceFindAllSections() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Media> media = MediaService.all();
-                long count = MediaService.count();
+                List<Category> categorys = CategoryService.all();
+                long count = CategoryService.count();
+                assertEquals(count, 2);
+
+                assertEquals(categorys.get(0).text, "test");
+            
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testCategoryServicePageSections() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                List<Category> categorys = CategoryService.paginate(0, 1);
+                assertEquals(categorys.get(0).text, "test");
+                assertEquals(categorys.size(), 1);
+
+                categorys = CategoryService.paginate(1, 1);
+                assertEquals(categorys.size(), 1);
+            
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testCategoryServiceCreateSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Category create = new Category("test2");
+                Category category = CategoryService.create(create);
+                assertEquals(category, create);
+            
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testCategoryServiceUpdateSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Category category = CategoryService.find(1);
+                category.text = "Update test";
+                Category update = CategoryService.update(category);
+                assertEquals(update.text, "Update test");
+            
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testCategoryServiceDeleteSection() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                long count = CategoryService.count();
+                assertEquals(count, 2);
+
+                assertTrue(CategoryService.delete(1));
+
+                count = CategoryService.count();
                 assertEquals(count, 1);
-
-                assertEquals(media.get(0).filename, "test");
             
                 successTest();
             });
@@ -64,75 +127,11 @@ public class MediaServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaServicePageMedias() {
+    public void testCategoryServiceDeleteNotFoundSection() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Media> media = MediaService.paginate(0, 1);
-                assertEquals(media.get(0).filename, "test");
-                assertEquals(media.size(), 1);
-
-                media = MediaService.paginate(1, 1);
-                assertEquals(media.size(), 0);
-            
-                successTest();
-            });
-        });
-    }
-
-    @Test
-    public void testMediaServiceCreateMedia() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeDataModel();
-                Media create = new Media("test2", RecipeService.find(1));
-                Media media = MediaService.create(create);
-                assertEquals(media, create);
-            
-                successTest();
-            });
-        });
-    }
-
-    @Test
-    public void testMediaServiceUpdateMedia() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeDataModel();
-                Media media = MediaService.find(1);
-                media.filename = "Update test";
-                Media update = MediaService.update(media);
-                assertEquals(update.filename, "Update test");
-            
-                successTest();
-            });
-        });
-    }
-
-    @Test
-    public void testMediaServiceDeleteMedia() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeDataModel();
-                long count = MediaService.count();
-                assertEquals(count, 1);
-
-                assertTrue(MediaService.delete(1));
-
-                count = MediaService.count();
-                assertEquals(count, 0);
-            
-                successTest();
-            });
-        });
-    }
-
-    @Test
-    public void testMediaServiceDeleteNotFoundMedia() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeDataModel();
-                assertFalse(MediaService.delete(0));
+                assertFalse(CategoryService.delete(0));
             
                 successTest();
             });
