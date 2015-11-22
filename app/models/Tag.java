@@ -13,11 +13,11 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import models.base.Model;
 import models.dao.TagDAO;
 import models.manytomany.RecipeTags;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import util.Model;
 
 @Entity
 @Table(name = "tags")

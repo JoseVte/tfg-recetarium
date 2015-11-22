@@ -19,9 +19,15 @@ data:
 - &recipe !!models.Recipe
       title:       Test
       slug:        test
-      description: Descripcion test
+      description: Description test
       user:        *user
       category:     *category
+- &recipe2 !!models.Recipe
+      title:       Test 2
+      slug:        test-2
+      description: Description test
+      user:        *user
+      category:     *categorynew
 - &comment !!models.Comment
       text:   test
       recipe: *recipe

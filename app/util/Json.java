@@ -5,6 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import models.base.Model;
 import play.mvc.Http.Response;
 import play.mvc.Result;
 

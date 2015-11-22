@@ -3,6 +3,7 @@ package models.dao;
 import java.util.List;
 
 import models.Category;
+import models.base.CrudDAO;
 import play.db.jpa.JPA;
 
 public class CategoryDAO extends CrudDAO<Category> {
@@ -20,10 +21,9 @@ public class CategoryDAO extends CrudDAO<Category> {
      *
      * @return List<Category>
      */
-    @SuppressWarnings("unchecked")
     public List<Category> check(String field, Object value, Integer id, String comparison) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
-                + comparison + " '" + value + "' ORDER BY id").getResultList();
+                + comparison + " '" + value + "' ORDER BY id", Category.class).getResultList();
     }
 
     /**

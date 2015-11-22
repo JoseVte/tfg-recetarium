@@ -28,14 +28,14 @@ public class RecipeServiceTest extends AbstractTest {
                 Recipe recipe = RecipeService.find(1);
                 assertEquals(recipe.title, "Test");
                 assertEquals(recipe.slug, "test");
-                assertEquals(recipe.description, "Descripcion test");
+                assertEquals(recipe.description, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text.toString(), "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -48,7 +48,41 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
                 Recipe recipe = RecipeService.find(0);
                 assertNull(recipe);
-            
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceFindBySlugRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = RecipeService.findBySlug("test");
+                assertEquals(recipe.id.intValue(), 1);
+                assertEquals(recipe.title, "Test");
+                assertEquals(recipe.description, "Description test");
+                assertEquals(recipe.user.id.intValue(), 1);
+                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.tags.size(), 1);
+                assertEquals(recipe.favorites.size(), 1);
+                assertEquals(recipe.ratings.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceNotFoundBySlugRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = RecipeService.findBySlug("not-found");
+                assertNull(recipe);
+
                 successTest();
             });
         });
@@ -61,10 +95,10 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
                 List<Recipe> recipes = RecipeService.all();
                 long count = RecipeService.count();
-                assertEquals(count, 1);
+                assertEquals(count, 2);
 
                 assertEquals(recipes.get(0).title, "Test");
-            
+
                 successTest();
             });
         });
@@ -80,8 +114,8 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipes.size(), 1);
 
                 recipes = RecipeService.paginate(1, 1);
-                assertEquals(recipes.size(), 0);
-            
+                assertEquals(recipes.size(), 1);
+
                 successTest();
             });
         });
@@ -95,7 +129,7 @@ public class RecipeServiceTest extends AbstractTest {
                 Recipe create = new Recipe("test2", "Test2", null, UserService.find(1));
                 Recipe recipe = RecipeService.create(create);
                 assertEquals(recipe, create);
-            
+
                 successTest();
             });
         });
@@ -110,7 +144,7 @@ public class RecipeServiceTest extends AbstractTest {
                 recipe.title = "Update test";
                 Recipe update = RecipeService.update(recipe);
                 assertEquals(update.title, "Update test");
-            
+
                 successTest();
             });
         });
@@ -122,13 +156,13 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 long count = RecipeService.count();
-                assertEquals(count, 1);
+                assertEquals(count, 2);
 
                 assertTrue(RecipeService.delete(1));
 
                 count = RecipeService.count();
-                assertEquals(count, 0);
-            
+                assertEquals(count, 1);
+
                 successTest();
             });
         });
@@ -140,7 +174,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 assertFalse(RecipeService.delete(0));
-            
+
                 successTest();
             });
         });
@@ -155,7 +189,7 @@ public class RecipeServiceTest extends AbstractTest {
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addTag(1, recipe.id));
-            
+
                 successTest();
             });
         });
@@ -169,7 +203,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.addTag(1, 0));
                 assertFalse(RecipeService.addTag(0, 1));
-            
+
                 successTest();
             });
         });
@@ -182,7 +216,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(RecipeService.addTag(1, 1));
-            
+
                 successTest();
             });
         });
@@ -195,7 +229,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(RecipeService.deleteTag(1, 1));
-            
+
                 successTest();
             });
         });
@@ -209,7 +243,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.deleteTag(1, 0));
                 assertFalse(RecipeService.deleteTag(0, 1));
-            
+
                 successTest();
             });
         });
@@ -224,7 +258,7 @@ public class RecipeServiceTest extends AbstractTest {
                 recipe = RecipeService.create(recipe);
 
                 assertFalse(RecipeService.deleteTag(1, recipe.id));
-            
+
                 successTest();
             });
         });
@@ -238,8 +272,8 @@ public class RecipeServiceTest extends AbstractTest {
                 Recipe recipe = new Recipe("test2", "Test2", null, UserService.find(1));
                 recipe = RecipeService.create(recipe);
 
-                assertTrue(RecipeService.addFavorite(recipe.id, 1));
-            
+                assertTrue(RecipeService.addFavorite(1, recipe.id));
+
                 successTest();
             });
         });
@@ -253,7 +287,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.addFavorite(1, 0));
                 assertFalse(RecipeService.addFavorite(0, 1));
-            
+
                 successTest();
             });
         });
@@ -266,7 +300,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(RecipeService.addFavorite(1, 1));
-            
+
                 successTest();
             });
         });
@@ -279,7 +313,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(RecipeService.deleteFavorite(1, 1));
-            
+
                 successTest();
             });
         });
@@ -293,7 +327,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.deleteFavorite(1, 0));
                 assertFalse(RecipeService.deleteFavorite(0, 1));
-            
+
                 successTest();
             });
         });
@@ -306,7 +340,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(RecipeService.deleteFavorite(2, 1));
-            
+
                 successTest();
             });
         });
@@ -320,8 +354,8 @@ public class RecipeServiceTest extends AbstractTest {
                 Recipe recipe = new Recipe("test2", "Test2", null, UserService.find(1));
                 recipe = RecipeService.create(recipe);
 
-                assertTrue(RecipeService.addRating(recipe.id, 1, 4.3));
-            
+                assertTrue(RecipeService.addRating(1, recipe.id, 4.3));
+
                 successTest();
             });
         });
@@ -335,7 +369,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.addRating(1, 0, 0.0));
                 assertFalse(RecipeService.addRating(0, 1, 0.0));
-            
+
                 successTest();
             });
         });
@@ -348,7 +382,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(RecipeService.addRating(1, 1, 0.0));
-            
+
                 successTest();
             });
         });
@@ -362,7 +396,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.addRating(1, 1, -0.01));
                 assertFalse(RecipeService.addRating(1, 1, 5.01));
-            
+
                 successTest();
             });
         });
@@ -375,7 +409,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(RecipeService.updateRating(1, 1, 0.0));
-            
+
                 successTest();
             });
         });
@@ -389,7 +423,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.updateRating(1, 0, 0.0));
                 assertFalse(RecipeService.updateRating(0, 1, 0.0));
-            
+
                 successTest();
             });
         });
@@ -403,7 +437,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.updateRating(1, 1, -0.01));
                 assertFalse(RecipeService.updateRating(1, 1, 5.01));
-            
+
                 successTest();
             });
         });
@@ -416,7 +450,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(RecipeService.deleteRating(1, 1));
-            
+
                 successTest();
             });
         });
@@ -430,7 +464,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.deleteRating(1, 0));
                 assertFalse(RecipeService.deleteRating(0, 1));
-            
+
                 successTest();
             });
         });
@@ -444,8 +478,8 @@ public class RecipeServiceTest extends AbstractTest {
                 Recipe recipe = new Recipe("test2", "Test2", null, UserService.find(1));
                 recipe = RecipeService.create(recipe);
 
-                assertTrue(RecipeService.addCategory(recipe.id, 1));
-            
+                assertTrue(RecipeService.addCategory(1, recipe.id));
+
                 successTest();
             });
         });
@@ -459,7 +493,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.addCategory(1, 0));
                 assertFalse(RecipeService.addCategory(0, 1));
-            
+
                 successTest();
             });
         });
@@ -472,7 +506,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(RecipeService.addCategory(1, 1));
-            
+
                 successTest();
             });
         });
@@ -486,7 +520,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertTrue(RecipeService.updateCategory(1, 1));
                 assertTrue(RecipeService.updateCategory(2, 1));
-            
+
                 successTest();
             });
         });
@@ -500,7 +534,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.updateCategory(1, 0));
                 assertFalse(RecipeService.updateCategory(0, 1));
-            
+
                 successTest();
             });
         });
@@ -513,7 +547,7 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(RecipeService.deleteCategory(1, 1));
-            
+
                 successTest();
             });
         });
@@ -527,7 +561,7 @@ public class RecipeServiceTest extends AbstractTest {
 
                 assertFalse(RecipeService.deleteCategory(1, 0));
                 assertFalse(RecipeService.deleteCategory(0, 1));
-            
+
                 successTest();
             });
         });

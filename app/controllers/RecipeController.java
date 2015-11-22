@@ -16,14 +16,6 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 public class RecipeController extends AbstractController {
     static Form<Recipe> recipeForm = Form.form(Recipe.class);
 
-    /**
-     * Get the recipes with pagination
-     *
-     * @param Integer page
-     * @param Integer size
-     *
-     * @return Result
-     */
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size) {
         List<Recipe> models = RecipeService.paginate(page - 1, size);
@@ -38,29 +30,31 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), ok(result));
     }
 
-    /**
-     * Get one recipe by id
-     *
-     * @param Integer id
-     *
-     * @return Result
-     */
     @Transactional(readOnly = true)
     public Result get(Integer id) {
         Recipe recipe = RecipeService.find(id);
         if (recipe == null) {
-            ObjectNode result = Json.newObject();
-            result.put("error", "Not found " + id);
-            return util.Json.jsonResult(response(), notFound(result));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
         }
         return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
     }
 
     /**
-     * Create an recipe with the data of request
+     * Get one recipe by slug
+     *
+     * @param String slug
      *
      * @return Result
      */
+    @Transactional(readOnly = true)
+    public Result get(String slug) {
+        Recipe recipe = RecipeService.findBySlug(slug);
+        if (recipe == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + slug)));
+        }
+        return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
+    }
+
     @Transactional
     public Result create() {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
@@ -71,13 +65,6 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
 
-    /**
-     * Update an recipe with the data of request
-     *
-     * @param Integer id
-     *
-     * @return Result
-     */
     @Transactional
     public Result update(Integer id) {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
@@ -85,27 +72,18 @@ public class RecipeController extends AbstractController {
             return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
         Recipe recipeModel = recipe.get();
-        recipeModel.id = id;
+        if (recipeModel.id != id) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+        }
         recipeModel = RecipeService.update(recipeModel);
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
     }
 
-    /**
-     * Delete an recipe by id
-     *
-     * @param Integer id
-     *
-     * @return Result
-     */
     @Transactional
     public Result delete(Integer id) {
         if (RecipeService.delete(id)) {
-            ObjectNode result = Json.newObject();
-            result.put("msg", "Deleted " + id);
-            return util.Json.jsonResult(response(), ok(result));
+            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
         }
-        ObjectNode result = Json.newObject();
-        result.put("error", "Not found " + id);
-        return util.Json.jsonResult(response(), notFound(result));
+        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
     }
 }

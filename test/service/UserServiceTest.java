@@ -29,14 +29,14 @@ public class UserServiceTest extends AbstractTest {
                 assertEquals(user.username, "test");
                 assertEquals(user.email, "test@testing.dev");
                 assertEquals(user.type, TypeUser.COMUN);
-                assertEquals(user.recipes.size(), 1);
+                assertEquals(user.recipes.size(), 2);
 
                 User admin = UserService.find(2);
                 assertEquals(admin.username, "admin");
                 assertEquals(admin.email, "admin@admin.dev");
                 assertEquals(admin.type, TypeUser.ADMIN);
                 assertEquals(admin.recipes.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -49,7 +49,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
                 User user = UserService.find(0);
                 assertNull(user);
-            
+
                 successTest();
             });
         });
@@ -66,7 +66,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertEquals(users.get(0).username, "test");
                 assertEquals(users.get(1).username, "admin");
-            
+
                 successTest();
             });
         });
@@ -84,7 +84,7 @@ public class UserServiceTest extends AbstractTest {
                 users = UserService.paginate(1, 1);
                 assertEquals(users.get(0).username, "admin");
                 assertEquals(users.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -98,7 +98,7 @@ public class UserServiceTest extends AbstractTest {
                 User create = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
                 User user = UserService.create(create);
                 assertEquals(user, create);
-            
+
                 successTest();
             });
         });
@@ -113,7 +113,7 @@ public class UserServiceTest extends AbstractTest {
                 user.username = "Update test";
                 User update = UserService.update(user);
                 assertEquals(update.username, "Update test");
-            
+
                 successTest();
             });
         });
@@ -131,7 +131,7 @@ public class UserServiceTest extends AbstractTest {
 
                 count = UserService.count();
                 assertEquals(count, 1);
-            
+
                 successTest();
             });
         });
@@ -143,7 +143,7 @@ public class UserServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 assertFalse(UserService.delete(0));
-            
+
                 successTest();
             });
         });
@@ -158,7 +158,7 @@ public class UserServiceTest extends AbstractTest {
                 friend = UserService.create(friend);
 
                 assertTrue(UserService.addFriend(1, friend.id));
-            
+
                 successTest();
             });
         });
@@ -172,7 +172,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.addFriend(1, 0));
                 assertFalse(UserService.addFriend(0, 1));
-            
+
                 successTest();
             });
         });
@@ -185,7 +185,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(UserService.addFriend(1, 2));
-            
+
                 successTest();
             });
         });
@@ -198,7 +198,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(UserService.addFriend(1, 1));
-            
+
                 successTest();
             });
         });
@@ -211,7 +211,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(UserService.deleteFriend(1, 2));
-            
+
                 successTest();
             });
         });
@@ -225,7 +225,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.deleteFriend(1, 0));
                 assertFalse(UserService.deleteFriend(0, 1));
-            
+
                 successTest();
             });
         });
@@ -240,7 +240,7 @@ public class UserServiceTest extends AbstractTest {
                 friend = UserService.create(friend);
 
                 assertFalse(UserService.deleteFriend(1, friend.id));
-            
+
                 successTest();
             });
         });
@@ -255,7 +255,7 @@ public class UserServiceTest extends AbstractTest {
                 user = UserService.create(user);
 
                 assertTrue(UserService.addFavorite(user.id, 1));
-            
+
                 successTest();
             });
         });
@@ -269,7 +269,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.addFavorite(1, 0));
                 assertFalse(UserService.addFavorite(0, 1));
-            
+
                 successTest();
             });
         });
@@ -282,7 +282,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(UserService.addFavorite(1, 1));
-            
+
                 successTest();
             });
         });
@@ -295,7 +295,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(UserService.deleteFavorite(1, 1));
-            
+
                 successTest();
             });
         });
@@ -309,7 +309,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.deleteFavorite(1, 0));
                 assertFalse(UserService.deleteFavorite(0, 1));
-            
+
                 successTest();
             });
         });
@@ -322,7 +322,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(UserService.deleteFavorite(2, 1));
-            
+
                 successTest();
             });
         });
@@ -337,7 +337,7 @@ public class UserServiceTest extends AbstractTest {
                 user = UserService.create(user);
 
                 assertTrue(UserService.addRating(user.id, 1, 4.3));
-            
+
                 successTest();
             });
         });
@@ -351,7 +351,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.addRating(1, 0, 0.0));
                 assertFalse(UserService.addRating(0, 1, 0.0));
-            
+
                 successTest();
             });
         });
@@ -364,7 +364,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(UserService.addRating(1, 1, 0.0));
-            
+
                 successTest();
             });
         });
@@ -378,7 +378,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.addRating(1, 1, -0.01));
                 assertFalse(UserService.addRating(1, 1, 5.01));
-            
+
                 successTest();
             });
         });
@@ -391,7 +391,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(UserService.updateRating(1, 1, 0.0));
-            
+
                 successTest();
             });
         });
@@ -405,7 +405,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.updateRating(1, 0, 0.0));
                 assertFalse(UserService.updateRating(0, 1, 0.0));
-            
+
                 successTest();
             });
         });
@@ -419,7 +419,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.updateRating(1, 1, -0.01));
                 assertFalse(UserService.updateRating(1, 1, 5.01));
-            
+
                 successTest();
             });
         });
@@ -432,7 +432,7 @@ public class UserServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(UserService.deleteRating(1, 1));
-            
+
                 successTest();
             });
         });
@@ -446,7 +446,7 @@ public class UserServiceTest extends AbstractTest {
 
                 assertFalse(UserService.deleteRating(1, 0));
                 assertFalse(UserService.deleteRating(0, 1));
-            
+
                 successTest();
             });
         });

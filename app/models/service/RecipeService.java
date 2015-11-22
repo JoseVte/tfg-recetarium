@@ -50,6 +50,17 @@ public class RecipeService {
     public static Recipe find(Integer id) {
         return recipeDAO.find(id);
     }
+    
+    /**
+     * Find a recipe by slug
+     *
+     * @param String slug
+     *
+     * @return Recipe
+     */
+    public static Recipe findBySlug(String slug) {
+        return recipeDAO.findBySlug(slug);
+    }
 
     /**
      * Delete a recipe by id

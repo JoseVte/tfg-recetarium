@@ -14,10 +14,10 @@ import javax.persistence.UniqueConstraint;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import models.base.Model;
 import models.dao.MediaDAO;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import util.Model;
 
 @Entity
 @JsonPropertyOrder({ "id", "filename", "recipe", "created_at", "updated_at" })

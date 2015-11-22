@@ -1,4 +1,4 @@
-package util;
+package models.base;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +9,6 @@ import javax.persistence.Transient;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import models.User;
-import models.dao.CrudDAO;
 
 @MappedSuperclass
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

@@ -19,6 +19,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import models.base.Model;
 import models.dao.UserDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
@@ -26,7 +27,6 @@ import models.manytomany.Rating;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import util.Encryptation;
-import util.Model;
 
 @Entity
 @Table(name = "users")

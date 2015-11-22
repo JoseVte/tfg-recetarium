@@ -31,8 +31,8 @@ public class CommentServiceTest extends AbstractTest {
                 assertEquals(comment.user.id.intValue(), 1);
                 assertEquals(comment.recipe.id.intValue(), 1);
                 assertEquals(comment.replies.size(), 1);
-            
-            successTest();
+
+                successTest();
             });
         });
     }
@@ -44,8 +44,8 @@ public class CommentServiceTest extends AbstractTest {
                 initializeDataModel();
                 Comment comment = CommentService.find(0);
                 assertNull(comment);
-            
-            successTest();
+
+                successTest();
             });
         });
     }
@@ -60,8 +60,8 @@ public class CommentServiceTest extends AbstractTest {
                 assertEquals(count, 2);
 
                 assertEquals(comments.get(0).text, "test");
-            
-            successTest();
+
+                successTest();
             });
         });
     }
@@ -77,8 +77,8 @@ public class CommentServiceTest extends AbstractTest {
 
                 comments = CommentService.paginate(1, 1);
                 assertEquals(comments.size(), 1);
-            
-            successTest();
+
+                successTest();
             });
         });
     }
@@ -91,8 +91,8 @@ public class CommentServiceTest extends AbstractTest {
                 Comment create = new Comment("test2", UserService.find(1), RecipeService.find(1), null);
                 Comment comment = CommentService.create(create);
                 assertEquals(comment, create);
-            
-            successTest();
+
+                successTest();
             });
         });
     }
@@ -106,8 +106,8 @@ public class CommentServiceTest extends AbstractTest {
                 comment.text = "Update test";
                 Comment update = CommentService.update(comment);
                 assertEquals(update.text, "Update test");
-            
-            successTest();
+
+                successTest();
             });
         });
     }
@@ -124,8 +124,8 @@ public class CommentServiceTest extends AbstractTest {
 
                 count = CommentService.count();
                 assertEquals(count, 0);
-            
-            successTest();
+
+                successTest();
             });
         });
     }
@@ -136,8 +136,8 @@ public class CommentServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 assertFalse(CommentService.delete(0));
-            
-            successTest();
+
+                successTest();
             });
         });
     }

@@ -24,14 +24,14 @@ public abstract class AbstractController extends Controller {
     public abstract Result get(Integer id);
     
     /**
-     * Create an user with the data of request
+     * Create a model with the data of request
      *
      * @return Result
      */
     public abstract Result create();
     
     /**
-     * Update an user with the data of request
+     * Update a model with the data of request
      *
      * @param Integer id
      *
@@ -40,7 +40,7 @@ public abstract class AbstractController extends Controller {
     public abstract Result update(Integer id);
     
     /**
-     * Delete an user by id
+     * Delete a model by id
      *
      * @param Integer id
      *

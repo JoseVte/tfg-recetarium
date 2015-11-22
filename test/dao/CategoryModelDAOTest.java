@@ -24,7 +24,7 @@ public class CategoryModelDAOTest extends AbstractTest {
                 Category category = categoryDAO.find(1);
                 assertEquals(category.text, "test");
                 assertEquals(category.recipes.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -37,7 +37,7 @@ public class CategoryModelDAOTest extends AbstractTest {
                 initializeDataModel();
                 Category category = categoryDAO.find(0);
                 assertNull(category);
-            
+
                 successTest();
             });
         });
@@ -53,7 +53,7 @@ public class CategoryModelDAOTest extends AbstractTest {
                 assertEquals(count, 2);
 
                 assertEquals(categories.get(0).text, "test");
-            
+
                 successTest();
             });
         });
@@ -70,7 +70,7 @@ public class CategoryModelDAOTest extends AbstractTest {
 
                 categories = categoryDAO.paginate(1, 1);
                 assertEquals(categories.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -84,7 +84,7 @@ public class CategoryModelDAOTest extends AbstractTest {
                 Category create = new Category("test2");
                 Category category = categoryDAO.create(create);
                 assertEquals(category, create);
-            
+
                 successTest();
             });
         });
@@ -99,7 +99,7 @@ public class CategoryModelDAOTest extends AbstractTest {
                 category.text = "Update test";
                 Category update = categoryDAO.update(category);
                 assertEquals(update.text, "Update test");
-            
+
                 successTest();
             });
         });
@@ -118,7 +118,7 @@ public class CategoryModelDAOTest extends AbstractTest {
 
                 count = categoryDAO.count();
                 assertEquals(count, 1);
-            
+
                 successTest();
             });
         });
@@ -133,8 +133,9 @@ public class CategoryModelDAOTest extends AbstractTest {
 
                 try {
                     categoryDAO.delete(category);
-                } catch (Exception e) {}
-            
+                } catch (Exception e) {
+                }
+
                 successTest();
             });
         });
