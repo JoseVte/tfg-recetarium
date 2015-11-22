@@ -28,7 +28,7 @@ public class MediaServiceTest extends AbstractTest {
                 Media media = MediaService.find(1);
                 assertEquals(media.filename, "test");
                 assertEquals(media.recipe.id.intValue(), 1);
-            
+
                 successTest();
             });
         });
@@ -41,7 +41,7 @@ public class MediaServiceTest extends AbstractTest {
                 initializeDataModel();
                 Media media = MediaService.find(0);
                 assertNull(media);
-            
+
                 successTest();
             });
         });
@@ -57,7 +57,7 @@ public class MediaServiceTest extends AbstractTest {
                 assertEquals(count, 1);
 
                 assertEquals(media.get(0).filename, "test");
-            
+
                 successTest();
             });
         });
@@ -74,7 +74,7 @@ public class MediaServiceTest extends AbstractTest {
 
                 media = MediaService.paginate(1, 1);
                 assertEquals(media.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -88,7 +88,7 @@ public class MediaServiceTest extends AbstractTest {
                 Media create = new Media("test2", RecipeService.find(1));
                 Media media = MediaService.create(create);
                 assertEquals(media, create);
-            
+
                 successTest();
             });
         });
@@ -103,7 +103,7 @@ public class MediaServiceTest extends AbstractTest {
                 media.filename = "Update test";
                 Media update = MediaService.update(media);
                 assertEquals(update.filename, "Update test");
-            
+
                 successTest();
             });
         });
@@ -121,7 +121,7 @@ public class MediaServiceTest extends AbstractTest {
 
                 count = MediaService.count();
                 assertEquals(count, 0);
-            
+
                 successTest();
             });
         });
@@ -133,7 +133,7 @@ public class MediaServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 assertFalse(MediaService.delete(0));
-            
+
                 successTest();
             });
         });

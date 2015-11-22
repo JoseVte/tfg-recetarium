@@ -26,7 +26,7 @@ public class TagModelDAOTest extends AbstractTest {
                 Tag tag = tagDAO.find(1);
                 assertEquals(tag.text, "test");
                 assertEquals(tag.recipes.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -39,7 +39,7 @@ public class TagModelDAOTest extends AbstractTest {
                 initializeDataModel();
                 Tag tag = tagDAO.find(0);
                 assertNull(tag);
-            
+
                 successTest();
             });
         });
@@ -55,7 +55,7 @@ public class TagModelDAOTest extends AbstractTest {
                 assertEquals(count, 1);
 
                 assertEquals(tags.get(0).text, "test");
-            
+
                 successTest();
             });
         });
@@ -72,7 +72,7 @@ public class TagModelDAOTest extends AbstractTest {
 
                 tags = tagDAO.paginate(1, 1);
                 assertEquals(tags.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -86,7 +86,7 @@ public class TagModelDAOTest extends AbstractTest {
                 Tag create = new Tag("test2");
                 Tag tag = tagDAO.create(create);
                 assertEquals(tag, create);
-            
+
                 successTest();
             });
         });
@@ -101,7 +101,7 @@ public class TagModelDAOTest extends AbstractTest {
                 tag.text = "Update test";
                 Tag update = tagDAO.update(tag);
                 assertEquals(update.text, "Update test");
-            
+
                 successTest();
             });
         });
@@ -120,7 +120,7 @@ public class TagModelDAOTest extends AbstractTest {
 
                 count = tagDAO.count();
                 assertEquals(count, 0);
-            
+
                 successTest();
             });
         });
@@ -135,8 +135,9 @@ public class TagModelDAOTest extends AbstractTest {
 
                 try {
                     tagDAO.delete(tag);
-                } catch (Exception e) {}
-            
+                } catch (Exception e) {
+                }
+
                 successTest();
             });
         });
@@ -158,7 +159,7 @@ public class TagModelDAOTest extends AbstractTest {
 
                 assertEquals(tag.recipes.size(), 1);
                 assertEquals(recipe.tags.size(), 2);
-            
+
                 successTest();
             });
         });
@@ -179,7 +180,7 @@ public class TagModelDAOTest extends AbstractTest {
 
                 assertEquals(tag.recipes.size(), 0);
                 assertEquals(recipe.tags.size(), 0);
-            
+
                 successTest();
             });
         });

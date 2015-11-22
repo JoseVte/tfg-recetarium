@@ -16,9 +16,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
+import models.base.Model;
 import models.dao.CommentDAO;
 import play.data.validation.Constraints;
-import util.Model;
 
 @Entity
 @Table(name = "comments")

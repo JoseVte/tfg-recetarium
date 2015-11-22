@@ -27,7 +27,7 @@ public class CategoryServiceTest extends AbstractTest {
                 Category category = CategoryService.find(1);
                 assertEquals(category.text, "test");
                 assertEquals(category.recipes.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -40,7 +40,7 @@ public class CategoryServiceTest extends AbstractTest {
                 initializeDataModel();
                 Category category = CategoryService.find(0);
                 assertNull(category);
-            
+
                 successTest();
             });
         });
@@ -56,7 +56,7 @@ public class CategoryServiceTest extends AbstractTest {
                 assertEquals(count, 2);
 
                 assertEquals(categorys.get(0).text, "test");
-            
+
                 successTest();
             });
         });
@@ -73,7 +73,7 @@ public class CategoryServiceTest extends AbstractTest {
 
                 categorys = CategoryService.paginate(1, 1);
                 assertEquals(categorys.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -87,7 +87,7 @@ public class CategoryServiceTest extends AbstractTest {
                 Category create = new Category("test2");
                 Category category = CategoryService.create(create);
                 assertEquals(category, create);
-            
+
                 successTest();
             });
         });
@@ -102,7 +102,7 @@ public class CategoryServiceTest extends AbstractTest {
                 category.text = "Update test";
                 Category update = CategoryService.update(category);
                 assertEquals(update.text, "Update test");
-            
+
                 successTest();
             });
         });
@@ -120,7 +120,7 @@ public class CategoryServiceTest extends AbstractTest {
 
                 count = CategoryService.count();
                 assertEquals(count, 1);
-            
+
                 successTest();
             });
         });
@@ -132,7 +132,7 @@ public class CategoryServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 assertFalse(CategoryService.delete(0));
-            
+
                 successTest();
             });
         });

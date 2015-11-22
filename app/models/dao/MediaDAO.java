@@ -3,6 +3,7 @@ package models.dao;
 import java.util.List;
 
 import models.Media;
+import models.base.CrudDAO;
 import play.db.jpa.JPA;
 
 public class MediaDAO extends CrudDAO<Media> {
@@ -19,9 +20,8 @@ public class MediaDAO extends CrudDAO<Media> {
      *
      * @return List<Media>
      */
-    @SuppressWarnings("unchecked")
     public List<Media> check(Integer recipe_id, String filename, Integer id) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND (filename = '" + filename
-                + "' AND recipe_id = '" + recipe_id + "') ORDER BY id").getResultList();
+                + "' AND recipe_id = '" + recipe_id + "') ORDER BY id", Media.class).getResultList();
     }
 }

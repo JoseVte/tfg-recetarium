@@ -29,14 +29,14 @@ public class UserModelDAOTest extends AbstractTest {
                 assertEquals(user.username, "test");
                 assertEquals(user.email, "test@testing.dev");
                 assertEquals(user.type, TypeUser.COMUN);
-                assertEquals(user.recipes.size(), 1);
+                assertEquals(user.recipes.size(), 2);
 
                 User admin = userDAO.find(2);
                 assertEquals(admin.username, "admin");
                 assertEquals(admin.email, "admin@admin.dev");
                 assertEquals(admin.type, TypeUser.ADMIN);
                 assertEquals(admin.recipes.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -49,7 +49,7 @@ public class UserModelDAOTest extends AbstractTest {
                 initializeDataModel();
                 User user = userDAO.find(0);
                 assertNull(user);
-            
+
                 successTest();
             });
         });
@@ -66,7 +66,7 @@ public class UserModelDAOTest extends AbstractTest {
 
                 assertEquals(users.get(0).username, "test");
                 assertEquals(users.get(1).username, "admin");
-            
+
                 successTest();
             });
         });
@@ -84,7 +84,7 @@ public class UserModelDAOTest extends AbstractTest {
                 users = userDAO.paginate(1, 1);
                 assertEquals(users.get(0).username, "admin");
                 assertEquals(users.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -98,7 +98,7 @@ public class UserModelDAOTest extends AbstractTest {
                 User create = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
                 User user = userDAO.create(create);
                 assertEquals(user, create);
-            
+
                 successTest();
             });
         });
@@ -113,7 +113,7 @@ public class UserModelDAOTest extends AbstractTest {
                 user.username = "Update test";
                 User update = userDAO.update(user);
                 assertEquals(update.username, "Update test");
-            
+
                 successTest();
             });
         });
@@ -132,7 +132,7 @@ public class UserModelDAOTest extends AbstractTest {
 
                 count = userDAO.count();
                 assertEquals(count, 1);
-            
+
                 successTest();
             });
         });
@@ -147,8 +147,9 @@ public class UserModelDAOTest extends AbstractTest {
 
                 try {
                     userDAO.delete(user);
-                } catch (Exception e) {}
-            
+                } catch (Exception e) {
+                }
+
                 successTest();
             });
         });
@@ -170,7 +171,7 @@ public class UserModelDAOTest extends AbstractTest {
 
                 assertEquals(user.myFriends.size(), 2);
                 assertEquals(friend.friends.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -191,7 +192,7 @@ public class UserModelDAOTest extends AbstractTest {
 
                 assertEquals(user.myFriends.size(), 0);
                 assertEquals(admin.friends.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -213,7 +214,7 @@ public class UserModelDAOTest extends AbstractTest {
 
                 assertEquals(user.recipesFavorites.size(), 1);
                 assertEquals(recipe.favorites.size(), 2);
-            
+
                 successTest();
             });
         });
@@ -234,7 +235,7 @@ public class UserModelDAOTest extends AbstractTest {
 
                 assertEquals(user.recipesFavorites.size(), 0);
                 assertEquals(recipe.favorites.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -256,7 +257,7 @@ public class UserModelDAOTest extends AbstractTest {
 
                 assertEquals(user.ratings.size(), 1);
                 assertEquals(recipe.ratings.size(), 2);
-            
+
                 successTest();
             });
         });
@@ -275,7 +276,7 @@ public class UserModelDAOTest extends AbstractTest {
                 UserDAO.updateRating(user, recipe, 4.3);
 
                 assertEquals(recipe.ratings.get(0).rating, new Double(4.3));
-            
+
                 successTest();
             });
         });
@@ -296,7 +297,7 @@ public class UserModelDAOTest extends AbstractTest {
 
                 assertEquals(user.ratings.size(), 0);
                 assertEquals(recipe.ratings.size(), 0);
-            
+
                 successTest();
             });
         });

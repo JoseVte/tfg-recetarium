@@ -28,14 +28,14 @@ public class RecipeModelDAOTest extends AbstractTest {
                 Recipe recipe = recipeDAO.find(1);
                 assertEquals(recipe.title, "Test");
                 assertEquals(recipe.slug, "test");
-                assertEquals(recipe.description, "Descripcion test");
+                assertEquals(recipe.description, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text.toString(), "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -48,7 +48,41 @@ public class RecipeModelDAOTest extends AbstractTest {
                 initializeDataModel();
                 Recipe recipe = recipeDAO.find(0);
                 assertNull(recipe);
-            
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeDAOFindBySlugRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = recipeDAO.findBySlug("test");
+                assertEquals(recipe.id.intValue(), 1);
+                assertEquals(recipe.title, "Test");
+                assertEquals(recipe.description, "Description test");
+                assertEquals(recipe.user.id.intValue(), 1);
+                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.tags.size(), 1);
+                assertEquals(recipe.favorites.size(), 1);
+                assertEquals(recipe.ratings.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeDAONotFoundBySlugRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = recipeDAO.findBySlug("not-found");
+                assertNull(recipe);
+
                 successTest();
             });
         });
@@ -61,10 +95,10 @@ public class RecipeModelDAOTest extends AbstractTest {
                 initializeDataModel();
                 List<Recipe> recipes = recipeDAO.all();
                 long count = recipeDAO.count();
-                assertEquals(count, 1);
+                assertEquals(count, 2);
 
                 assertEquals(recipes.get(0).title, "Test");
-            
+
                 successTest();
             });
         });
@@ -80,8 +114,8 @@ public class RecipeModelDAOTest extends AbstractTest {
                 assertEquals(recipes.size(), 1);
 
                 recipes = recipeDAO.paginate(1, 1);
-                assertEquals(recipes.size(), 0);
-            
+                assertEquals(recipes.size(), 1);
+
                 successTest();
             });
         });
@@ -95,7 +129,7 @@ public class RecipeModelDAOTest extends AbstractTest {
                 Recipe create = new Recipe("test2", "Test2", null, userDAO.find(1));
                 Recipe recipe = recipeDAO.create(create);
                 assertEquals(recipe, create);
-            
+
                 successTest();
             });
         });
@@ -110,7 +144,7 @@ public class RecipeModelDAOTest extends AbstractTest {
                 recipe.title = "Update test";
                 Recipe update = recipeDAO.update(recipe);
                 assertEquals(update.title, "Update test");
-            
+
                 successTest();
             });
         });
@@ -123,13 +157,13 @@ public class RecipeModelDAOTest extends AbstractTest {
                 initializeDataModel();
                 Recipe recipe = recipeDAO.find(1);
                 long count = recipeDAO.count();
-                assertEquals(count, 1);
+                assertEquals(count, 2);
 
                 recipeDAO.delete(recipe);
 
                 count = recipeDAO.count();
-                assertEquals(count, 0);
-            
+                assertEquals(count, 1);
+
                 successTest();
             });
         });
@@ -144,8 +178,9 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 try {
                     recipeDAO.delete(recipe);
-                } catch (Exception e) {}
-            
+                } catch (Exception e) {
+                }
+
                 successTest();
             });
         });
@@ -167,7 +202,7 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(tag.recipes.size(), 2);
                 assertEquals(recipe.tags.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -188,7 +223,7 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(tag.recipes.size(), 0);
                 assertEquals(recipe.tags.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -210,7 +245,7 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(user.recipesFavorites.size(), 2);
                 assertEquals(recipe.favorites.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -231,7 +266,7 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(user.recipesFavorites.size(), 0);
                 assertEquals(recipe.favorites.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -253,7 +288,7 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(user.ratings.size(), 2);
                 assertEquals(recipe.ratings.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -272,7 +307,7 @@ public class RecipeModelDAOTest extends AbstractTest {
                 RecipeDAO.updateRating(user, recipe, 4.3);
 
                 assertEquals(recipe.ratings.get(0).rating, new Double(4.3));
-            
+
                 successTest();
             });
         });
@@ -293,7 +328,7 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(user.ratings.size(), 0);
                 assertEquals(recipe.ratings.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -315,7 +350,7 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(category.recipes.size(), 2);
                 assertEquals(recipe.category.text, "test");
-            
+
                 successTest();
             });
         });
@@ -332,13 +367,15 @@ public class RecipeModelDAOTest extends AbstractTest {
                 recipe = recipeDAO.create(recipe);
 
                 assertEquals(category.recipes.size(), 2);
+                assertEquals(newSection.recipes.size(), 1);
                 assertEquals(recipe.category.text, "test");
 
                 RecipeDAO.addOrUpdateCategory(newSection, recipe);
 
-                assertEquals(newSection.recipes.size(), 1);
+                assertEquals(category.recipes.size(), 1);
+                assertEquals(newSection.recipes.size(), 2);
                 assertEquals(recipe.category.text, "test-new");
-            
+
                 successTest();
             });
         });
@@ -359,7 +396,7 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(category.recipes.size(), 0);
                 assertNull(recipe.category);
-            
+
                 successTest();
             });
         });

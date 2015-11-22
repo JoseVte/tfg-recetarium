@@ -1,11 +1,10 @@
-package models.dao;
+package models.base;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import play.db.jpa.JPA;
-import util.Model;
 
 public class CrudDAO<T extends Model> {
     private Class<? extends Model> typeOfModel;

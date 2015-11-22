@@ -5,13 +5,13 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import models.User;
+import models.base.Model;
 import models.service.UserService;
 import play.Logger;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Result;
-import util.Model;
 import views.html.*;
 
 public class UserController extends AbstractController {

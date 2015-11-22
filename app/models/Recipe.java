@@ -16,13 +16,15 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import models.base.Model;
 import models.dao.RecipeDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
+import models.service.CategoryService;
+import models.service.UserService;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import util.Model;
 
 @Entity
 @Table(name = "recipes")
@@ -39,12 +41,13 @@ public class Recipe extends Model implements Serializable {
     public String             title;
     public String             description;
 
+    @Constraints.Required
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     public User               user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category_id", nullable = true)
     public Category           category;
 
     @JsonIgnore
@@ -89,8 +92,17 @@ public class Recipe extends Model implements Serializable {
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
+        if (id != null && dao.find(id) == null) {
+            errors.add(new ValidationError("id", "This recipe doesn't exist"));
+        }
         if (!((RecipeDAO) dao).check("slug", slug, id).isEmpty()) {
-            errors.add(new ValidationError("slug", "This slug is already used."));
+            errors.add(new ValidationError("slug", "This slug is already used"));
+        }
+        if (user != null && UserService.find(user.id) == null) {
+            errors.add(new ValidationError("user", "The user doesn't exist"));
+        }
+        if (category != null && CategoryService.find(category.id) == null) {
+            errors.add(new ValidationError("category", "The category doesn't exist"));
         }
         return errors.isEmpty() ? null : errors;
     }

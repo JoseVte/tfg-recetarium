@@ -16,7 +16,9 @@ DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
 
 ## Recipes
 GET     /recipes                  controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3)
-GET     /recipes/$id<[0-9]+>      controllers.RecipeController.get(id: Integer)
+# This URI is not necessary, the recipes are identified by a slug
+#GET     /recipes/$id<[0-9]+>      controllers.RecipeController.get(id: Integer)
+GET     /recipes/*slug            controllers.RecipeController.get(slug: String)
 POST    /recipes                  controllers.RecipeController.create()
 PUT     /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)
 PATCH   /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)

@@ -24,7 +24,7 @@ public class MediaModelDAOTest extends AbstractTest {
                 Media media = mediaDAO.find(1);
                 assertEquals(media.filename, "test");
                 assertEquals(media.recipe.id.intValue(), 1);
-            
+
                 successTest();
             });
         });
@@ -37,7 +37,7 @@ public class MediaModelDAOTest extends AbstractTest {
                 initializeDataModel();
                 Media media = mediaDAO.find(0);
                 assertNull(media);
-            
+
                 successTest();
             });
         });
@@ -53,7 +53,7 @@ public class MediaModelDAOTest extends AbstractTest {
                 assertEquals(count, 1);
 
                 assertEquals(media.get(0).filename, "test");
-            
+
                 successTest();
             });
         });
@@ -70,7 +70,7 @@ public class MediaModelDAOTest extends AbstractTest {
 
                 media = mediaDAO.paginate(1, 1);
                 assertEquals(media.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -84,7 +84,7 @@ public class MediaModelDAOTest extends AbstractTest {
                 Media create = new Media("test2", recipeDAO.find(1));
                 Media media = mediaDAO.create(create);
                 assertEquals(media, create);
-            
+
                 successTest();
             });
         });
@@ -99,7 +99,7 @@ public class MediaModelDAOTest extends AbstractTest {
                 media.filename = "Update test";
                 Media update = mediaDAO.update(media);
                 assertEquals(update.filename, "Update test");
-            
+
                 successTest();
             });
         });
@@ -118,7 +118,7 @@ public class MediaModelDAOTest extends AbstractTest {
 
                 count = mediaDAO.count();
                 assertEquals(count, 0);
-            
+
                 successTest();
             });
         });
@@ -133,8 +133,9 @@ public class MediaModelDAOTest extends AbstractTest {
 
                 try {
                     mediaDAO.delete(media);
-                } catch (Exception e) {}
-            
+                } catch (Exception e) {
+                }
+
                 successTest();
             });
         });

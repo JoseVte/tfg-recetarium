@@ -1,4 +1,4 @@
-package util;
+package models.base;
 
 import java.util.Date;
 

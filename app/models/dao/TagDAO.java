@@ -4,6 +4,7 @@ import java.util.List;
 
 import models.Recipe;
 import models.Tag;
+import models.base.CrudDAO;
 import models.manytomany.RecipeTags;
 import play.db.jpa.JPA;
 
@@ -22,10 +23,9 @@ public class TagDAO extends CrudDAO<Tag>{
      *
      * @return List<Tag>
      */
-    @SuppressWarnings("unchecked")
     public List<Tag> check(String field, Object value, Integer id, String comparison) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
-                + comparison + " '" + value + "' ORDER BY id").getResultList();
+                + comparison + " '" + value + "' ORDER BY id", Tag.class).getResultList();
     }
 
     /**
@@ -63,8 +63,8 @@ public class TagDAO extends CrudDAO<Tag>{
      * @param recipe
      */
     public static void deleteRecipe(Tag tag, Recipe recipe) {
-        RecipeTags tagged = (RecipeTags) JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName()
-                + " m WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id).getSingleResult();
+        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName()
+                + " m WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
         JPA.em().remove(tagged);
         // Reload entities
         JPA.em().flush();

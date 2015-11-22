@@ -27,7 +27,7 @@ public class TagServiceTest extends AbstractTest {
                 Tag tag = TagService.find(1);
                 assertEquals(tag.text, "test");
                 assertEquals(tag.recipes.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -40,7 +40,7 @@ public class TagServiceTest extends AbstractTest {
                 initializeDataModel();
                 Tag tag = TagService.find(0);
                 assertNull(tag);
-            
+
                 successTest();
             });
         });
@@ -56,7 +56,7 @@ public class TagServiceTest extends AbstractTest {
                 assertEquals(count, 1);
 
                 assertEquals(tags.get(0).text, "test");
-            
+
                 successTest();
             });
         });
@@ -73,7 +73,7 @@ public class TagServiceTest extends AbstractTest {
 
                 tags = TagService.paginate(1, 1);
                 assertEquals(tags.size(), 0);
-            
+
                 successTest();
             });
         });
@@ -87,7 +87,7 @@ public class TagServiceTest extends AbstractTest {
                 Tag create = new Tag("test2");
                 Tag tag = TagService.create(create);
                 assertEquals(tag, create);
-            
+
                 successTest();
             });
         });
@@ -102,7 +102,7 @@ public class TagServiceTest extends AbstractTest {
                 tag.text = "Update test";
                 Tag update = TagService.update(tag);
                 assertEquals(update.text, "Update test");
-            
+
                 successTest();
             });
         });
@@ -120,7 +120,7 @@ public class TagServiceTest extends AbstractTest {
 
                 count = TagService.count();
                 assertEquals(count, 0);
-            
+
                 successTest();
             });
         });
@@ -132,7 +132,7 @@ public class TagServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 assertFalse(TagService.delete(0));
-            
+
                 successTest();
             });
         });
@@ -147,7 +147,7 @@ public class TagServiceTest extends AbstractTest {
                 tag = TagService.create(tag);
 
                 assertTrue(TagService.addRecipe(tag.id, 1));
-            
+
                 successTest();
             });
         });
@@ -161,7 +161,7 @@ public class TagServiceTest extends AbstractTest {
 
                 assertFalse(TagService.addRecipe(1, 0));
                 assertFalse(TagService.addRecipe(0, 1));
-            
+
                 successTest();
             });
         });
@@ -174,7 +174,7 @@ public class TagServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(TagService.addRecipe(1, 1));
-            
+
                 successTest();
             });
         });
@@ -187,7 +187,7 @@ public class TagServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertTrue(TagService.deleteRecipe(1, 1));
-            
+
                 successTest();
             });
         });
@@ -201,7 +201,7 @@ public class TagServiceTest extends AbstractTest {
 
                 assertFalse(TagService.deleteRecipe(1, 0));
                 assertFalse(TagService.deleteRecipe(0, 1));
-            
+
                 successTest();
             });
         });
@@ -216,7 +216,7 @@ public class TagServiceTest extends AbstractTest {
                 tag = TagService.create(tag);
 
                 assertFalse(TagService.deleteRecipe(tag.id, 1));
-            
+
                 successTest();
             });
         });

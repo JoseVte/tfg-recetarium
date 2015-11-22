@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 
 import models.Comment;
-import models.User;
 import play.db.jpa.JPA;
 import util.AbstractTest;
 
@@ -28,7 +27,7 @@ public class CommentModelDAOTest extends AbstractTest {
                 assertEquals(comment.recipe.id.intValue(), 1);
                 assertEquals(comment.replies.size(), 1);
                 assertNull(comment.parent);
-            
+
                 successTest();
             });
         });
@@ -41,7 +40,7 @@ public class CommentModelDAOTest extends AbstractTest {
                 initializeDataModel();
                 Comment comment = commentDAO.find(0);
                 assertNull(comment);
-            
+
                 successTest();
             });
         });
@@ -57,7 +56,7 @@ public class CommentModelDAOTest extends AbstractTest {
                 assertEquals(count, 2);
 
                 assertEquals(comments.get(0).text, "test");
-            
+
                 successTest();
             });
         });
@@ -74,7 +73,7 @@ public class CommentModelDAOTest extends AbstractTest {
 
                 comments = commentDAO.paginate(1, 1);
                 assertEquals(comments.size(), 1);
-            
+
                 successTest();
             });
         });
@@ -88,7 +87,7 @@ public class CommentModelDAOTest extends AbstractTest {
                 Comment create = new Comment("test2", userDAO.find(1), recipeDAO.find(1), null);
                 Comment comment = commentDAO.create(create);
                 assertEquals(comment, create);
-            
+
                 successTest();
             });
         });
@@ -103,7 +102,7 @@ public class CommentModelDAOTest extends AbstractTest {
                 comment.text = "Update test";
                 Comment update = commentDAO.update(comment);
                 assertEquals(update.text, "Update test");
-            
+
                 successTest();
             });
         });
@@ -122,7 +121,7 @@ public class CommentModelDAOTest extends AbstractTest {
 
                 count = commentDAO.count();
                 assertEquals(count, 0);
-            
+
                 successTest();
             });
         });
@@ -137,8 +136,9 @@ public class CommentModelDAOTest extends AbstractTest {
 
                 try {
                     commentDAO.delete(comment);
-                } catch (Exception e) {}
-            
+                } catch (Exception e) {
+                }
+
                 successTest();
             });
         });
