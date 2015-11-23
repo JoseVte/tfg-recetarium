@@ -4,6 +4,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
+import controllers.AuthController.Register;
 import models.Recipe;
 import models.User;
 import models.dao.UserDAO;
@@ -95,6 +96,31 @@ public class UserService {
      */
     public static Long count() {
         return userDAO.count();
+    }
+    
+    /**
+     * Check the value of field is used
+     *
+     * @param field
+     * @param value
+     *
+     * @return List<User>
+     */
+    public static List<User> check(String field, String value) {
+        return userDAO.check(field, value);
+    }
+
+    /**
+     * Register an user
+     *
+     * @param Register register
+     *
+     * @return User
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     */
+    public static User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return userDAO.register(register);
     }
 
     /**

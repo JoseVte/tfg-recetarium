@@ -5,6 +5,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 import java.util.UUID;
 
+import controllers.AuthController.Register;
 import models.Recipe;
 import models.User;
 import models.base.CrudDAO;
@@ -17,6 +18,20 @@ import util.Encryptation;
 public class UserDAO extends CrudDAO<User> {
     public UserDAO() {
         super(User.class);
+    }
+    
+    /**
+     * Register an user
+     *
+     * @param Register register
+     *
+     * @return User
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     */
+    public User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        User user = new User(register.username, register.email, register.password, register.firstName, register.lastName, register.type);
+        return this.create(user);
     }
 
     /**
@@ -45,6 +60,18 @@ public class UserDAO extends CrudDAO<User> {
      */
     public List<User> check(String field, Object value, Integer id) {
         return check(field, value, id, "=");
+    }
+    
+    /**
+     * Where clause
+     *
+     * @param String field
+     * @param Object value
+     *
+     * @return List<User>
+     */
+    public List<User> check(String field, Object value) {
+        return check(field, value, 0, "=");
     }
 
     /**
