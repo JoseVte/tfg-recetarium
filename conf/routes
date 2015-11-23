@@ -5,6 +5,9 @@
 # Home page
 GET     /                           controllers.UserController.index()
 
+POST    /auth/login                 controllers.AuthController.login()
+POST    /auth/logout                controllers.AuthController.logout()
+
 # Routes API Rest
 ## Users
 GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3)

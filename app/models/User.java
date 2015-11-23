@@ -40,6 +40,7 @@ public class User extends Model implements Serializable {
     public String             username;
 
     @Constraints.Required
+    @Constraints.Email
     @Column(nullable = false, unique = true)
     public String             email;
 
@@ -57,6 +58,10 @@ public class User extends Model implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public TypeUser           type;
+    
+    @Column(name = "auth_token")
+    @JsonProperty(value = "auth_token")
+    public String authToken;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -84,6 +89,9 @@ public class User extends Model implements Serializable {
 
     @Transient
     private UserDAO           dao;
+    
+    @Transient
+    private boolean updatePassword = true;
 
     public User() {
         dao = new UserDAO();
@@ -125,10 +133,12 @@ public class User extends Model implements Serializable {
     public void prePersistData() {
         if (firstName != null && firstName.isEmpty()) firstName = null;
         if (lastName != null && lastName.isEmpty()) lastName = null;
-        try {
-            password = Encryptation.createHash(password);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
+        if (password != null && !password.isEmpty() && updatePassword) {
+            try {
+                password = Encryptation.createHash(password);
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -140,7 +150,10 @@ public class User extends Model implements Serializable {
     @Override
     public void handleRelations(Model old) {
         User user = ((User) old);
-        if (password != null && password.isEmpty()) this.password = user.password;
+        if (password == null || password.isEmpty()){
+            this.updatePassword = user.password.equals(password);
+            this.password = user.password;
+        }
         this.setCreatedAt(user.getCreatedAt());
         this.recipes = user.recipes;
         this.myFriends = user.myFriends;

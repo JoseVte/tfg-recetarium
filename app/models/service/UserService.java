@@ -98,6 +98,51 @@ public class UserService {
     }
 
     /**
+     * Find an user by email and password
+     *
+     * @param email
+     * @param password
+     *
+     * @return User
+     */
+    public static User findByEmailAddressAndPassword(String email, String password) {
+        return userDAO.findByEmailAddressAndPassword(email, password);
+    }
+    
+    /**
+     * Find an user by auth token
+     *
+     * @param authToken
+     *
+     * @return User
+     */
+    public static User findByAuthToken(String authToken) {
+        return userDAO.findByAuthToken(authToken);
+    }
+
+    /**
+     * Create a token for the user
+     *
+     * @param user
+     *
+     * @return String
+     */
+    public static String createToken(User user) {
+        return userDAO.createToken(user);
+    }
+
+    /**
+     * Delete a token for the user
+     *
+     * @param user
+     *
+     * @return String
+     */
+    public static void deleteAuthToken(User user) {
+        userDAO.deleteAuthToken(user);
+    }
+
+    /**
      * Add new friend to an user
      *
      * @param user

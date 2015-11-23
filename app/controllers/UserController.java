@@ -12,6 +12,7 @@ import play.data.Form;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.*;
 
 public class UserController extends AbstractController {
@@ -27,6 +28,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional(readOnly = true)
+    @Security.Authenticated(Secured.class)
     @SuppressWarnings("deprecation")
     public Result list(Integer page, Integer size) {
         List<User> models = UserService.paginate(page - 1, size);

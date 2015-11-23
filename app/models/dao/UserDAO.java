@@ -3,6 +3,7 @@ package models.dao;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+import java.util.UUID;
 
 import models.Recipe;
 import models.User;
@@ -80,6 +81,63 @@ public class UserDAO extends CrudDAO<User> {
         // Compare the hashes in constant time. The password is correct if
         // both hashes match.
         return Encryptation.slowEquals(hash, testHash);
+    }
+
+    /**
+     * Create a token for the user
+     *
+     * @param user
+     *
+     * @return String
+     */
+    public String createToken(User user) {
+        user.authToken = UUID.randomUUID().toString();
+        JPA.em().flush();
+        JPA.em().refresh(user);
+        return user.authToken;
+    }
+
+    public void deleteAuthToken(User user) {
+        user.authToken = null;
+        JPA.em().flush();
+        JPA.em().refresh(user);
+    }
+    
+    /**
+     * Find an user by auth token
+     *
+     * @param authToken
+     *
+     * @return User
+     */
+    public User findByAuthToken(String authToken) {
+        if (authToken == null) return null;
+
+        try  {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE auth_token = '" + authToken + "'", User.class).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Find an user by email and password
+     *
+     * @param email
+     * @param password
+     *
+     * @return User
+     */
+    public User findByEmailAddressAndPassword(String email, String password) {
+        if (email == null || password == null) return null;
+
+        try  {
+            User user = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class).getSingleResult();
+            if (validatePassword(password, user.password)) return user;
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     /**
