@@ -13,9 +13,11 @@ public class Secured extends Security.Authenticator {
         User user = null;
         String[] authTokenHeaderValues = ctx.request().headers().get(AuthController.AUTH_TOKEN_HEADER);
         if ((authTokenHeaderValues != null) && (authTokenHeaderValues.length == 1) && (authTokenHeaderValues[0] != null)) {
-            user = UserService.findByAuthToken(authTokenHeaderValues[0]);
+            user = UserService.checkJWT(authTokenHeaderValues[0]);
             if (user != null) {
                 ctx.args.put("user", user);
+                ctx.response().discardCookie(AuthController.AUTH_TOKEN);
+                ctx.response().setCookie(AuthController.AUTH_TOKEN, authTokenHeaderValues[0]);
                 return user.email;
             }
         }

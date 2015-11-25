@@ -54,7 +54,7 @@ public class AuthController extends Controller {
         if (user == null) {
             return unauthorized();
         } else {
-            String authToken = UserService.createToken(user);
+            String authToken = UserService.createJWT(user);
             ObjectNode authTokenJson = Json.newObject();
             authTokenJson.put(AUTH_TOKEN, authToken);
             response().setCookie(AUTH_TOKEN, authToken);
@@ -82,7 +82,7 @@ public class AuthController extends Controller {
         if (user == null) {
             return unauthorized();
         } else {
-            String authToken = UserService.createToken(user);
+            String authToken = UserService.createJWT(user);
             ObjectNode authTokenJson = Json.newObject();
             authTokenJson.put(AUTH_TOKEN, authToken);
             response().setCookie(AUTH_TOKEN, authToken);
@@ -99,8 +99,7 @@ public class AuthController extends Controller {
     @Security.Authenticated(Secured.class)
     public Result logout() {
         response().discardCookie(AUTH_TOKEN);
-        UserService.deleteAuthToken(getUser());
-        return redirect(REDIRECT_PATH);
+        return ok();
     }
     
     public static class Login {

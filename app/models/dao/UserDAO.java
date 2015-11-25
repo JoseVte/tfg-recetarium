@@ -1,9 +1,19 @@
 package models.dao;
 
+import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
-import java.util.UUID;
+
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+import org.jose4j.jwe.JsonWebEncryption;
+import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
+import org.jose4j.keys.AesKey;
+import org.jose4j.lang.JoseException;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import controllers.AuthController.Register;
 import models.Recipe;
@@ -12,6 +22,9 @@ import models.base.CrudDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
+import play.Logger;
+import play.Play;
+import play.libs.Json;
 import play.db.jpa.JPA;
 import util.Encryptation;
 
@@ -117,32 +130,56 @@ public class UserDAO extends CrudDAO<User> {
      *
      * @return String
      */
-    public String createToken(User user) {
-        user.authToken = UUID.randomUUID().toString();
-        JPA.em().flush();
-        JPA.em().refresh(user);
-        return user.authToken;
-    }
+    @SuppressWarnings("deprecation")
+    public String createJWT(User user) {
+        try {
+            ObjectMapper json = new ObjectMapper();
+            ObjectNode object = json.createObjectNode();
+            object.put("user", Json.toJson(user));
+            object.put("expiration", 3600);
 
-    public void deleteAuthToken(User user) {
-        user.authToken = null;
-        JPA.em().flush();
-        JPA.em().refresh(user);
+            String keySecret = Play.application().configuration().getString("play.crypto.secret");
+            Key key = new AesKey(keySecret.getBytes());
+            
+            JsonWebEncryption jwe = new JsonWebEncryption();
+            jwe.setPayload(object.toString());
+            jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.A128KW);
+            jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
+            jwe.setKey(key);
+            
+            String jwt = jwe.getCompactSerialization();
+            
+            return jwt;
+        } catch (JoseException e) {
+            Logger.error(e.getMessage());
+            return null;
+        }
     }
     
     /**
-     * Find an user by auth token
+     * Check the auth token
      *
-     * @param authToken
+     * @param jwt
      *
      * @return User
      */
-    public User findByAuthToken(String authToken) {
-        if (authToken == null) return null;
+    public User checkJWT(String jwt) {
+        if (jwt == null) return null;
+        
+        try {
+            String keySecret = Play.application().configuration().getString("play.crypto.secret");
+            Key key = new AesKey(keySecret.getBytes());
+            JsonWebEncryption jwe = new JsonWebEncryption();
+            jwe.setKey(key);
+            jwe.setCompactSerialization(jwt);
+            JsonNode json = Json.parse(jwe.getPayload());
+            User user = Json.fromJson(json.get("user"), User.class);
 
-        try  {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE auth_token = '" + authToken + "'", User.class).getSingleResult();
+            jwt = this.createJWT(user);
+
+            return user;
         } catch (Exception e) {
+            Logger.error(e.getMessage());
             return null;
         }
     }

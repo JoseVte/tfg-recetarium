@@ -44,6 +44,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional(readOnly = true)
+    @Security.Authenticated(Secured.class)
     public Result get(Integer id) {
         User user = UserService.find(id);
         if (user == null) {
@@ -53,6 +54,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
+    @Security.Authenticated(Secured.class)
     public Result create() {
         Form<User> user = formModel.bindFromRequest();
         if (user.hasErrors()) {
@@ -68,6 +70,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
+    @Security.Authenticated(Secured.class)
     public Result update(Integer id) {
         Form<User> user = formModel.bindFromRequest();
         if (user.hasErrors()) {
@@ -79,6 +82,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
+    @Security.Authenticated(Secured.class)
     public Result delete(Integer id) {
         if (UserService.delete(id)) {
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));

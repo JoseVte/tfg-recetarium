@@ -136,14 +136,14 @@ public class UserService {
     }
     
     /**
-     * Find an user by auth token
+     * Check the auth token
      *
      * @param authToken
      *
      * @return User
      */
-    public static User findByAuthToken(String authToken) {
-        return userDAO.findByAuthToken(authToken);
+    public static User checkJWT(String authToken) {
+        return userDAO.checkJWT(authToken);
     }
 
     /**
@@ -153,19 +153,8 @@ public class UserService {
      *
      * @return String
      */
-    public static String createToken(User user) {
-        return userDAO.createToken(user);
-    }
-
-    /**
-     * Delete a token for the user
-     *
-     * @param user
-     *
-     * @return String
-     */
-    public static void deleteAuthToken(User user) {
-        userDAO.deleteAuthToken(user);
+    public static String createJWT(User user) {
+        return userDAO.createJWT(user);
     }
 
     /**
