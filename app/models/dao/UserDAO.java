@@ -1,14 +1,9 @@
 package models.dao;
 
-import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
-import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
-import org.jose4j.jwe.JsonWebEncryption;
-import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
-import org.jose4j.keys.AesKey;
 import org.jose4j.lang.JoseException;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -23,9 +18,8 @@ import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
 import play.Logger;
-import play.Play;
-import play.libs.Json;
 import play.db.jpa.JPA;
+import play.libs.Json;
 import util.Encryptation;
 
 public class UserDAO extends CrudDAO<User> {
@@ -136,23 +130,11 @@ public class UserDAO extends CrudDAO<User> {
             ObjectMapper json = new ObjectMapper();
             ObjectNode object = json.createObjectNode();
             object.put("user", Json.toJson(user));
-            object.put("expiration", 3600);
-
-            String keySecret = Play.application().configuration().getString("play.crypto.secret");
-            Key key = new AesKey(keySecret.getBytes());
             
-            JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setPayload(object.toString());
-            jwe.setAlgorithmHeaderValue(KeyManagementAlgorithmIdentifiers.A128KW);
-            jwe.setEncryptionMethodHeaderParameter(ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256);
-            jwe.setKey(key);
-            
-            String jwt = jwe.getCompactSerialization();
-            
-            return jwt;
+            return util.Json.createJwt(object.toString());
         } catch (JoseException e) {
             Logger.error(e.getMessage());
-            return null;
+            return new String();
         }
     }
     
@@ -167,12 +149,8 @@ public class UserDAO extends CrudDAO<User> {
         if (jwt == null) return null;
         
         try {
-            String keySecret = Play.application().configuration().getString("play.crypto.secret");
-            Key key = new AesKey(keySecret.getBytes());
-            JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setKey(key);
-            jwe.setCompactSerialization(jwt);
-            JsonNode json = Json.parse(jwe.getPayload());
+            JsonNode json = Json.parse(util.Json.checkJwt(jwt));
+            if (!json.has("user")) throw new Exception("Token malformed");
             User user = Json.fromJson(json.get("user"), User.class);
 
             jwt = this.createJWT(user);
