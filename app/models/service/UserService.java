@@ -11,6 +11,7 @@ import models.dao.UserDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
+import util.VerificationToken;
 
 public class UserService {
     private static UserDAO userDAO;
@@ -122,6 +123,17 @@ public class UserService {
     public static User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return userDAO.register(register);
     }
+    
+    /**
+     * Find an user by email
+     *
+     * @param email
+     *
+     * @return User
+     */
+    public static User findByEmailAddress(String email) {
+        return userDAO.findByEmailAddress(email);
+    }
 
     /**
      * Find an user by email and password
@@ -155,6 +167,20 @@ public class UserService {
      */
     public static String createJWT(User user) {
         return userDAO.createJWT(user);
+    }
+    
+    public static VerificationToken getActiveLostPasswordToken(User user) {
+        VerificationToken token = userDAO.getLostPasswordToken(user);
+        if (token.hasExpired() || token.isVerified()) return null;
+        return token;
+    }
+    
+    public static VerificationToken addVerification(User user) {
+        VerificationToken token = new VerificationToken();
+        user.lostPassToken = token.getToken();
+        user.lostPassExpire = token.getExpiryDate();
+        userDAO.update(user);
+        return token;
     }
 
     /**

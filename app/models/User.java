@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,6 +14,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -59,9 +62,14 @@ public class User extends Model implements Serializable {
     @Column(nullable = false)
     public TypeUser           type;
     
-    @Column(name = "auth_token")
-    @JsonProperty(value = "auth_token")
-    public String authToken;
+    @Column(name = "lost_pass_token")
+    @JsonIgnore
+    public String lostPassToken;
+    
+    @Column(name = "lost_pass_expire")
+    @JsonIgnore
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date lostPassExpire;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -173,7 +181,7 @@ public class User extends Model implements Serializable {
         return "User [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
                 + ", firstName=" + firstName + ", lastName=" + lastName + ", type=" + type.toString() + ", recipes="
                 + recipes.size() + ", comments=" + comments.size() + ", myFriends=" + myFriends.size() + ", friends="
-                + friends.size() + ", recipesFavorites=" + recipesFavorites.size() + ", ratings=" + ratings.size()
-                + "]";
+                + friends.size() + ", recipesFavorites=" + recipesFavorites.size() + ", ratings=" + ratings.size() + 
+                ", lostPassToken=" + lostPassToken + ", lostPassExpire=" + lostPassExpire + "]";
     }
 }

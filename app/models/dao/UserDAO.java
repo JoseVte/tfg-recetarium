@@ -21,6 +21,7 @@ import play.Logger;
 import play.db.jpa.JPA;
 import play.libs.Json;
 import util.Encryptation;
+import util.VerificationToken;
 
 public class UserDAO extends CrudDAO<User> {
     public UserDAO() {
@@ -161,6 +162,35 @@ public class UserDAO extends CrudDAO<User> {
             return null;
         }
     }
+    
+
+    public VerificationToken getLostPasswordToken(User user) {
+        if (user == null) return new VerificationToken();
+        try  {
+            if (user.lostPassToken == null || user.lostPassToken.isEmpty()) {
+                user = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + user.email + "'", User.class).getSingleResult();
+            }
+            return new VerificationToken(user.lostPassToken, user.lostPassExpire);
+        } catch (Exception e) {
+            return new VerificationToken();
+        }
+    }
+    
+    /**
+     * Find an user by email
+     *
+     * @param email
+     *
+     * @return User
+     */
+    public User findByEmailAddress(String email) {
+        if (email == null) return null;
+        try  {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class).getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
     /**
      * Find an user by email and password
@@ -174,7 +204,7 @@ public class UserDAO extends CrudDAO<User> {
         if (email == null || password == null) return null;
 
         try  {
-            User user = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class).getSingleResult();
+            User user = findByEmailAddress(email);
             if (validatePassword(password, user.password)) return user;
             return null;
         } catch (Exception e) {

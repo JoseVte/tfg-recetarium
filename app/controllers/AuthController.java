@@ -5,11 +5,15 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import models.TypeUser;
 import models.User;
+import models.service.EmailService;
 import models.service.UserService;
+import play.libs.mailer.MailerClient;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
@@ -19,11 +23,19 @@ import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
+import util.VerificationToken;
 
 public class AuthController extends Controller {
     public final static String AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
     public static final String AUTH_TOKEN = "auth_token";
     public static final String REDIRECT_PATH = "/";
+    
+    private final MailerClient mailer;
+
+    @Inject
+    public AuthController(MailerClient mailer) {
+      this.mailer = mailer;
+    }
     
     public static User getUser() {
         return (User)Http.Context.current().args.get("user");
@@ -39,7 +51,7 @@ public class AuthController extends Controller {
         Form<Register> registerForm = Form.form(Register.class).bindFromRequest();
         
         if (registerForm.hasErrors()) {
-            return badRequest(registerForm.errorsAsJson());
+            return util.Json.jsonResult(response(), badRequest(registerForm.errorsAsJson()));
         }
         
         Register register = registerForm.get();
@@ -52,13 +64,13 @@ public class AuthController extends Controller {
         
         // Login after register
         if (user == null) {
-            return unauthorized();
+            return util.Json.jsonResult(response(), unauthorized());
         } else {
             String authToken = UserService.createJWT(user);
             ObjectNode authTokenJson = Json.newObject();
             authTokenJson.put(AUTH_TOKEN, authToken);
             response().setCookie(AUTH_TOKEN, authToken);
-            return ok(authTokenJson);
+            return util.Json.jsonResult(response(), ok(authTokenJson));
         }
     }
 
@@ -72,7 +84,7 @@ public class AuthController extends Controller {
         Form<Login> loginForm = Form.form(Login.class).bindFromRequest();
 
         if (loginForm.hasErrors()) {
-            return badRequest(loginForm.errorsAsJson());
+            return util.Json.jsonResult(response(), badRequest(loginForm.errorsAsJson()));
         }
 
         Login login = loginForm.get();
@@ -80,14 +92,31 @@ public class AuthController extends Controller {
         User user = UserService.findByEmailAddressAndPassword(login.email, login.password);
 
         if (user == null) {
-            return unauthorized();
+            return util.Json.jsonResult(response(), unauthorized());
         } else {
             String authToken = UserService.createJWT(user);
             ObjectNode authTokenJson = Json.newObject();
             authTokenJson.put(AUTH_TOKEN, authToken);
             response().setCookie(AUTH_TOKEN, authToken);
-            return ok(authTokenJson);
+            return util.Json.jsonResult(response(), ok(authTokenJson));
         }
+    }
+    
+    @Transactional
+    public Result sendLostPasswordToken() {
+        Form<RecoverPassword> recover = Form.form(RecoverPassword.class).bindFromRequest();
+        VerificationToken token = null;
+        String email = recover.get().email;
+        User user = UserService.findByEmailAddress(email);
+        if (user == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found email " + email)));
+        }
+        token = UserService.getActiveLostPasswordToken(user);
+        if (token == null) {
+            token = UserService.addVerification(user);
+        }
+        new EmailService(mailer).sendVerificationToken(user, token);
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Reset password email sent")));
     }
     
     /**
@@ -100,6 +129,12 @@ public class AuthController extends Controller {
     public Result logout() {
         response().discardCookie(AUTH_TOKEN);
         return ok();
+    }
+    
+    public static class RecoverPassword {
+        @Constraints.Required
+        @Constraints.Email
+        public String email;
     }
     
     public static class Login {
