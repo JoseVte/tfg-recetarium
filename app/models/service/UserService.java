@@ -169,12 +169,26 @@ public class UserService {
         return userDAO.createJWT(user);
     }
     
+    /**
+     * Get the token valid of an user
+     *
+     * @param user
+     *
+     * @return VerificationToken
+     */
     public static VerificationToken getActiveLostPasswordToken(User user) {
         VerificationToken token = userDAO.getLostPasswordToken(user);
-        if (token.hasExpired() || token.isVerified()) return null;
+        if (token == null || token.hasExpired() || token.isVerified()) return null;
         return token;
     }
     
+    /**
+     * Add new token for the user
+     *
+     * @param user
+     *
+     * @return VerificationToken
+     */
     public static VerificationToken addVerification(User user) {
         VerificationToken token = new VerificationToken();
         user.lostPassToken = token.getToken();

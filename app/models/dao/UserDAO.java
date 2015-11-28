@@ -163,17 +163,18 @@ public class UserDAO extends CrudDAO<User> {
         }
     }
     
-
+    /**
+     * Get the token valid of an user
+     *
+     * @param user
+     *
+     * @return VerificationToken
+     */
     public VerificationToken getLostPasswordToken(User user) {
-        if (user == null) return new VerificationToken();
-        try  {
-            if (user.lostPassToken == null || user.lostPassToken.isEmpty()) {
-                user = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + user.email + "'", User.class).getSingleResult();
-            }
+        if (user != null && user.lostPassToken != null && !user.lostPassToken.isEmpty()) {
             return new VerificationToken(user.lostPassToken, user.lostPassExpire);
-        } catch (Exception e) {
-            return new VerificationToken();
         }
+        return null;
     }
     
     /**

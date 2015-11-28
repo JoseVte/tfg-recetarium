@@ -8,7 +8,7 @@ import org.joda.time.DateTime;
 import play.Play;
 
 public class VerificationToken {
-    private static final int DEFAULT_EXPIRY_TIME_IN_MINS = Play.application().configuration().getInt("lastPassword.expiry.minutes");
+    private static final int DEFAULT_EXPIRY_TIME_IN_MINS = Play.application().configuration().getInt("lostPassword.expiry.minutes");
     private final String token;
     private Date expiryDate;
     private boolean verified;
@@ -16,7 +16,7 @@ public class VerificationToken {
         this.token = UUID.randomUUID().toString();
         this.expiryDate = calculateExpiryDate(DEFAULT_EXPIRY_TIME_IN_MINS);
     }
-    
+
     public VerificationToken(String token, Date expire) {
         this.token = token;
         this.expiryDate = expire;

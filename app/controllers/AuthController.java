@@ -102,6 +102,11 @@ public class AuthController extends Controller {
         }
     }
     
+    /**
+     * Send lost password token
+     *
+     * @return Result
+     */
     @Transactional
     public Result sendLostPasswordToken() {
         Form<RecoverPassword> recover = Form.form(RecoverPassword.class).bindFromRequest();
@@ -115,7 +120,7 @@ public class AuthController extends Controller {
         if (token == null) {
             token = UserService.addVerification(user);
         }
-        new EmailService(mailer).sendVerificationToken(user, token);
+        new EmailService(mailer).sendVerificationToken(user);
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Reset password email sent")));
     }
     
@@ -137,26 +142,15 @@ public class AuthController extends Controller {
         public String email;
     }
     
-    public static class Login {
-        @Constraints.Required
-        @Constraints.Email
-        public String email;
-
+    public static class Login extends RecoverPassword {
         @Constraints.Required
         public String password;
 
     }
     
-    public static class Register {
+    public static class Register extends Login {
         @Constraints.Required
         public String username;
-        
-        @Constraints.Required
-        @Constraints.Email
-        public String             email;
-
-        @Constraints.Required
-        public String             password;
         
         @Constraints.Required
         public String             passwordRepeat;
