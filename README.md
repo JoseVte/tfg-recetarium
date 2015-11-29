@@ -7,30 +7,30 @@ API Recetarium
 
 | Acción | URI |
 | ------ | --- |
-| Listado por páginas | GET    /recipes(?page=*&size=*) |
-| Obtener por slug | GET    /recipes/{slug} |
-| Crear | POST   /recipes |
-| Actualizar |  PUT    /recipes/{id} <br> PATCH  /recipes/{id} |
-| Borrar |  DELETE /recipes/{id} |
+| [Listado por páginas](/doc/recetas-doc.md#paginacion) | **GET**    /recipes(?page=*&size=*) |
+| [Obtener por slug](/doc/recetas-doc.md#obtener-una-receta-por-slug) | **GET**    /recipes/{slug} |
+| [Crear](/doc/recetas-doc.md#crear-una-receta-nueba) | **POST**   /recipes |
+| [Actualizar](/doc/recetas-doc.md#actualizar-una-receta-ya-existente) |  **PUT**    /recipes/{id} <br> **PATCH**  /recipes/{id} |
+| [Borrar](/doc/recetas-doc.md#borrar-una-receta) |  **DELETE** /recipes/{id} |
 
 #### Autentificación
 
 | Acción | URI |
 | ------ | --- |
-| Login | POST    /auth/login |
-| Registrar | POST    /auth/register |
-| Enviar email para reiniciar la password | POST    /auth/reset/password |
-| Cambia la contraseña | PUT     /auth/reset/password <br> PATCH   /auth/reset/password |
+| Login | **POST**    /auth/login |
+| Registrar | **POST**    /auth/register |
+| Enviar email para reiniciar la password | **POST**    /auth/reset/password |
+| Cambia la contraseña | **PUT**     /auth/reset/password <br> **PATCH**   /auth/reset/password |
 
 #### Usuarios
 
 | Acción | URI |
 | ------ | --- |
-| Listado por páginas | GET    /users(?page=*&size=*) |
-| Obtener por slug | GET    /users/{id} |
-| Crear | POST   /users |
-| Actualizar |  PUT    /users/{id} <br> PATCH  /users/{id} |
-| Borrar |  DELETE /users/{id} |
+| Listado por páginas | **GET**    /users(?page=*&size=*) |
+| Obtener por id | **GET**    /users/{id} |
+| Crear | **POST**   /users |
+| Actualizar |  **PUT**    /users/{id} <br> **PATCH**  /users/{id} |
+| Borrar |  **DELETE** /users/{id} |
 
 -----
 
@@ -39,6 +39,8 @@ API Recetarium
 - [Autentificación](/doc/auth-doc.md)
 - [Recetas](/doc/recetas-doc.md)
 - [Usuarios](/doc/user-doc.md)
+
+-----
 
 ## CHANGELOG
 

@@ -72,7 +72,7 @@ Devuelve un error `404` si no se encuentra la receta:
 
 #### Crear una receta nueva
 
-Para crear una receta se necesita enviar la [estructura de la receta](#estructura-json) sin el `ID`:
+Para crear una receta se necesita enviar la [estructura de la receta](#estructura-json) sin el `ID`, `created_at` y `updated_at`:
 
 ```
 POST /recipes
@@ -95,7 +95,7 @@ Si se crea correctamente devuelve la nueva receta con un codigo `201`, pero si o
 
 #### Actualizar una receta ya existente
 
-Para actualizar los datos de una receta se debe enviar toda la [estructura de la receta](#estructura-json):
+Para actualizar los datos de una receta se debe enviar toda la [estructura de la receta](#estructura-json) menos `created_at` y `updated_at`:
 
 ```
 PUT   /recipes/{id}
