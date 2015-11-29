@@ -5,18 +5,32 @@ API Recetarium
 
 #### Recetas
 
-```
-GET    /recipes(?page=*&size=*)
+| Acción | URI |
+| ------ | --- |
+| Listado por páginas | GET    /recipes(?page=*&size=*) |
+| Obtener por slug | GET    /recipes/{slug} |
+| Crear | POST   /recipes |
+| Actualizar |  PUT    /recipes/{id} <br> PATCH  /recipes/{id} |
+| Borrar |  DELETE /recipes/{id} |
 
-GET    /recipes/{slug}
+#### Autentificación
 
-POST   /recipes
+| Acción | URI |
+| ------ | --- |
+| Login | POST    /auth/login |
+| Registrar | POST    /auth/register |
+| Enviar email para reiniciar la password | POST    /auth/reset/password |
+| Cambia la contraseña | PUT     /auth/reset/password <br> PATCH   /auth/reset/password |
 
-PUT    /recipes/{id}
-PATCH  /recipes/{id}
+#### Usuarios
 
-DELETE /recipes/{id}
-```
+| Acción | URI |
+| ------ | --- |
+| Listado por páginas | GET    /users(?page=*&size=*) |
+| Obtener por slug | GET    /users/{id} |
+| Crear | POST   /users |
+| Actualizar |  PUT    /users/{id} <br> PATCH  /users/{id} |
+| Borrar |  DELETE /users/{id} |
 
 -----
 
