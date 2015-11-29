@@ -1,0 +1,3 @@
+## Autentificaciónn
+
+#### Estructura JSON

@@ -1,46 +1,40 @@
 API Recetarium
 ================================
 
+## RUTAS DE LA API
+
+#### Recetas
+
+```
+GET    /recipes(?page=*&size=*)
+
+GET    /recipes/{slug}
+
+POST   /recipes
+
+PUT    /recipes/{id}
+PATCH  /recipes/{id}
+
+DELETE /recipes/{id}
+```
+
 -----
 
-# URIs
+## DOCUMENTACIÓN EXPANDIDA
 
-## User
+- [Autentificación](/doc/auth-doc.md)
+- [Recetas](/doc/recetas-doc.md)
+- [Usuarios](/doc/user-doc.md)
 
-#### Paginacion
+## CHANGELOG
 
-```
-GET /employees?page=2
-```
+### Versión beta-0.1
 
-#### Consultar uno
+- CRUD y servicios para usuarios, recetas, comentarios, categorias, tags y archivos
+- Controladores para usuarios y recetas
+- Implementación de registro,login y reinicio de password
+- Acceso a rutas privadas mediante JWT
 
-```
-GET /employees/1
-```
-
-#### Crear uno
-
-```
-POST /employees
-```
-
-#### Actualizar datos
-
-```
-PUT/PATCH /employees
-```
-
-#### Borrar
-
-```
-DELETE /employees/1
-```
-
-
-CHANGELOG
-=========
-
-## Version alpha
+### Versión alpha
 
 - App base
