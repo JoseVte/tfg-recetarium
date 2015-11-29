@@ -178,7 +178,7 @@ public class UserService {
      */
     public static VerificationToken getActiveLostPasswordToken(User user) {
         VerificationToken token = userDAO.getLostPasswordToken(user);
-        if (token == null || token.hasExpired() || token.isVerified()) return null;
+        if (token == null || token.hasExpired()) return null;
         return token;
     }
     
@@ -195,6 +195,35 @@ public class UserService {
         user.lostPassExpire = token.getExpiryDate();
         userDAO.update(user);
         return token;
+    }
+    
+    /**
+     * Add new token for the user
+     *
+     * @param email
+     * @param token
+     *
+     * @return boolean
+     */
+    public static boolean validateResetToken(String email, String token) {
+        User user = userDAO.findByEmailAddress(email);
+        VerificationToken tokenDB = userDAO.getLostPasswordToken(user);
+        if (user == null || tokenDB == null || tokenDB.hasExpired()) return false;
+        return true;
+    }
+    
+    /**
+     * Change the password of the user
+     *
+     * @param email
+     * @param password
+     */
+    public static void changePassword(String email, String password) {
+        User user = userDAO.findByEmailAddress(email);
+        user.password = password;
+        user.lostPassExpire = null;
+        user.lostPassToken = null;
+        userDAO.update(user);
     }
 
     /**

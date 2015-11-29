@@ -11,7 +11,6 @@ public class VerificationToken {
     private static final int DEFAULT_EXPIRY_TIME_IN_MINS = Play.application().configuration().getInt("lostPassword.expiry.minutes");
     private final String token;
     private Date expiryDate;
-    private boolean verified;
     public VerificationToken() {
         this.token = UUID.randomUUID().toString();
         this.expiryDate = calculateExpiryDate(DEFAULT_EXPIRY_TIME_IN_MINS);
@@ -20,14 +19,6 @@ public class VerificationToken {
     public VerificationToken(String token, Date expire) {
         this.token = token;
         this.expiryDate = expire;
-    }
-
-    public boolean isVerified() {
-        return verified;
-    }
-
-    public void setVerified(boolean verified) {
-        this.verified = verified;
     }
 
     public Date getExpiryDate() {

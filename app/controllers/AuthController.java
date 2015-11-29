@@ -125,6 +125,24 @@ public class AuthController extends Controller {
     }
     
     /**
+     * Reset the password from an email and token
+     *
+     * @return Result
+     */
+    @Transactional
+    public Result resetPassword() {
+        Form<ResetPassword> reset = Form.form(ResetPassword.class).bindFromRequest();
+        
+        if (reset.hasErrors()) {
+            return util.Json.jsonResult(response(), badRequest(reset.errorsAsJson()));
+        }
+        
+        UserService.changePassword(reset.get().email, reset.get().password);
+        
+        return ok();
+    }
+    
+    /**
      * Logout
      *
      * @return Result
@@ -136,6 +154,10 @@ public class AuthController extends Controller {
         return ok();
     }
     
+    /***********************/
+    /* Request validators  */
+    /* @author Josrom      */
+    /***********************/
     public static class RecoverPassword {
         @Constraints.Required
         @Constraints.Email
@@ -172,6 +194,19 @@ public class AuthController extends Controller {
             if (password != null && passwordRepeat != null && !password.equals(passwordRepeat)) {
                 errors.add(new ValidationError("password", "The passwords must be equals"));
                 errors.add(new ValidationError("passwordRepeat", "The passwords must be equals"));
+            }
+            return errors.isEmpty() ? null : errors;
+        }
+    }
+    
+    public static class ResetPassword extends Login {
+        @Constraints.Required
+        public String token;
+        
+        public List<ValidationError> validate() {
+            List<ValidationError> errors = new ArrayList<>();
+            if (!UserService.validateResetToken(email, token)) {
+                errors.add(new ValidationError("token", "Invalid token"));
             }
             return errors.isEmpty() ? null : errors;
         }
