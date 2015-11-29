@@ -5,7 +5,6 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import models.User;
-import models.base.Model;
 import models.service.UserService;
 import play.Logger;
 import play.data.Form;
@@ -17,7 +16,7 @@ import views.html.*;
 
 public class UserController extends AbstractController {
     Form<User> formModel = Form.form(User.class);
-    
+
     /**
      * Get the index page
      *
@@ -37,7 +36,7 @@ public class UserController extends AbstractController {
         routesString[0] = routes.UserController.list(page - 1, size).toString();
         routesString[1] = routes.UserController.list(page + 1, size).toString();
         routesString[2] = routes.UserController.list(page, size).toString();
-        
+
         ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString);
 
         return util.Json.jsonResult(response(), ok(result));
@@ -65,7 +64,8 @@ public class UserController extends AbstractController {
             return util.Json.jsonResult(response(), created(Json.toJson(newUser)));
         } catch (Exception e) {
             Logger.error(e.getMessage());
-            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(),
+                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
     }
 

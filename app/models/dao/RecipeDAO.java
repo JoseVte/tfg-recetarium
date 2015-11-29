@@ -2,8 +2,8 @@ package models.dao;
 
 import java.util.List;
 
-import models.Recipe;
 import models.Category;
+import models.Recipe;
 import models.Tag;
 import models.User;
 import models.base.CrudDAO;
@@ -16,10 +16,10 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     public RecipeDAO() {
         super(Recipe.class);
     }
-    
-    
+
     public Recipe findBySlug(String slug) {
-        List<Recipe> result = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'", Recipe.class).getResultList();
+        List<Recipe> result = JPA.em()
+                .createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'", Recipe.class).getResultList();
         if (!result.isEmpty()) return result.get(0);
         return null;
     }
@@ -74,8 +74,8 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe
      */
     public static void deleteTag(Tag tag, Recipe recipe) {
-        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName()
-                + " m WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
+        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName() + " m WHERE tag_id = "
+                + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
         JPA.em().remove(tagged);
         // Reload entities
         JPA.em().flush();
@@ -105,8 +105,8 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe
      */
     public static void deleteFavorite(User user, Recipe recipe) {
-        Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName()
-                + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
+        Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName() + " m WHERE user_id = "
+                + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
         JPA.em().remove(fav);
         // Reload entities
         JPA.em().flush();
@@ -136,8 +136,8 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe
      */
     public static void updateRating(User user, Recipe recipe, double value) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = "
-                + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
+                + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         rating.rating = value;
         JPA.em().merge(rating);
         // Reload entities
@@ -153,8 +153,8 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe
      */
     public static void deleteRating(User user, Recipe recipe) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = "
-                + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
+                + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         JPA.em().remove(rating);
         // Reload entities
         JPA.em().flush();

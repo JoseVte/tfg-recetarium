@@ -7,9 +7,11 @@ import models.dao.CommentDAO;
 
 public class CommentService {
     private static CommentDAO dao;
+
     static {
         dao = new CommentDAO();
     }
+
     /**
      * Create a comment
      *

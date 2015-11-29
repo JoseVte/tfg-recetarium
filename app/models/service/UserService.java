@@ -15,6 +15,7 @@ import util.VerificationToken;
 
 public class UserService {
     private static UserDAO userDAO;
+
     static {
         userDAO = new UserDAO();
     }
@@ -98,7 +99,7 @@ public class UserService {
     public static Long count() {
         return userDAO.count();
     }
-    
+
     /**
      * Check the value of field is used
      *
@@ -123,7 +124,7 @@ public class UserService {
     public static User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return userDAO.register(register);
     }
-    
+
     /**
      * Find an user by email
      *
@@ -146,7 +147,7 @@ public class UserService {
     public static User findByEmailAddressAndPassword(String email, String password) {
         return userDAO.findByEmailAddressAndPassword(email, password);
     }
-    
+
     /**
      * Check the auth token
      *
@@ -168,7 +169,7 @@ public class UserService {
     public static String createJWT(User user) {
         return userDAO.createJWT(user);
     }
-    
+
     /**
      * Get the token valid of an user
      *
@@ -181,7 +182,7 @@ public class UserService {
         if (token == null || token.hasExpired()) return null;
         return token;
     }
-    
+
     /**
      * Add new token for the user
      *
@@ -196,7 +197,7 @@ public class UserService {
         userDAO.update(user);
         return token;
     }
-    
+
     /**
      * Add new token for the user
      *
@@ -211,7 +212,7 @@ public class UserService {
         if (user == null || tokenDB == null || tokenDB.hasExpired()) return false;
         return true;
     }
-    
+
     /**
      * Change the password of the user
      *

@@ -9,6 +9,7 @@ import models.manytomany.RecipeTags;
 
 public class TagService {
     private static TagDAO dao;
+
     static {
         dao = new TagDAO();
     }

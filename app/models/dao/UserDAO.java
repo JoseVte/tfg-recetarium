@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import controllers.AuthController.Register;
 import models.Recipe;
+import models.TypeUser;
 import models.User;
 import models.base.CrudDAO;
 import models.manytomany.Favorite;
@@ -27,7 +28,7 @@ public class UserDAO extends CrudDAO<User> {
     public UserDAO() {
         super(User.class);
     }
-    
+
     /**
      * Register an user
      *
@@ -38,7 +39,8 @@ public class UserDAO extends CrudDAO<User> {
      * @throws NoSuchAlgorithmException
      */
     public User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        User user = new User(register.username, register.email, register.password, register.firstName, register.lastName, register.type);
+        User user = new User(register.username, register.email, register.password, register.firstName,
+                register.lastName, TypeUser.COMUN);
         return this.create(user);
     }
 
@@ -69,7 +71,7 @@ public class UserDAO extends CrudDAO<User> {
     public List<User> check(String field, Object value, Integer id) {
         return check(field, value, id, "=");
     }
-    
+
     /**
      * Where clause
      *
@@ -131,14 +133,14 @@ public class UserDAO extends CrudDAO<User> {
             ObjectMapper json = new ObjectMapper();
             ObjectNode object = json.createObjectNode();
             object.put("user", Json.toJson(user));
-            
+
             return util.Json.createJwt(object.toString());
         } catch (JoseException e) {
             Logger.error(e.getMessage());
             return new String();
         }
     }
-    
+
     /**
      * Check the auth token
      *
@@ -148,7 +150,7 @@ public class UserDAO extends CrudDAO<User> {
      */
     public User checkJWT(String jwt) {
         if (jwt == null) return null;
-        
+
         try {
             JsonNode json = Json.parse(util.Json.checkJwt(jwt));
             if (!json.has("user")) throw new Exception("Token malformed");
@@ -162,7 +164,7 @@ public class UserDAO extends CrudDAO<User> {
             return null;
         }
     }
-    
+
     /**
      * Get the token valid of an user
      *
@@ -176,7 +178,7 @@ public class UserDAO extends CrudDAO<User> {
         }
         return null;
     }
-    
+
     /**
      * Find an user by email
      *
@@ -186,8 +188,9 @@ public class UserDAO extends CrudDAO<User> {
      */
     public User findByEmailAddress(String email) {
         if (email == null) return null;
-        try  {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class).getSingleResult();
+        try {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class)
+                    .getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -204,7 +207,7 @@ public class UserDAO extends CrudDAO<User> {
     public User findByEmailAddressAndPassword(String email, String password) {
         if (email == null || password == null) return null;
 
-        try  {
+        try {
             User user = findByEmailAddress(email);
             if (validatePassword(password, user.password)) return user;
             return null;
@@ -235,8 +238,8 @@ public class UserDAO extends CrudDAO<User> {
      * @param friend
      */
     public static void deleteFriend(User user, User friend) {
-        Friend friendship = JPA.em().createQuery("SELECT m FROM " + Friend.class.getName()
-                + " m WHERE user_id = " + user.id + " AND friend_id = " + friend.id, Friend.class).getSingleResult();
+        Friend friendship = JPA.em().createQuery("SELECT m FROM " + Friend.class.getName() + " m WHERE user_id = "
+                + user.id + " AND friend_id = " + friend.id, Friend.class).getSingleResult();
         JPA.em().remove(friendship);
         // Reload entities
         JPA.em().flush();
@@ -266,8 +269,8 @@ public class UserDAO extends CrudDAO<User> {
      * @param recipe
      */
     public static void deleteFavorite(User user, Recipe recipe) {
-        Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName()
-                + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
+        Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName() + " m WHERE user_id = "
+                + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
         JPA.em().remove(fav);
         // Reload entities
         JPA.em().flush();
@@ -297,8 +300,8 @@ public class UserDAO extends CrudDAO<User> {
      * @param recipe
      */
     public static void updateRating(User user, Recipe recipe, double value) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = "
-                + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
+                + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         rating.rating = value;
         JPA.em().merge(rating);
         // Reload entities
@@ -314,8 +317,8 @@ public class UserDAO extends CrudDAO<User> {
      * @param recipe
      */
     public static void deleteRating(User user, Recipe recipe) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = "
-                + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
+                + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         JPA.em().remove(rating);
         // Reload entities
         JPA.em().flush();

@@ -61,15 +61,15 @@ public class User extends Model implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public TypeUser           type;
-    
+
     @Column(name = "lost_pass_token")
     @JsonIgnore
-    public String lostPassToken;
-    
+    public String             lostPassToken;
+
     @Column(name = "lost_pass_expire")
     @JsonIgnore
     @Temporal(TemporalType.TIMESTAMP)
-    public Date lostPassExpire;
+    public Date               lostPassExpire;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -97,9 +97,9 @@ public class User extends Model implements Serializable {
 
     @Transient
     private UserDAO           dao;
-    
+
     @Transient
-    private boolean updatePassword = true;
+    private boolean           updatePassword   = true;
 
     public User() {
         dao = new UserDAO();
@@ -158,7 +158,7 @@ public class User extends Model implements Serializable {
     @Override
     public void handleRelations(Model old) {
         User user = ((User) old);
-        if (password == null || password.isEmpty()){
+        if (password == null || password.isEmpty()) {
             this.updatePassword = user.password.equals(password);
             this.password = user.password;
         }
@@ -181,7 +181,7 @@ public class User extends Model implements Serializable {
         return "User [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
                 + ", firstName=" + firstName + ", lastName=" + lastName + ", type=" + type.toString() + ", recipes="
                 + recipes.size() + ", comments=" + comments.size() + ", myFriends=" + myFriends.size() + ", friends="
-                + friends.size() + ", recipesFavorites=" + recipesFavorites.size() + ", ratings=" + ratings.size() + 
-                ", lostPassToken=" + lostPassToken + ", lostPassExpire=" + lostPassExpire + "]";
+                + friends.size() + ", recipesFavorites=" + recipesFavorites.size() + ", ratings=" + ratings.size()
+                + ", lostPassToken=" + lostPassToken + ", lostPassExpire=" + lostPassExpire + "]";
     }
 }

@@ -9,16 +9,15 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import models.TypeUser;
 import models.User;
 import models.service.EmailService;
 import models.service.UserService;
-import play.libs.mailer.MailerClient;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
 import play.libs.Json;
+import play.libs.mailer.MailerClient;
 import play.mvc.Controller;
 import play.mvc.Http;
 import play.mvc.Result;
@@ -27,20 +26,20 @@ import util.VerificationToken;
 
 public class AuthController extends Controller {
     public final static String AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
-    public static final String AUTH_TOKEN = "auth_token";
-    public static final String REDIRECT_PATH = "/";
-    
-    private final MailerClient mailer;
+    public static final String AUTH_TOKEN        = "auth_token";
+    public static final String REDIRECT_PATH     = "/";
+
+    private final EmailService mailer;
 
     @Inject
     public AuthController(MailerClient mailer) {
-      this.mailer = mailer;
+        this.mailer = new EmailService(mailer);
     }
-    
+
     public static User getUser() {
-        return (User)Http.Context.current().args.get("user");
+        return (User) Http.Context.current().args.get("user");
     }
-    
+
     /**
      * Register
      *
@@ -49,11 +48,11 @@ public class AuthController extends Controller {
     @Transactional
     public Result register() {
         Form<Register> registerForm = Form.form(Register.class).bindFromRequest();
-        
+
         if (registerForm.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(registerForm.errorsAsJson()));
         }
-        
+
         Register register = registerForm.get();
         User user;
         try {
@@ -61,7 +60,7 @@ public class AuthController extends Controller {
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             user = null;
         }
-        
+
         // Login after register
         if (user == null) {
             return util.Json.jsonResult(response(), unauthorized());
@@ -101,7 +100,7 @@ public class AuthController extends Controller {
             return util.Json.jsonResult(response(), ok(authTokenJson));
         }
     }
-    
+
     /**
      * Send lost password token
      *
@@ -114,16 +113,20 @@ public class AuthController extends Controller {
         String email = recover.get().email;
         User user = UserService.findByEmailAddress(email);
         if (user == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found email " + email)));
+            return util.Json.jsonResult(response(),
+                    notFound(util.Json.generateJsonErrorMessages("Not found email " + email)));
         }
         token = UserService.getActiveLostPasswordToken(user);
         if (token == null) {
             token = UserService.addVerification(user);
         }
-        new EmailService(mailer).sendVerificationToken(user);
+        if (mailer.sendVerificationToken(user) == null) {
+            return util.Json.jsonResult(response(),
+                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+        }
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Reset password email sent")));
     }
-    
+
     /**
      * Reset the password from an email and token
      *
@@ -132,16 +135,16 @@ public class AuthController extends Controller {
     @Transactional
     public Result resetPassword() {
         Form<ResetPassword> reset = Form.form(ResetPassword.class).bindFromRequest();
-        
+
         if (reset.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(reset.errorsAsJson()));
         }
-        
+
         UserService.changePassword(reset.get().email, reset.get().password);
-        
+
         return ok();
     }
-    
+
     /**
      * Logout
      *
@@ -153,36 +156,33 @@ public class AuthController extends Controller {
         response().discardCookie(AUTH_TOKEN);
         return ok();
     }
-    
+
     /***********************/
-    /* Request validators  */
-    /* @author Josrom      */
+    /* Request validators */
+    /* @author Josrom */
     /***********************/
     public static class RecoverPassword {
         @Constraints.Required
         @Constraints.Email
         public String email;
     }
-    
+
     public static class Login extends RecoverPassword {
         @Constraints.Required
         public String password;
 
     }
-    
+
     public static class Register extends Login {
         @Constraints.Required
-        public String username;
-        
-        @Constraints.Required
-        public String             passwordRepeat;
-
-        public String             firstName;
-        public String             lastName;
+        public String   username;
 
         @Constraints.Required
-        public TypeUser           type;
-        
+        public String   passwordRepeat;
+
+        public String   firstName;
+        public String   lastName;
+
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
             if (!UserService.check("email", email).isEmpty()) {
@@ -198,11 +198,11 @@ public class AuthController extends Controller {
             return errors.isEmpty() ? null : errors;
         }
     }
-    
+
     public static class ResetPassword extends Login {
         @Constraints.Required
         public String token;
-        
+
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<>();
             if (!UserService.validateResetToken(email, token)) {

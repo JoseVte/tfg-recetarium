@@ -3,7 +3,6 @@ package models.service;
 import models.User;
 import play.libs.mailer.Email;
 import play.libs.mailer.MailerClient;
-import util.VerificationToken;
 import views.html.emails.*;
 
 public class EmailService {
@@ -18,7 +17,7 @@ public class EmailService {
      *
      * @param user
      */
-    public void sendVerificationToken(User user) {
+    public String sendVerificationToken(User user) {
         Email email = new Email();
         email.setSubject("Reset password");
         email.setFrom("Recetarium <info@recetarium.com>");
@@ -26,7 +25,7 @@ public class EmailService {
         String body = resetPassword.render(user).body();
         email.setBodyHtml(body);
         email.setBodyText("For reset your password click here: " + user.lostPassToken);
-        String id = mailerClient.send(email);
+        return mailerClient.send(email);
     }
 
 }

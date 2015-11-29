@@ -67,23 +67,27 @@ public class Json {
     }
 
     /**
-    * Create a token for the user
-    *
-    * @param subject String
-    *
-    * @return String
-    */
+     * Create a token for the user
+     *
+     * @param subject String
+     *
+     * @return String
+     */
     public static String createJwt(String subject) throws JoseException {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         Key key = new HmacKey(keySecret.getBytes());
-        
+
         JwtClaims claims = new JwtClaims();
-        claims.setExpirationTimeMinutesInTheFuture(60); // time when the token will expire (60 minutes from now)
+        claims.setExpirationTimeMinutesInTheFuture(60); // time when the token
+                                                        // will expire (60
+                                                        // minutes from now)
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast(2); // time before which the token is not yet valid (2 minutes ago)
+        claims.setNotBeforeMinutesInThePast(2); // time before which the token
+                                                // is not yet valid (2 minutes
+                                                // ago)
         claims.setSubject(subject);
-        
+
         JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
         jws.setKey(key);
@@ -92,7 +96,7 @@ public class Json {
 
         return jwt;
     }
-    
+
     /**
      * Check the auth token
      *
@@ -103,26 +107,25 @@ public class Json {
     public static String checkJwt(String jwt) {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         Key key = new AesKey(keySecret.getBytes());
-        
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                .setRequireExpirationTime() // the JWT must have an expiration time
-                .setAllowedClockSkewInSeconds(30) // allow some leeway in validating time based claims to account for clock skew
-                .setRequireSubject()
-                .setVerificationKey(key)
-                .build();
 
-        try
-        {
-            //  Validate the JWT and process it to the Claims
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setRequireExpirationTime() // the
+                                                                                      // JWT
+                                                                                      // must
+                                                                                      // have
+                                                                                      // an
+                                                                                      // expiration
+                                                                                      // time
+                .setAllowedClockSkewInSeconds(30) // allow some leeway in
+                                                  // validating time based
+                                                  // claims to account for clock
+                                                  // skew
+                .setRequireSubject().setVerificationKey(key).build();
+
+        try {
+            // Validate the JWT and process it to the Claims
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
-            System.out.println("JWT validation succeeded! " + jwtClaims);
             return jwtClaims.getSubject();
-        }
-        catch (InvalidJwtException | MalformedClaimException e)
-        {
-            // InvalidJwtException will be thrown, if the JWT failed processing or validation in anyway.
-            // Hopefully with meaningful explanations(s) about what went wrong.
-            System.out.println("Invalid JWT! " + e);
+        } catch (InvalidJwtException | MalformedClaimException e) {
             return null;
         }
     }

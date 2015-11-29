@@ -7,10 +7,11 @@ import models.dao.CategoryDAO;
 
 public class CategoryService {
     private static CategoryDAO dao;
+
     static {
         dao = new CategoryDAO();
     }
-    
+
     /**
      * Create a section
      *

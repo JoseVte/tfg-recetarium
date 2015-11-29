@@ -10,7 +10,6 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-
 @EntityListeners({ TimestampListener.class })
 @MappedSuperclass
 public class Timestamp {

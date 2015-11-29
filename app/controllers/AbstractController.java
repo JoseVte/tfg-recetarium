@@ -13,7 +13,7 @@ public abstract class AbstractController extends Controller {
      * @return Result
      */
     public abstract Result list(Integer page, Integer size);
-    
+
     /**
      * Get one model by id
      *
@@ -22,14 +22,14 @@ public abstract class AbstractController extends Controller {
      * @return Result
      */
     public abstract Result get(Integer id);
-    
+
     /**
      * Create a model with the data of request
      *
      * @return Result
      */
     public abstract Result create();
-    
+
     /**
      * Update a model with the data of request
      *
@@ -38,7 +38,7 @@ public abstract class AbstractController extends Controller {
      * @return Result
      */
     public abstract Result update(Integer id);
-    
+
     /**
      * Delete a model by id
      *

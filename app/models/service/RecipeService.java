@@ -2,18 +2,18 @@ package models.service;
 
 import java.util.List;
 
-import models.Recipe;
 import models.Category;
+import models.Recipe;
 import models.Tag;
 import models.User;
 import models.dao.RecipeDAO;
-import models.service.UserService;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 
 public class RecipeService {
     private static RecipeDAO recipeDAO;
+
     static {
         recipeDAO = new RecipeDAO();
     }
@@ -50,7 +50,7 @@ public class RecipeService {
     public static Recipe find(Integer id) {
         return recipeDAO.find(id);
     }
-    
+
     /**
      * Find a recipe by slug
      *
