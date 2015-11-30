@@ -131,7 +131,7 @@ public class AuthControllerTest extends AbstractTest {
     public void testAuthControllerRegisterOk() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/auth/register").post(registerJson).get(timeout);
+            WSResponse response = WS.url("http://localhost:3333/auth/register").post(registerJson).get(30000);
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
 

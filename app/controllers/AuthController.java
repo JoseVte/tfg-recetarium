@@ -57,20 +57,26 @@ public class AuthController extends Controller {
         User user;
         try {
             user = UserService.register(register);
+            // Login after register
+            if (user == null) {
+                return util.Json.jsonResult(response(), unauthorized());
+            } else {
+                if (mailer.sendRegistrationEmails(user) == null) {
+                    return util.Json.jsonResult(response(),
+                            internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+                }
+                String authToken = UserService.createJWT(user);
+                ObjectNode authTokenJson = Json.newObject();
+                authTokenJson.put(AUTH_TOKEN, authToken);
+                response().setCookie(AUTH_TOKEN, authToken);
+                return util.Json.jsonResult(response(), ok(authTokenJson));
+            }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            user = null;
+            return util.Json.jsonResult(response(),
+                        internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
 
-        // Login after register
-        if (user == null) {
-            return util.Json.jsonResult(response(), unauthorized());
-        } else {
-            String authToken = UserService.createJWT(user);
-            ObjectNode authTokenJson = Json.newObject();
-            authTokenJson.put(AUTH_TOKEN, authToken);
-            response().setCookie(AUTH_TOKEN, authToken);
-            return util.Json.jsonResult(response(), ok(authTokenJson));
-        }
+        
     }
 
     /**
@@ -188,10 +194,10 @@ public class AuthController extends Controller {
 
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
-            if (!UserService.check("email", email).isEmpty()) {
+            if (!UserService.where("email", email).isEmpty()) {
                 errors.add(new ValidationError("email", "This e-mail is already registered"));
             }
-            if (!UserService.check("username", username).isEmpty()) {
+            if (!UserService.where("username", username).isEmpty()) {
                 errors.add(new ValidationError("username", "This username is already registered"));
             }
             if (password != null && passwordRepeat != null && !password.equals(passwordRepeat)) {

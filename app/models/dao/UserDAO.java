@@ -54,7 +54,7 @@ public class UserDAO extends CrudDAO<User> {
      *
      * @return List<User>
      */
-    public List<User> check(String field, Object value, Integer id, String comparison) {
+    public List<User> where(String field, Object value, Integer id, String comparison) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
                 + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
     }
@@ -68,8 +68,8 @@ public class UserDAO extends CrudDAO<User> {
      *
      * @return List<User>
      */
-    public List<User> check(String field, Object value, Integer id) {
-        return check(field, value, id, "=");
+    public List<User> where(String field, Object value, Integer id) {
+        return where(field, value, id, "=");
     }
 
     /**
@@ -80,8 +80,8 @@ public class UserDAO extends CrudDAO<User> {
      *
      * @return List<User>
      */
-    public List<User> check(String field, Object value) {
-        return check(field, value, 0, "=");
+    public List<User> where(String field, Object value) {
+        return where(field, value, 0, "=");
     }
 
     /**

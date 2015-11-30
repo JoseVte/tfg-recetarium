@@ -120,10 +120,10 @@ public class User extends Model implements Serializable {
         if (id != null && dao.find(id) == null) {
             errors.add(new ValidationError("id", "This user doesn't exist"));
         }
-        if (!dao.check("email", email, id).isEmpty()) {
+        if (!dao.where("email", email, id).isEmpty()) {
             errors.add(new ValidationError("email", "This e-mail is already registered"));
         }
-        if (!dao.check("username", username, id).isEmpty()) {
+        if (!dao.where("username", username, id).isEmpty()) {
             errors.add(new ValidationError("username", "This username is already registered"));
         }
         if ((id == null || dao.find(id) == null) && (password == null || password.isEmpty())) {

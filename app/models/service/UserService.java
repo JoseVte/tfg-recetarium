@@ -108,8 +108,8 @@ public class UserService {
      *
      * @return List<User>
      */
-    public static List<User> check(String field, String value) {
-        return userDAO.check(field, value);
+    public static List<User> where(String field, String value) {
+        return userDAO.where(field, value);
     }
 
     /**
