@@ -71,7 +71,7 @@ Devuelve un error `404` si no se encuentra el usuario:
 }
 ```
 
-#### Crear un usuario nueva
+#### Crear un usuario nuevo
 
 Para crear un usuario se necesita enviar la [estructura del usuario](#estructura-json) sin el `ID`, `created_at` y `updated_at`:
 
@@ -79,7 +79,7 @@ Para crear un usuario se necesita enviar la [estructura del usuario](#estructura
 POST /users
 ```
 
-Si se crea correctamente devuelve la nueva receta con un codigo `201`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
+Si se crea correctamente devuelve el nuevo usuario con un codigo `201`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
 
 ```json
 {
@@ -131,7 +131,7 @@ DELETE /users/{id}
 DELETE /users/1
 ```
 
-Si se borra correctamente devuelve un mensage advirtiendo de que se ha completado la acción:
+Si se borra correctamente devuelve un mensaje advirtiendo de que se ha completado la acción:
 
 ````json
 {

@@ -109,6 +109,9 @@ public class AuthController extends Controller {
     @Transactional
     public Result sendLostPasswordToken() {
         Form<RecoverPassword> recover = Form.form(RecoverPassword.class).bindFromRequest();
+        if (recover.hasErrors()) {
+            return util.Json.jsonResult(response(), badRequest(recover.errorsAsJson()));
+        }
         VerificationToken token = null;
         String email = recover.get().email;
         User user = UserService.findByEmailAddress(email);
@@ -142,7 +145,7 @@ public class AuthController extends Controller {
 
         UserService.changePassword(reset.get().email, reset.get().password);
 
-        return ok();
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
     }
 
     /**

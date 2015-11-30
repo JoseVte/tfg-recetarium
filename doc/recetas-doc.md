@@ -130,7 +130,7 @@ DELETE /recipes/{id}
 DELETE /recipes/1
 ```
 
-Si se borra correctamente devuelve un mensage advirtiendo de que se ha completado la acción:
+Si se borra correctamente devuelve un mensaje advirtiendo de que se ha completado la acción:
 
 ````json
 {
