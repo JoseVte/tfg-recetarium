@@ -10,7 +10,7 @@ public class CategoryDAO extends CrudDAO<Category> {
     public CategoryDAO() {
         super(Category.class);
     }
-    
+
     /**
      * Where clause
      *

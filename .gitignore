@@ -18,3 +18,4 @@ project/activator-sbt-idea-shim.sbt
 project/sbt-ui.sbt
 project/idea.sbt
 project/activator-sbt-eclipse-shim.sbt
+/bin/

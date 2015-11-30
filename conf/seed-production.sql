@@ -18,8 +18,8 @@ LOCK TABLES `users` WRITE;
 
 INSERT INTO `users` (`id`, `username`, `email`, `first_name`, `last_name`, `password`, `type`, `created_at`, `updated_at`)
 VALUES
-	(1, 'Josrom', 'jvortsromero@gmail.com', 'Jose Vicente', 'Orts Romero', SHA1('josevte1'), 'ADMIN', now(), now()),
-	(2, 'Dantar', 'dantar@gmail.com', 'Daniel', 'Ambit', SHA1('password'), 'COMUN', now(), now());
+	(1, 'Josrom', 'jvortsromero@gmail.com', 'Jose Vicente', 'Orts Romero', '1000:e5bf55a614b86207c226abed6dbfd999b195fe969396a0fb:16d9a9a92a95fe5087087779e6f5d2a8afcfe79a18c7cb65', 'ADMIN', now(), now()),
+	(2, 'Dantar', 'dantar@gmail.com', 'Daniel', 'Ambit', '1000:e5bf55a614b86207c226abed6dbfd999b195fe969396a0fb:16d9a9a92a95fe5087087779e6f5d2a8afcfe79a18c7cb65', 'COMUN', now(), now());
 
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;

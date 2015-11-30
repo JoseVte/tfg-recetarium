@@ -1,3 +1,6 @@
+import java.io.File
+import PlayKeys._
+
 name := """recetarium"""
 
 version := "alpha"
@@ -14,7 +17,9 @@ libraryDependencies ++= Seq(
   cache,
   javaWs,
   "org.codehaus.jackson" % "jackson-mapper-asl" % "1.8.5",
-  "org.yaml" % "snakeyaml" % "1.16"
+  "org.yaml" % "snakeyaml" % "1.16",
+  "org.bitbucket.b_c" % "jose4j" % "0.4.4",
+  "com.typesafe.play" %% "play-mailer" % "3.0.1"
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the

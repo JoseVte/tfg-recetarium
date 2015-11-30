@@ -45,7 +45,7 @@ public class InitDataLoader {
             log.trace("saved: {}", obj);
         }
     }
-    
+
     public static void initializeData() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
         EntityManager em = emf.createEntityManager();

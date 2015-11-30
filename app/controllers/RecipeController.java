@@ -2,16 +2,14 @@ package controllers;
 
 import java.util.List;
 
-import play.mvc.*;
-import play.libs.Json;
-import play.data.Form;
-import play.db.jpa.*;
-
-import models.*;
-import models.service.RecipeService;
-import views.html.*;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import models.Recipe;
+import models.service.RecipeService;
+import play.data.Form;
+import play.db.jpa.Transactional;
+import play.libs.Json;
+import play.mvc.Result;
 
 public class RecipeController extends AbstractController {
     static Form<Recipe> recipeForm = Form.form(Recipe.class);
@@ -24,7 +22,7 @@ public class RecipeController extends AbstractController {
         routesString[0] = routes.RecipeController.list(page - 1, size).toString();
         routesString[1] = routes.RecipeController.list(page + 1, size).toString();
         routesString[2] = routes.RecipeController.list(page, size).toString();
-        
+
         ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString);
 
         return util.Json.jsonResult(response(), ok(result));
@@ -73,7 +71,8 @@ public class RecipeController extends AbstractController {
         }
         Recipe recipeModel = recipe.get();
         if (recipeModel.id != id) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+            return util.Json.jsonResult(response(),
+                    badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
         }
         recipeModel = RecipeService.update(recipeModel);
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));

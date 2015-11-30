@@ -28,6 +28,7 @@ public abstract class AbstractTest extends WithApplication {
     protected CommentDAO       commentDAO;
     protected MediaDAO         mediaDAO;
     protected TagDAO           tagDAO;
+    protected String           token;
 
     public AbstractTest() {
         userDAO = new UserDAO();

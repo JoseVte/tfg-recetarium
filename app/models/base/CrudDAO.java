@@ -8,13 +8,13 @@ import play.db.jpa.JPA;
 
 public class CrudDAO<T extends Model> {
     private Class<? extends Model> typeOfModel;
-    protected String TABLE;
-    
+    protected String               TABLE;
+
     public CrudDAO(Class<? extends Model> model) {
         typeOfModel = model;
         TABLE = typeOfModel.getName();
     }
-    
+
     /**
      * Create a model
      *
@@ -33,7 +33,7 @@ public class CrudDAO<T extends Model> {
         JPA.em().refresh(model);
         return (T) model;
     }
-    
+
     /**
      * Find a model by id
      *

@@ -5,6 +5,13 @@
 # Home page
 GET     /                           controllers.UserController.index()
 
+POST    /auth/register              controllers.AuthController.register()
+POST    /auth/login                 controllers.AuthController.login()
+POST    /auth/logout                controllers.AuthController.logout()
+POST    /auth/reset/password        controllers.AuthController.sendLostPasswordToken()
+PUT     /auth/reset/password        controllers.AuthController.resetPassword()
+PATCH   /auth/reset/password        controllers.AuthController.resetPassword()
+
 # Routes API Rest
 ## Users
 GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3)

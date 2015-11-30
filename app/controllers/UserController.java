@@ -5,18 +5,18 @@ import java.util.List;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import models.User;
-import models.base.Model;
 import models.service.UserService;
 import play.Logger;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Result;
+import play.mvc.Security;
 import views.html.*;
 
 public class UserController extends AbstractController {
     Form<User> formModel = Form.form(User.class);
-    
+
     /**
      * Get the index page
      *
@@ -27,6 +27,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional(readOnly = true)
+    @Security.Authenticated(Secured.class)
     @SuppressWarnings("deprecation")
     public Result list(Integer page, Integer size) {
         List<User> models = UserService.paginate(page - 1, size);
@@ -35,13 +36,14 @@ public class UserController extends AbstractController {
         routesString[0] = routes.UserController.list(page - 1, size).toString();
         routesString[1] = routes.UserController.list(page + 1, size).toString();
         routesString[2] = routes.UserController.list(page, size).toString();
-        
+
         ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString);
 
         return util.Json.jsonResult(response(), ok(result));
     }
 
     @Transactional(readOnly = true)
+    @Security.Authenticated(Secured.class)
     public Result get(Integer id) {
         User user = UserService.find(id);
         if (user == null) {
@@ -51,6 +53,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
+    @Security.Authenticated(Secured.class)
     public Result create() {
         Form<User> user = formModel.bindFromRequest();
         if (user.hasErrors()) {
@@ -61,11 +64,13 @@ public class UserController extends AbstractController {
             return util.Json.jsonResult(response(), created(Json.toJson(newUser)));
         } catch (Exception e) {
             Logger.error(e.getMessage());
-            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(),
+                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
     }
 
     @Transactional
+    @Security.Authenticated(Secured.class)
     public Result update(Integer id) {
         Form<User> user = formModel.bindFromRequest();
         if (user.hasErrors()) {
@@ -77,6 +82,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
+    @Security.Authenticated(Secured.class)
     public Result delete(Integer id) {
         if (UserService.delete(id)) {
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));

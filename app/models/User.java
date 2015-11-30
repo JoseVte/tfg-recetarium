@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -13,6 +14,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -40,6 +43,7 @@ public class User extends Model implements Serializable {
     public String             username;
 
     @Constraints.Required
+    @Constraints.Email
     @Column(nullable = false, unique = true)
     public String             email;
 
@@ -57,6 +61,15 @@ public class User extends Model implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public TypeUser           type;
+
+    @Column(name = "lost_pass_token")
+    @JsonIgnore
+    public String             lostPassToken;
+
+    @Column(name = "lost_pass_expire")
+    @JsonIgnore
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date               lostPassExpire;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
@@ -85,6 +98,9 @@ public class User extends Model implements Serializable {
     @Transient
     private UserDAO           dao;
 
+    @Transient
+    private boolean           updatePassword   = true;
+
     public User() {
         dao = new UserDAO();
     }
@@ -104,10 +120,10 @@ public class User extends Model implements Serializable {
         if (id != null && dao.find(id) == null) {
             errors.add(new ValidationError("id", "This user doesn't exist"));
         }
-        if (!dao.check("email", email, id).isEmpty()) {
+        if (!dao.where("email", email, id).isEmpty()) {
             errors.add(new ValidationError("email", "This e-mail is already registered"));
         }
-        if (!dao.check("username", username, id).isEmpty()) {
+        if (!dao.where("username", username, id).isEmpty()) {
             errors.add(new ValidationError("username", "This username is already registered"));
         }
         if ((id == null || dao.find(id) == null) && (password == null || password.isEmpty())) {
@@ -125,10 +141,12 @@ public class User extends Model implements Serializable {
     public void prePersistData() {
         if (firstName != null && firstName.isEmpty()) firstName = null;
         if (lastName != null && lastName.isEmpty()) lastName = null;
-        try {
-            password = Encryptation.createHash(password);
-        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            e.printStackTrace();
+        if (password != null && !password.isEmpty() && updatePassword) {
+            try {
+                password = Encryptation.createHash(password);
+            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -140,7 +158,10 @@ public class User extends Model implements Serializable {
     @Override
     public void handleRelations(Model old) {
         User user = ((User) old);
-        if (password != null && password.isEmpty()) this.password = user.password;
+        if (password == null || password.isEmpty()) {
+            this.updatePassword = user.password.equals(password);
+            this.password = user.password;
+        }
         this.setCreatedAt(user.getCreatedAt());
         this.recipes = user.recipes;
         this.myFriends = user.myFriends;
@@ -161,6 +182,6 @@ public class User extends Model implements Serializable {
                 + ", firstName=" + firstName + ", lastName=" + lastName + ", type=" + type.toString() + ", recipes="
                 + recipes.size() + ", comments=" + comments.size() + ", myFriends=" + myFriends.size() + ", friends="
                 + friends.size() + ", recipesFavorites=" + recipesFavorites.size() + ", ratings=" + ratings.size()
-                + "]";
+                + ", lostPassToken=" + lostPassToken + ", lostPassExpire=" + lostPassExpire + "]";
     }
 }

@@ -8,7 +8,7 @@ import models.base.CrudDAO;
 import models.manytomany.RecipeTags;
 import play.db.jpa.JPA;
 
-public class TagDAO extends CrudDAO<Tag>{
+public class TagDAO extends CrudDAO<Tag> {
     public TagDAO() {
         super(Tag.class);
     }
@@ -63,8 +63,8 @@ public class TagDAO extends CrudDAO<Tag>{
      * @param recipe
      */
     public static void deleteRecipe(Tag tag, Recipe recipe) {
-        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName()
-                + " m WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
+        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName() + " m WHERE tag_id = "
+                + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
         JPA.em().remove(tagged);
         // Reload entities
         JPA.em().flush();

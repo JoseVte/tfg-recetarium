@@ -11,29 +11,30 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import models.User;
 
 @MappedSuperclass
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public abstract class Model extends Timestamp{
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+public abstract class Model extends Timestamp {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer            id;
-    
+    public Integer                     id;
+
     @Transient
     protected CrudDAO<? extends Model> dao;
-    
-    public Model() {}
-    
+
+    public Model() {
+    }
+
     /**
      * Fix the data before store
      */
     public abstract void prePersistData();
-    
+
     /**
      * Fix the relations between models
      *
      * @param old
      */
     public abstract void handleRelations(Model old);
-    
+
     /*
      * (non-Javadoc)
      * 

@@ -7,6 +7,7 @@ import models.dao.MediaDAO;
 
 public class MediaService {
     private static MediaDAO dao;
+
     static {
         dao = new MediaDAO();
     }

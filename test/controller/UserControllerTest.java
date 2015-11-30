@@ -8,6 +8,7 @@ import static play.mvc.Http.Status.BAD_REQUEST;
 import static play.mvc.Http.Status.CREATED;
 import static play.mvc.Http.Status.NOT_FOUND;
 import static play.mvc.Http.Status.OK;
+import static play.mvc.Http.Status.UNAUTHORIZED;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import controllers.AuthController;
 import models.TypeUser;
 import play.libs.Json;
 import play.libs.ws.WS;
@@ -34,6 +36,7 @@ public class UserControllerTest extends AbstractTest {
     ObjectNode dataError5;
     ObjectNode dataError6;
     ObjectNode dataError7;
+    ObjectNode loginJson;
 
     public UserControllerTest() throws Exception {
         dataOk = Json.newObject();
@@ -83,13 +86,39 @@ public class UserControllerTest extends AbstractTest {
         dataError7.put("email", "test@test.dev");
         dataError7.put("password", "password");
         dataError7.put("type", "OTHER");
+
+        loginJson = Json.newObject();
+        loginJson.put("email", "test@testing.dev");
+        loginJson.put("password", "josevte1");
+    }
+
+    @Test
+    public void testUserControllerUnauthorized() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse response = WS.url("http://localhost:3333/users/1").get().get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/users").get().get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/users").post(dataOk).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/users/1").put(dataOk.put("id", 1)).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/users/1").delete().get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+
+            successTest();
+        });
     }
 
     @Test
     public void testUserControllerFindAnUserOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users/1").get().get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -108,7 +137,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerFindAnUserNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users/5").get().get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/5")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
             assertEquals(NOT_FOUND, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -125,7 +157,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerPageUsersOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users?page=1&size=1").get().get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users?page=1&size=1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -147,7 +182,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerCreateUserOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users").post(dataOk).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
 
             assertEquals(CREATED, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -165,7 +203,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerCreateUserBadRequest1() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users").post(dataError1).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError1).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -182,7 +223,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerCreateUserBadRequest2() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users").post(dataError2).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError2).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -199,7 +243,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerCreateUserBadRequest3() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users").post(dataError3).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError3).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -216,7 +263,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerCreateUserBadRequest4() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users").post(dataError4).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError4).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -233,7 +283,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerCreateUserBadRequest5() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users").post(dataError5).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError5).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -250,7 +303,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerCreateUserBadRequest6() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users").post(dataError6).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError6).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -267,7 +323,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerCreateUserBadRequest7() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users").post(dataError7).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError7).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -284,7 +343,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerUpdateUserOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users/1").put(dataOk.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 1)).get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -302,7 +364,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerUpdateUserBadRequest1() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users/1").put(dataError1.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError1.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -319,7 +384,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerUpdateUserBadRequest2() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users/1").put(dataError2.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError2.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -336,7 +404,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerUpdateUserNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users/5").put(dataOk.put("id", 5)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/5")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 5)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -353,7 +424,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerDeleteUserOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users/1").delete().get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -370,7 +444,10 @@ public class UserControllerTest extends AbstractTest {
     public void testUserControllerDeleteUserNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/users/5").delete().get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/5")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
 
             assertEquals(NOT_FOUND, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
