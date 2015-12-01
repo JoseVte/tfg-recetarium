@@ -10,23 +10,20 @@ import java.util.List;
 
 import org.junit.Test;
 
-import models.Comment;
+import models.Category;
 import play.db.jpa.JPA;
 import util.AbstractTest;
 
-public class CommentModelDAOTest extends AbstractTest {
+public class CategoryModelDAOTest extends AbstractTest {
 
     @Test
-    public void testCommentDAOFindComment() {
+    public void testCategoryDAOFindCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = commentDAO.find(1);
-                assertEquals(comment.text, "test");
-                assertEquals(comment.user.id.intValue(), 1);
-                assertEquals(comment.recipe.id.intValue(), 1);
-                assertEquals(comment.replies.size(), 1);
-                assertNull(comment.parent);
+                Category category = categoryDAO.find(1);
+                assertEquals(category.text, "test");
+                assertEquals(category.recipes.size(), 1);
 
                 successTest();
             });
@@ -34,12 +31,12 @@ public class CommentModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testCommentDAONotFoundComment() {
+    public void testCategoryDAONotFoundCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = commentDAO.find(0);
-                assertNull(comment);
+                Category category = categoryDAO.find(0);
+                assertNull(category);
 
                 successTest();
             });
@@ -47,15 +44,15 @@ public class CommentModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testCommentDAOFindAllComments() {
+    public void testCategoryDAOFindAllCategories() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Comment> comments = commentDAO.all();
-                long count = commentDAO.count();
+                List<Category> categories = categoryDAO.all();
+                long count = categoryDAO.count();
                 assertEquals(count, 2);
 
-                assertEquals(comments.get(0).text, "test");
+                assertEquals(categories.get(0).text, "test");
 
                 successTest();
             });
@@ -63,16 +60,16 @@ public class CommentModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testCommentDAOPageComments() {
+    public void testCategoryDAOPageCategories() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Comment> comments = commentDAO.paginate(0, 1);
-                assertEquals(comments.get(0).text, "test");
-                assertEquals(comments.size(), 1);
+                List<Category> categories = categoryDAO.paginate(0, 1);
+                assertEquals(categories.get(0).text, "test");
+                assertEquals(categories.size(), 1);
 
-                comments = commentDAO.paginate(1, 1);
-                assertEquals(comments.size(), 1);
+                categories = categoryDAO.paginate(1, 1);
+                assertEquals(categories.size(), 1);
 
                 successTest();
             });
@@ -80,13 +77,13 @@ public class CommentModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testCommentDAOCreateComment() {
+    public void testCategoryDAOCreateCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment create = new Comment("test2", userDAO.find(1), recipeDAO.find(1), null);
-                Comment comment = commentDAO.create(create);
-                assertEquals(comment, create);
+                Category create = new Category("test2");
+                Category category = categoryDAO.create(create);
+                assertEquals(category, create);
 
                 successTest();
             });
@@ -94,13 +91,13 @@ public class CommentModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testCommentDAOUpdateComment() {
+    public void testCategoryDAOUpdateCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = commentDAO.find(1);
-                comment.text = "Update test";
-                Comment update = commentDAO.update(comment);
+                Category category = categoryDAO.find(1);
+                category.text = "Update test";
+                Category update = categoryDAO.update(category);
                 assertEquals(update.text, "Update test");
 
                 successTest();
@@ -109,18 +106,18 @@ public class CommentModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testCommentDAODeleteComment() {
+    public void testCategoryDAODeleteCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = commentDAO.find(1);
-                long count = commentDAO.count();
+                Category category = categoryDAO.find(1);
+                long count = categoryDAO.count();
                 assertEquals(count, 2);
 
-                commentDAO.delete(comment);
+                categoryDAO.delete(category);
 
-                count = commentDAO.count();
-                assertEquals(count, 0);
+                count = categoryDAO.count();
+                assertEquals(count, 1);
 
                 successTest();
             });
@@ -128,14 +125,14 @@ public class CommentModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testCommentDAODeleteNotFoundComment() {
+    public void testCategoryDAODeleteNotFoundCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Comment comment = commentDAO.find(0);
+                Category category = categoryDAO.find(0);
 
                 try {
-                    commentDAO.delete(comment);
+                    categoryDAO.delete(category);
                 } catch (Exception e) {
                 }
 

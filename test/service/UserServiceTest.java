@@ -8,13 +8,7 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import org.junit.Test;
 
@@ -22,91 +16,67 @@ import models.TypeUser;
 import models.User;
 import models.service.UserService;
 import play.db.jpa.JPA;
-import play.test.FakeApplication;
-import play.test.WithApplication;
-import util.InitDataLoader;
+import util.AbstractTest;
 
-public class UserServiceTest extends WithApplication {
-
-    @Override
-    public FakeApplication provideFakeApplication() {
-        return fakeApplication(inMemoryDatabase());
-    }
-
-    public void initializeData() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction trx = em.getTransaction();
-        try {
-
-            // Start the transaction
-            trx.begin();
-            InitDataLoader.load(em, "test/init-data.yml");
-            // Commit and end the transaction
-            trx.commit();
-        } catch (RuntimeException | IOException e) {
-            if (trx != null && trx.isActive()) {
-                trx.rollback();
-            }
-            throw e;
-        } finally {
-            // Close the manager
-            em.close();
-            emf.close();
-        }
-    }
+public class UserServiceTest extends AbstractTest {
 
     @Test
-    public void testServiceFindUser() {
+    public void testUserServiceFindUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 User user = UserService.find(1);
                 assertEquals(user.username, "test");
                 assertEquals(user.email, "test@testing.dev");
                 assertEquals(user.type, TypeUser.COMUN);
-                assertEquals(user.recipes.size(), 1);
+                assertEquals(user.recipes.size(), 2);
 
                 User admin = UserService.find(2);
                 assertEquals(admin.username, "admin");
                 assertEquals(admin.email, "admin@admin.dev");
                 assertEquals(admin.type, TypeUser.ADMIN);
                 assertEquals(admin.recipes.size(), 0);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceNotFoundUser() {
+    public void testUserServiceNotFoundUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 User user = UserService.find(0);
                 assertNull(user);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceFindAllUsers() {
+    public void testUserServiceFindAllUsers() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 List<User> users = UserService.all();
                 long count = UserService.count();
                 assertEquals(count, 2);
 
                 assertEquals(users.get(0).username, "test");
                 assertEquals(users.get(1).username, "admin");
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServicePageUsers() {
+    public void testUserServicePageUsers() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 List<User> users = UserService.paginate(0, 1);
                 assertEquals(users.get(0).username, "test");
                 assertEquals(users.size(), 1);
@@ -114,40 +84,46 @@ public class UserServiceTest extends WithApplication {
                 users = UserService.paginate(1, 1);
                 assertEquals(users.get(0).username, "admin");
                 assertEquals(users.size(), 1);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceCreateUser() {
+    public void testUserServiceCreateUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 User create = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
                 User user = UserService.create(create);
                 assertEquals(user, create);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceUpdateUser() {
+    public void testUserServiceUpdateUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 User user = UserService.find(1);
                 user.username = "Update test";
                 User update = UserService.update(user);
                 assertEquals(update.username, "Update test");
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteUser() {
+    public void testUserServiceDeleteUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 long count = UserService.count();
                 assertEquals(count, 2);
 
@@ -155,274 +131,323 @@ public class UserServiceTest extends WithApplication {
 
                 count = UserService.count();
                 assertEquals(count, 1);
-            });
-        });
-    }
 
-    public void testServiceDeleteNotFoundUser() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                assertFalse(UserService.delete(0));
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddFriend() {
+    public void testUserServiceDeleteNotFoundUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
+                assertFalse(UserService.delete(0));
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testUserServiceAddFriend() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
                 User friend = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
                 friend = UserService.create(friend);
 
                 assertTrue(UserService.addFriend(1, friend.id));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddFriendNotFound() {
+    public void testUserServiceAddFriendNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.addFriend(1, 0));
                 assertFalse(UserService.addFriend(0, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddFriendAlreadyFriends() {
+    public void testUserServiceAddFriendAlreadyFriends() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.addFriend(1, 2));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddFriendSameUser() {
+    public void testUserServiceAddFriendSameUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.addFriend(1, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteFriend() {
+    public void testUserServiceDeleteFriend() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertTrue(UserService.deleteFriend(1, 2));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteFriendNotFound() {
+    public void testUserServiceDeleteFriendNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.deleteFriend(1, 0));
                 assertFalse(UserService.deleteFriend(0, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteFriendNotExist() {
+    public void testUserServiceDeleteFriendNotExist() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 User friend = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
                 friend = UserService.create(friend);
 
                 assertFalse(UserService.deleteFriend(1, friend.id));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddFavorite() {
+    public void testUserServiceAddFavorite() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 User user = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
                 user = UserService.create(user);
 
                 assertTrue(UserService.addFavorite(user.id, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddFavoriteNotFound() {
+    public void testUserServiceAddFavoriteNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.addFavorite(1, 0));
                 assertFalse(UserService.addFavorite(0, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddFavoriteAlredyFav() {
+    public void testUserServiceAddFavoriteAlredyFav() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.addFavorite(1, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteFavorite() {
+    public void testUserServiceDeleteFavorite() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertTrue(UserService.deleteFavorite(1, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteFavoriteNotFound() {
+    public void testUserServiceDeleteFavoriteNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.deleteFavorite(1, 0));
                 assertFalse(UserService.deleteFavorite(0, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteFavoriteNotExist() {
+    public void testUserServiceDeleteFavoriteNotExist() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.deleteFavorite(2, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddRating() {
+    public void testUserServiceAddRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 User user = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
                 user = UserService.create(user);
 
                 assertTrue(UserService.addRating(user.id, 1, 4.3));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddRatingNotFound() {
+    public void testUserServiceAddRatingNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.addRating(1, 0, 0.0));
                 assertFalse(UserService.addRating(0, 1, 0.0));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddRatingAlredyRating() {
+    public void testUserServiceAddRatingAlredyRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.addRating(1, 1, 0.0));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddRatingValueIncorrect() {
+    public void testUserServiceAddRatingValueIncorrect() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.addRating(1, 1, -0.01));
                 assertFalse(UserService.addRating(1, 1, 5.01));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceUpdateRating() {
+    public void testUserServiceUpdateRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertTrue(UserService.updateRating(1, 1, 0.0));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceUpdateRatingNotFound() {
+    public void testUserServiceUpdateRatingNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.updateRating(1, 0, 0.0));
                 assertFalse(UserService.updateRating(0, 1, 0.0));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceUpdateRatingValueIncorrect() {
+    public void testUserServiceUpdateRatingValueIncorrect() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.updateRating(1, 1, -0.01));
                 assertFalse(UserService.updateRating(1, 1, 5.01));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteRating() {
+    public void testUserServiceDeleteRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertTrue(UserService.deleteRating(1, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteRatingNotFound() {
+    public void testUserServiceDeleteRatingNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(UserService.deleteRating(1, 0));
                 assertFalse(UserService.deleteRating(0, 1));
+
+                successTest();
             });
         });
     }

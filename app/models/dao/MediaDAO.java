@@ -3,91 +3,12 @@ package models.dao;
 import java.util.List;
 
 import models.Media;
+import models.base.CrudDAO;
 import play.db.jpa.JPA;
 
-public class MediaDAO {
-    static String TABLE = Media.class.getName();
-
-    /**
-     * Create a media
-     *
-     * @param Media model
-     *
-     * @return Media
-     */
-    public static Media create(Media model) {
-        model.prePersistData();
-        JPA.em().persist(model);
-        // Flush and refresh for check
-        JPA.em().flush();
-        JPA.em().refresh(model);
-        return model;
-    }
-
-    /**
-     * Find a media by id
-     *
-     * @param Integer id
-     *
-     * @return Media
-     */
-    public static Media find(Integer id) {
-        return JPA.em().find(Media.class, id);
-    }
-
-    /**
-     * Update a media
-     *
-     * @param Media model
-     *
-     * @return Media
-     */
-    public static Media update(Media model) {
-        Media aux = JPA.em().getReference(Media.class, model.id);
-        model.setCreatedAt(aux.getCreatedAt());
-        return JPA.em().merge(model);
-    }
-
-    /**
-     * Delete a media by id
-     *
-     * @param Media media
-     */
-    public static void delete(Media media) {
-        JPA.em().remove(media);
-    }
-
-    /**
-     * Get all media
-     *
-     * @return List<Media>
-     */
-    @SuppressWarnings("unchecked")
-    public static List<Media> all() {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
-    }
-
-    /**
-     * Get the page of media
-     *
-     * @param Integer page
-     * @param Integer size
-     *
-     * @return List<Media>
-     */
-    @SuppressWarnings("unchecked")
-    public static List<Media> paginate(Integer page, Integer size) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
-                .setMaxResults(size).getResultList();
-    }
-
-    /**
-     * Get the number of total row
-     *
-     * @return Long
-     */
-    public static Long count() {
-        return (Long) JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m").getSingleResult();
+public class MediaDAO extends CrudDAO<Media> {
+    public MediaDAO() {
+        super(Media.class);
     }
 
     /**
@@ -99,9 +20,8 @@ public class MediaDAO {
      *
      * @return List<Media>
      */
-    @SuppressWarnings("unchecked")
-    public static List<Media> check(Integer recipe_id, String filename, Integer id) {
+    public List<Media> check(Integer recipe_id, String filename, Integer id) {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND (filename = '" + filename
-                + "' AND recipe_id = '" + recipe_id + "') ORDER BY id").getResultList();
+                + "' AND recipe_id = '" + recipe_id + "') ORDER BY id", Media.class).getResultList();
     }
 }

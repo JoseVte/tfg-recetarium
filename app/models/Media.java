@@ -6,37 +6,24 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import models.base.Model;
 import models.dao.MediaDAO;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import util.Timestamp;
-import util.TimestampListener;
 
 @Entity
-@EntityListeners({ TimestampListener.class })
+@JsonPropertyOrder({ "id", "filename", "recipe", "created_at", "updated_at" })
 @Table(name = "media", uniqueConstraints = { @UniqueConstraint(columnNames = { "filename", "recipe_id" }) })
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Media extends Timestamp implements Serializable {
+public class Media extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer            id;
 
     @Constraints.Required
     @Column(nullable = false)
@@ -47,22 +34,41 @@ public class Media extends Timestamp implements Serializable {
     public Recipe             recipe;
 
     public Media() {
+        dao = new MediaDAO();
     }
 
     public Media(String filename, Recipe recipe) {
+        dao = new MediaDAO();
         this.filename = filename;
         this.recipe = recipe;
     }
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!MediaDAO.check(recipe.id, filename, id).isEmpty()) {
+        if (!((MediaDAO) dao).check(recipe.id, filename, id).isEmpty()) {
             errors.add(new ValidationError("filename", "This filename is already used for this recipe."));
         }
         return errors.isEmpty() ? null : errors;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#prePersistData()
+     */
+    @Override
     public void prePersistData() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#handleRelations(util.Model old)
+     */
+    @Override
+    public void handleRelations(Model old) {
+        Media media = (Media) old;
+        this.setCreatedAt(media.getCreatedAt());
     }
 
     /*

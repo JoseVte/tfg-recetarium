@@ -2,121 +2,87 @@ package controllers;
 
 import java.util.List;
 
-import play.*;
-import play.mvc.*;
-import play.libs.Json;
-import play.libs.Json.*;
-import play.data.Form;
-import play.db.jpa.*;
-
-import models.*;
-import models.service.RecipeService;
-import views.html.*;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-public class RecipeController extends Controller {
+import models.Recipe;
+import models.service.RecipeService;
+import play.data.Form;
+import play.db.jpa.Transactional;
+import play.libs.Json;
+import play.mvc.Result;
+
+public class RecipeController extends AbstractController {
     static Form<Recipe> recipeForm = Form.form(Recipe.class);
 
-    /**
-     * Add the content-type json to response
-     *
-     * @param Result httpResponse
-     *
-     * @return Result
-     */
-    public Result jsonResult(Result httpResponse) {
-        response().setContentType("application/json; charset=utf-8");
-        return httpResponse;
-    }
-
-    /**
-     * Get the recipes with pagination
-     *
-     * @param Integer page
-     * @param Integer size
-     *
-     * @return Result
-     */
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size) {
         List<Recipe> models = RecipeService.paginate(page - 1, size);
         Long count = RecipeService.count();
+        String[] routesString = new String[3];
+        routesString[0] = routes.RecipeController.list(page - 1, size).toString();
+        routesString[1] = routes.RecipeController.list(page + 1, size).toString();
+        routesString[2] = routes.RecipeController.list(page, size).toString();
 
-        ObjectNode result = Json.newObject();
-        result.put("data", Json.toJson(models));
-        result.put("total", count);
-        if (page > 1) result.put("link-prev", routes.RecipeController.list(page - 1, size).toString());
-        if (page * size < count) result.put("link-next", routes.RecipeController.list(page + 1, size).toString());
-        result.put("link-self", routes.RecipeController.list(page, size).toString());
+        ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString);
 
-        return jsonResult(ok(result));
+        return util.Json.jsonResult(response(), ok(result));
     }
 
-    /**
-     * Get one recipe by id
-     *
-     * @param Integer id
-     *
-     * @return Result
-     */
     @Transactional(readOnly = true)
     public Result get(Integer id) {
         Recipe recipe = RecipeService.find(id);
         if (recipe == null) {
-            ObjectNode result = Json.newObject();
-            result.put("error", "Not found " + id);
-            return jsonResult(notFound(result));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
         }
-        return jsonResult(ok(Json.toJson(recipe)));
+        return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
     }
 
     /**
-     * Create an recipe with the data of request
+     * Get one recipe by slug
+     *
+     * @param String slug
      *
      * @return Result
      */
+    @Transactional(readOnly = true)
+    public Result get(String slug) {
+        Recipe recipe = RecipeService.findBySlug(slug);
+        if (recipe == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + slug)));
+        }
+        return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
+    }
+
     @Transactional
     public Result create() {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
-            return jsonResult(badRequest(recipe.errorsAsJson()));
+            return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
         Recipe newRecipe = RecipeService.create(recipe.get());
-        return jsonResult(created(Json.toJson(newRecipe)));
+        return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
 
-    /**
-     * Update an recipe with the data of request
-     *
-     * @return Result
-     */
     @Transactional
-    public Result update() {
+    public Result update(Integer id) {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
-            return jsonResult(badRequest(recipe.errorsAsJson()));
+            return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
-        Recipe updatedRecipe = RecipeService.update(recipe.get());
-        return jsonResult(ok(Json.toJson(updatedRecipe)));
+        Recipe recipeModel = recipe.get();
+        if (recipeModel.id != id) {
+            return util.Json.jsonResult(response(),
+                    badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+        }
+        recipeModel = RecipeService.update(recipeModel);
+        return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
     }
 
-    /**
-     * Delete an recipe by id
-     *
-     * @param Integer id
-     *
-     * @return Result
-     */
     @Transactional
     public Result delete(Integer id) {
         if (RecipeService.delete(id)) {
-            ObjectNode result = Json.newObject();
-            result.put("msg", "Deleted " + id);
-            return jsonResult(ok(result));
+            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
         }
-        ObjectNode result = Json.newObject();
-        result.put("error", "Not found " + id);
-        return jsonResult(notFound(result));
+        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
     }
 }

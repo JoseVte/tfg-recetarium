@@ -7,40 +7,30 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import models.base.Model;
 import models.dao.RecipeDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
+import models.service.CategoryService;
+import models.service.UserService;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import util.Timestamp;
-import util.TimestampListener;
 
 @Entity
-@EntityListeners({ TimestampListener.class })
 @Table(name = "recipes")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Recipe extends Timestamp implements Serializable {
+@JsonPropertyOrder({ "id", "slug", "title", "description", "user", "category", "created_at", "updated_at" })
+public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer            id;
 
     @Constraints.Required
     @Column(unique = true, nullable = false)
@@ -51,57 +41,95 @@ public class Recipe extends Timestamp implements Serializable {
     public String             title;
     public String             description;
 
+    @Constraints.Required
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     public User               user;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "section_id")
-    public Section            section;
+    @JoinColumn(name = "category_id", nullable = true)
+    public Category           category;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment>      comments         = new ArrayList<Comment>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Favorite>     favorites        = new ArrayList<Favorite>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Rating>       ratings          = new ArrayList<Rating>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<RecipeTags>   tags             = new ArrayList<RecipeTags>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Media>        media            = new ArrayList<Media>();
 
     public Recipe() {
+        dao = new RecipeDAO();
     }
 
     public Recipe(String slug, String title, String description, User user) {
+        dao = new RecipeDAO();
         this.slug = slug;
         this.title = title;
         this.description = description;
         this.user = user;
     }
 
-    public Recipe(String slug, String title, String description, User user, Section section) {
+    public Recipe(String slug, String title, String description, User user, Category category) {
         this.slug = slug;
         this.title = title;
         this.description = description;
         this.user = user;
-        this.section = section;
+        this.category = category;
     }
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!RecipeDAO.check("slug", slug, id).isEmpty()) {
-            errors.add(new ValidationError("slug", "This slug is already used."));
+        if (id != null && dao.find(id) == null) {
+            errors.add(new ValidationError("id", "This recipe doesn't exist"));
+        }
+        if (!((RecipeDAO) dao).check("slug", slug, id).isEmpty()) {
+            errors.add(new ValidationError("slug", "This slug is already used"));
+        }
+        if (user != null && UserService.find(user.id) == null) {
+            errors.add(new ValidationError("user", "The user doesn't exist"));
+        }
+        if (category != null && CategoryService.find(category.id) == null) {
+            errors.add(new ValidationError("category", "The category doesn't exist"));
         }
         return errors.isEmpty() ? null : errors;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#prePersistData()
+     */
+    @Override
     public void prePersistData() {
         if (description != null && description.isEmpty()) description = null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#handleRelations(util.Model old)
+     */
+    @Override
+    public void handleRelations(Model old) {
+        Recipe recipe = (Recipe) old;
+        comments = recipe.comments;
+        favorites = recipe.favorites;
+        ratings = recipe.ratings;
+        tags = recipe.tags;
+        media = recipe.media;
     }
 
     /*
@@ -112,7 +140,7 @@ public class Recipe extends Timestamp implements Serializable {
     @Override
     public String toString() {
         return "Recipe [id=" + id + ", slug=" + slug + ", title=" + title + ", description=" + description + ", user="
-                + user.id + ", section=" + (section != null ? section.text : "") + ", comments=" + comments.size()
+                + user.id + ", section=" + (category != null ? category.text : "") + ", comments=" + comments.size()
                 + ", favorites=" + favorites.size() + ", ratings=" + ratings.size() + ", tags=" + tags.size()
                 + ", media=" + media.size() + "]";
     }

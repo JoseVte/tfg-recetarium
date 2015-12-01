@@ -6,60 +6,69 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import models.base.Model;
 import models.dao.TagDAO;
 import models.manytomany.RecipeTags;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import util.Timestamp;
-import util.TimestampListener;
 
 @Entity
-@EntityListeners({ TimestampListener.class })
 @Table(name = "tags")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Tag extends Timestamp implements Serializable {
+@JsonPropertyOrder({ "id", "text", "created_at", "updated_at" })
+public class Tag extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer            id;
 
     @Constraints.Required
     @Column(unique = true, nullable = false)
     public String             text;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<RecipeTags>   recipes          = new ArrayList<RecipeTags>();
 
     public Tag() {
+        dao = new TagDAO();
     }
 
     public Tag(String text) {
+        dao = new TagDAO();
         this.text = text;
     }
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!TagDAO.check("text", text, id).isEmpty()) {
+        if (!((TagDAO) dao).check("text", text, id).isEmpty()) {
             errors.add(new ValidationError("text", "This tag is already created."));
         }
         return errors.isEmpty() ? null : errors;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#prePersistData()
+     */
+    @Override
     public void prePersistData() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#handleRelations(util.Model old)
+     */
+    @Override
+    public void handleRelations(Model old) {
+        Tag tag = (Tag) old;
+        this.setCreatedAt(tag.getCreatedAt());
+        this.recipes = tag.recipes;
     }
 
     /*

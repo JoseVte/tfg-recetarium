@@ -8,6 +8,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.EntityTransaction;
+import javax.persistence.Persistence;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +43,28 @@ public class InitDataLoader {
         } else {
             entityManager.persist(obj);
             log.trace("saved: {}", obj);
+        }
+    }
+
+    public static void initializeData() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction trx = em.getTransaction();
+        try {
+
+            // Start the transaction
+            trx.begin();
+            load(em, "test/init-data.yml");
+            // Commit and end the transaction
+            trx.commit();
+        } catch (RuntimeException | IOException e) {
+            if (trx != null && trx.isActive()) {
+                trx.rollback();
+            }
+        } finally {
+            // Close the manager
+            em.close();
+            emf.close();
         }
     }
 }

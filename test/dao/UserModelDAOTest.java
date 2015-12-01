@@ -6,13 +6,7 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import org.junit.Test;
 
@@ -22,164 +16,153 @@ import models.User;
 import models.dao.RecipeDAO;
 import models.dao.UserDAO;
 import play.db.jpa.JPA;
-import play.test.FakeApplication;
-import play.test.WithApplication;
-import util.InitDataLoader;
+import util.AbstractTest;
 
-public class UserModelDAOTest extends WithApplication {
-
-    @Override
-    public FakeApplication provideFakeApplication() {
-        return fakeApplication(inMemoryDatabase());
-    }
-
-    public void initializeData() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction trx = em.getTransaction();
-        try {
-
-            // Start the transaction
-            trx.begin();
-            InitDataLoader.load(em, "test/init-data.yml");
-            // Commit and end the transaction
-            trx.commit();
-        } catch (RuntimeException | IOException e) {
-            if (trx != null && trx.isActive()) {
-                trx.rollback();
-            }
-            throw e;
-        } finally {
-            // Close the manager
-            em.close();
-            emf.close();
-        }
-    }
+public class UserModelDAOTest extends AbstractTest {
 
     @Test
-    public void testDAOFindUser() {
+    public void testUserDAOFindAnUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(1);
+                initializeDataModel();
+                User user = userDAO.find(1);
                 assertEquals(user.username, "test");
                 assertEquals(user.email, "test@testing.dev");
                 assertEquals(user.type, TypeUser.COMUN);
-                assertEquals(user.recipes.size(), 1);
+                assertEquals(user.recipes.size(), 2);
 
-                User admin = UserDAO.find(2);
+                User admin = userDAO.find(2);
                 assertEquals(admin.username, "admin");
                 assertEquals(admin.email, "admin@admin.dev");
                 assertEquals(admin.type, TypeUser.ADMIN);
                 assertEquals(admin.recipes.size(), 0);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAONotFoundUser() {
+    public void testUserDAONotFoundAnUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(0);
+                initializeDataModel();
+                User user = userDAO.find(0);
                 assertNull(user);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOFindAllUsers() {
+    public void testUserDAOFindAllUsers() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                List<User> users = UserDAO.all();
-                long count = UserDAO.count();
+                initializeDataModel();
+                List<User> users = userDAO.all();
+                long count = userDAO.count();
                 assertEquals(count, 2);
 
                 assertEquals(users.get(0).username, "test");
                 assertEquals(users.get(1).username, "admin");
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOPageUsers() {
+    public void testUserDAOPageUsers() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                List<User> users = UserDAO.paginate(0, 1);
+                initializeDataModel();
+                List<User> users = userDAO.paginate(0, 1);
                 assertEquals(users.get(0).username, "test");
                 assertEquals(users.size(), 1);
 
-                users = UserDAO.paginate(1, 1);
+                users = userDAO.paginate(1, 1);
                 assertEquals(users.get(0).username, "admin");
                 assertEquals(users.size(), 1);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOCreateUser() {
+    public void testUserDAOCreateUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 User create = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
-                User user = UserDAO.create(create);
+                User user = userDAO.create(create);
                 assertEquals(user, create);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOUpdateUser() {
+    public void testUserDAOUpdateUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(1);
+                initializeDataModel();
+                User user = userDAO.find(1);
                 user.username = "Update test";
-                User update = UserDAO.update(user);
+                User update = userDAO.update(user);
                 assertEquals(update.username, "Update test");
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAODeleteUser() {
+    public void testUserDAODeleteUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(1);
-                long count = UserDAO.count();
+                initializeDataModel();
+                User user = userDAO.find(1);
+                long count = userDAO.count();
                 assertEquals(count, 2);
 
-                UserDAO.delete(user);
+                userDAO.delete(user);
 
-                count = UserDAO.count();
+                count = userDAO.count();
                 assertEquals(count, 1);
-            });
-        });
-    }
 
-    @Test(expected = RuntimeException.class)
-    public void testDAODeleteNotFoundUser() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(0);
-
-                UserDAO.delete(user);
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOAddFriend() {
+    public void testUserDAODeleteNotFoundUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(1);
+                initializeDataModel();
+                User user = userDAO.find(0);
+
+                try {
+                    userDAO.delete(user);
+                } catch (Exception e) {
+                }
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testUserDAOAddFriend() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                User user = userDAO.find(1);
                 User friend = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
-                friend = UserDAO.create(friend);
+                friend = userDAO.create(friend);
 
                 assertEquals(user.myFriends.size(), 1);
                 assertEquals(friend.friends.size(), 0);
@@ -188,17 +171,19 @@ public class UserModelDAOTest extends WithApplication {
 
                 assertEquals(user.myFriends.size(), 2);
                 assertEquals(friend.friends.size(), 1);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAODeleteFriend() {
+    public void testUserDAODeleteFriend() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(1);
-                User admin = UserDAO.find(2);
+                initializeDataModel();
+                User user = userDAO.find(1);
+                User admin = userDAO.find(2);
 
                 assertEquals(user.myFriends.size(), 1);
                 assertEquals(admin.friends.size(), 1);
@@ -207,18 +192,20 @@ public class UserModelDAOTest extends WithApplication {
 
                 assertEquals(user.myFriends.size(), 0);
                 assertEquals(admin.friends.size(), 0);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOAddFavorite() {
+    public void testUserDAOAddFavorite() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Recipe recipe = RecipeDAO.find(1);
+                initializeDataModel();
+                Recipe recipe = recipeDAO.find(1);
                 User user = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
-                user = UserDAO.create(user);
+                user = userDAO.create(user);
 
                 assertEquals(user.recipesFavorites.size(), 0);
                 assertEquals(recipe.favorites.size(), 1);
@@ -227,17 +214,19 @@ public class UserModelDAOTest extends WithApplication {
 
                 assertEquals(user.recipesFavorites.size(), 1);
                 assertEquals(recipe.favorites.size(), 2);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAODeleteFavorite() {
+    public void testUserDAODeleteFavorite() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(1);
-                Recipe recipe = RecipeDAO.find(1);
+                initializeDataModel();
+                User user = userDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
 
                 assertEquals(user.recipesFavorites.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
@@ -246,18 +235,20 @@ public class UserModelDAOTest extends WithApplication {
 
                 assertEquals(user.recipesFavorites.size(), 0);
                 assertEquals(recipe.favorites.size(), 0);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOAddRating() {
+    public void testUserDAOAddRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                Recipe recipe = RecipeDAO.find(1);
+                initializeDataModel();
+                Recipe recipe = recipeDAO.find(1);
                 User user = new User("New test", "email@email.com", "password", null, null, TypeUser.COMUN);
-                user = UserDAO.create(user);
+                user = userDAO.create(user);
 
                 assertEquals(user.ratings.size(), 0);
                 assertEquals(recipe.ratings.size(), 1);
@@ -266,34 +257,38 @@ public class UserModelDAOTest extends WithApplication {
 
                 assertEquals(user.ratings.size(), 1);
                 assertEquals(recipe.ratings.size(), 2);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAOUpdateRating() {
+    public void testUserDAOUpdateRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(1);
-                Recipe recipe = RecipeDAO.find(1);
+                initializeDataModel();
+                User user = userDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
 
                 assertEquals(recipe.ratings.get(0).rating, new Double(2.5));
 
                 UserDAO.updateRating(user, recipe, 4.3);
 
                 assertEquals(recipe.ratings.get(0).rating, new Double(4.3));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testDAODeleteRating() {
+    public void testUserDAODeleteRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
-                User user = UserDAO.find(1);
-                Recipe recipe = RecipeDAO.find(1);
+                initializeDataModel();
+                User user = userDAO.find(1);
+                Recipe recipe = recipeDAO.find(1);
 
                 assertEquals(user.ratings.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
@@ -302,6 +297,8 @@ public class UserModelDAOTest extends WithApplication {
 
                 assertEquals(user.ratings.size(), 0);
                 assertEquals(recipe.ratings.size(), 0);
+
+                successTest();
             });
         });
     }

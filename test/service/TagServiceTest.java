@@ -8,135 +8,111 @@ import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
 
-import java.io.IOException;
 import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 
 import org.junit.Test;
 
 import models.Tag;
 import models.service.TagService;
 import play.db.jpa.JPA;
-import play.test.FakeApplication;
-import play.test.WithApplication;
-import util.InitDataLoader;
+import util.AbstractTest;
 
-public class TagServiceTest extends WithApplication {
-
-    @Override
-    public FakeApplication provideFakeApplication() {
-        return fakeApplication(inMemoryDatabase());
-    }
-
-    public void initializeData() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("memoryPersistenceUnit");
-        EntityManager em = emf.createEntityManager();
-        EntityTransaction trx = em.getTransaction();
-        try {
-
-            // Start the transaction
-            trx.begin();
-            InitDataLoader.load(em, "test/init-data.yml");
-            // Commit and end the transaction
-            trx.commit();
-        } catch (RuntimeException | IOException e) {
-            if (trx != null && trx.isActive()) {
-                trx.rollback();
-            }
-            throw e;
-        } finally {
-            // Close the manager
-            em.close();
-            emf.close();
-        }
-    }
+public class TagServiceTest extends AbstractTest {
 
     @Test
-    public void testServiceFindTag() {
+    public void testTagServiceFindTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 Tag tag = TagService.find(1);
                 assertEquals(tag.text, "test");
                 assertEquals(tag.recipes.size(), 1);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceNotFoundTag() {
+    public void testTagServiceNotFoundTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 Tag tag = TagService.find(0);
                 assertNull(tag);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceFindAllTags() {
+    public void testTagServiceFindAllTags() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 List<Tag> tags = TagService.all();
                 long count = TagService.count();
                 assertEquals(count, 1);
 
                 assertEquals(tags.get(0).text, "test");
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServicePageTags() {
+    public void testTagServicePageTags() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 List<Tag> tags = TagService.paginate(0, 1);
                 assertEquals(tags.get(0).text, "test");
                 assertEquals(tags.size(), 1);
 
                 tags = TagService.paginate(1, 1);
                 assertEquals(tags.size(), 0);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceCreateTag() {
+    public void testTagServiceCreateTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 Tag create = new Tag("test2");
                 Tag tag = TagService.create(create);
                 assertEquals(tag, create);
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceUpdateTag() {
+    public void testTagServiceUpdateTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 Tag tag = TagService.find(1);
                 tag.text = "Update test";
                 Tag update = TagService.update(tag);
                 assertEquals(update.text, "Update test");
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteTag() {
+    public void testTagServiceDeleteTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 long count = TagService.count();
                 assertEquals(count, 1);
 
@@ -144,87 +120,104 @@ public class TagServiceTest extends WithApplication {
 
                 count = TagService.count();
                 assertEquals(count, 0);
-            });
-        });
-    }
 
-    public void testServiceDeleteNotFoundTag() {
-        running(fakeApplication(inMemoryDatabase()), () -> {
-            JPA.withTransaction(() -> {
-                initializeData();
-                assertFalse(TagService.delete(0));
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddTag() {
+    public void testTagServiceDeleteNotFoundTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
+                assertFalse(TagService.delete(0));
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testTagServiceAddTag() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
                 Tag tag = new Tag("test2");
                 tag = TagService.create(tag);
 
                 assertTrue(TagService.addRecipe(tag.id, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddTagNotFound() {
+    public void testTagServiceAddTagNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(TagService.addRecipe(1, 0));
                 assertFalse(TagService.addRecipe(0, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceAddTagAlreadyTagged() {
+    public void testTagServiceAddTagAlreadyTagged() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(TagService.addRecipe(1, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteRecipeTag() {
+    public void testTagServiceDeleteRecipeTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertTrue(TagService.deleteRecipe(1, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteRecipeTagNotFound() {
+    public void testTagServiceDeleteRecipeTagNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
 
                 assertFalse(TagService.deleteRecipe(1, 0));
                 assertFalse(TagService.deleteRecipe(0, 1));
+
+                successTest();
             });
         });
     }
 
     @Test
-    public void testServiceDeleteRecipeTagNotExist() {
+    public void testTagServiceDeleteRecipeTagNotExist() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
-                initializeData();
+                initializeDataModel();
                 Tag tag = new Tag("test2");
                 tag = TagService.create(tag);
 
                 assertFalse(TagService.deleteRecipe(tag.id, 1));
+
+                successTest();
             });
         });
     }

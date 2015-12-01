@@ -6,59 +6,68 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import models.dao.SectionDAO;
+import models.base.Model;
+import models.dao.CategoryDAO;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
-import util.Timestamp;
-import util.TimestampListener;
 
 @Entity
-@EntityListeners({ TimestampListener.class })
-@Table(name = "sections")
-@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
-public class Section extends Timestamp implements Serializable {
+@Table(name = "categories")
+@JsonPropertyOrder({ "id", "text", "created_at", "updated_at" })
+public class Category extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer            id;
 
     @Constraints.Required
     @Column(unique = true, nullable = false)
     public String             text;
 
-    @OneToMany(mappedBy = "section", fetch = FetchType.LAZY, orphanRemoval = true)
+    @JsonIgnore
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Recipe>       recipes          = new ArrayList<Recipe>();
 
-    public Section() {
+    public Category() {
+        dao = new CategoryDAO();
     }
 
-    public Section(String text) {
+    public Category(String text) {
+        dao = new CategoryDAO();
         this.text = text;
     }
 
     public List<ValidationError> validate() {
         List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (!SectionDAO.check("text", text, id).isEmpty()) {
+        if (!((CategoryDAO) dao).check("text", text, id).isEmpty()) {
             errors.add(new ValidationError("text", "This section is already created."));
         }
         return errors.isEmpty() ? null : errors;
     }
 
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#prePersistData()
+     */
+    @Override
     public void prePersistData() {
+    }
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see util.Model#handleRelations(util.Model old)
+     */
+    @Override
+    public void handleRelations(Model old) {
+        Category category = ((Category) old);
+        this.setCreatedAt(category.getCreatedAt());
+        this.recipes = category.recipes;
     }
 
     /*

@@ -6,6 +6,12 @@ import models.Comment;
 import models.dao.CommentDAO;
 
 public class CommentService {
+    private static CommentDAO dao;
+
+    static {
+        dao = new CommentDAO();
+    }
+
     /**
      * Create a comment
      *
@@ -14,7 +20,7 @@ public class CommentService {
      * @return Comment
      */
     public static Comment create(Comment data) {
-        return CommentDAO.create(data);
+        return dao.create(data);
     }
 
     /**
@@ -25,7 +31,7 @@ public class CommentService {
      * @return Comment
      */
     public static Comment update(Comment data) {
-        return CommentDAO.update(data);
+        return dao.update(data);
     }
 
     /**
@@ -36,7 +42,7 @@ public class CommentService {
      * @return Comment
      */
     public static Comment find(Integer id) {
-        return CommentDAO.find(id);
+        return dao.find(id);
     }
 
     /**
@@ -45,9 +51,9 @@ public class CommentService {
      * @param Integer id
      */
     public static Boolean delete(Integer id) {
-        Comment comment = CommentDAO.find(id);
+        Comment comment = dao.find(id);
         if (comment != null) {
-            CommentDAO.delete(comment);
+            dao.delete(comment);
             return true;
         } else {
             return false;
@@ -60,7 +66,7 @@ public class CommentService {
      * @return List<Comment>
      */
     public static List<Comment> all() {
-        return CommentDAO.all();
+        return dao.all();
     }
 
     /**
@@ -72,7 +78,7 @@ public class CommentService {
      * @return List<Comment>
      */
     public static List<Comment> paginate(Integer page, Integer size) {
-        return CommentDAO.paginate(page, size);
+        return dao.paginate(page, size);
     }
 
     /**
@@ -81,6 +87,6 @@ public class CommentService {
      * @return Long
      */
     public static Long count() {
-        return CommentDAO.count();
+        return dao.count();
     }
 }
