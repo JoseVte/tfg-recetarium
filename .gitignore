@@ -19,3 +19,4 @@ project/sbt-ui.sbt
 project/idea.sbt
 project/activator-sbt-eclipse-shim.sbt
 /bin/
+.env

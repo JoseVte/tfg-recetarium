@@ -29,4 +29,7 @@ routesGenerator := InjectedRoutesGenerator
 // Compile the project before generating Eclipse files, so that generated .scala or .class files for views and routes are present
 //EclipseKeys.preTasks := Seq(compile in Compile)
 
+herokuAppName in Compile := "recetarium"
 javaOptions in Test += "-Dlogger.file=conf/test-logback.xml"
+javaOptions in Test += "-Dconfig.file=conf/test.conf"
+javaOptions in Production += "-Dconfig.file=conf/prod.conf"
