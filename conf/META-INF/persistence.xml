@@ -21,7 +21,7 @@
         <class>models.Recipe</class>
         <class>models.Comment</class>
         <class>models.Media</class>
-        <class>models.Section</class>
+        <class>models.Category</class>
         <class>models.Tag</class>
         <class>models.manytomany.Favorite</class>
         <class>models.manytomany.Friend</class>

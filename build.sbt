@@ -31,3 +31,5 @@ routesGenerator := InjectedRoutesGenerator
 
 herokuAppName in Compile := "recetarium"
 javaOptions in Test += "-Dlogger.file=conf/test-logback.xml"
+javaOptions in Test += "-Dconfig.file=conf/test.conf"
+javaOptions in Production += "-Dconfig.file=conf/prod.conf"
