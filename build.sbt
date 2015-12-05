@@ -16,6 +16,7 @@ libraryDependencies ++= Seq(
   "org.dbunit" % "dbunit" % "2.4.9",
   cache,
   javaWs,
+  filters,
   "org.codehaus.jackson" % "jackson-mapper-asl" % "1.8.5",
   "org.yaml" % "snakeyaml" % "1.16",
   "org.bitbucket.b_c" % "jose4j" % "0.4.4",
