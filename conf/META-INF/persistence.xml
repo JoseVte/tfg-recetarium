@@ -17,12 +17,22 @@
     <persistence-unit name="mySqlPersistenceUnit" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
         <non-jta-data-source>DefaultDS</non-jta-data-source>
+        <class>models.User</class>
+        <class>models.Recipe</class>
+        <class>models.Comment</class>
+        <class>models.Media</class>
+        <class>models.Category</class>
+        <class>models.Tag</class>
+        <class>models.manytomany.Favorite</class>
+        <class>models.manytomany.Friend</class>
+        <class>models.manytomany.Rating</class>
+        <class>models.manytomany.RecipeTags</class>
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL5Dialect"/>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
-            <!--  <property name="hibernate.show_sql" value="true"/>
+            <!-- <property name="hibernate.show_sql" value="true"/>
             <property name="hibernate.format_sql" value="true"/>
-            <property name="hibernate.use_sql_comments" value="true"/>  -->
+            <property name="hibernate.use_sql_comments" value="true"/> -->
         </properties>
     </persistence-unit>
 </persistence>

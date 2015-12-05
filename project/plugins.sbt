@@ -12,3 +12,6 @@ addSbtPlugin("com.typesafe.sbt" % "sbt-play-enhancer" % "1.1.0")
 
 // Plugin for eclipse
 addSbtPlugin("com.typesafe.sbteclipse" % "sbteclipse-plugin" % "4.0.0")
+
+// Heroku plugin
+addSbtPlugin("com.heroku" % "sbt-heroku" % "0.5.4")
