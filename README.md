@@ -1,3 +1,8 @@
+[![Issue Stats](http://issuestats.com/github/JoseVte/tfg-recetarium/badge/pr?style=flat)](http://issuestats.com/github/JoseVte/tfg-recetarium)
+[![Issue Stats](http://issuestats.com/github/JoseVte/tfg-recetarium/badge/issue?style=flat)](http://issuestats.com/github/JoseVte/tfg-recetarium)
+
+[![Build Status](http://104.197.128.78/jenkins/job/Recetarium/badge/icon)](http://104.197.128.78/jenkins/job/Recetarium/)
+
 API Recetarium
 ================================
 

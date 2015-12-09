@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import middleware.Admin;
 import models.User;
 import models.service.UserService;
 import play.Logger;
@@ -27,7 +28,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional(readOnly = true)
-    @Security.Authenticated(Secured.class)
+    @Security.Authenticated(Admin.class)
     @SuppressWarnings("deprecation")
     public Result list(Integer page, Integer size) {
         List<User> models = UserService.paginate(page - 1, size);
@@ -43,7 +44,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional(readOnly = true)
-    @Security.Authenticated(Secured.class)
+    @Security.Authenticated(Admin.class)
     public Result get(Integer id) {
         User user = UserService.find(id);
         if (user == null) {
@@ -53,7 +54,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
-    @Security.Authenticated(Secured.class)
+    @Security.Authenticated(Admin.class)
     public Result create() {
         Form<User> user = formModel.bindFromRequest();
         if (user.hasErrors()) {
@@ -70,7 +71,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
-    @Security.Authenticated(Secured.class)
+    @Security.Authenticated(Admin.class)
     public Result update(Integer id) {
         Form<User> user = formModel.bindFromRequest();
         if (user.hasErrors()) {
@@ -82,7 +83,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional
-    @Security.Authenticated(Secured.class)
+    @Security.Authenticated(Admin.class)
     public Result delete(Integer id) {
         if (UserService.delete(id)) {
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));

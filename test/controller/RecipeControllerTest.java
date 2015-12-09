@@ -8,6 +8,7 @@ import static play.mvc.Http.Status.BAD_REQUEST;
 import static play.mvc.Http.Status.CREATED;
 import static play.mvc.Http.Status.NOT_FOUND;
 import static play.mvc.Http.Status.OK;
+import static play.mvc.Http.Status.UNAUTHORIZED;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
@@ -33,6 +34,7 @@ public class RecipeControllerTest extends AbstractTest {
     ObjectNode dataError5;
     ObjectNode dataError6;
     ObjectNode dataError7;
+    ObjectNode loginJson;
 
     @SuppressWarnings("deprecation")
     public RecipeControllerTest() throws Exception {
@@ -82,6 +84,25 @@ public class RecipeControllerTest extends AbstractTest {
         dataError7.put("slug", "test-2");
         dataError7.put("user", idOk);
         dataError7.put("category", idOk);
+        
+        loginJson = Json.newObject();
+        loginJson.put("email", "test@testing.dev");
+        loginJson.put("password", "josevte1");
+    }
+    
+    @Test
+    public void testUserControllerUnauthorized() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataOk).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/recipes/1").put(dataOk.put("id", 1)).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/recipes/1").delete().get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+
+            successTest();
+        });
     }
 
     @Test
