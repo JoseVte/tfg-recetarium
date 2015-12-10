@@ -2,6 +2,8 @@ package models.dao;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import models.Category;
 import models.Recipe;
 import models.Tag;
@@ -10,6 +12,7 @@ import models.base.CrudDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
+import models.service.UserService;
 import play.db.jpa.JPA;
 
 public class RecipeDAO extends CrudDAO<Recipe> {
@@ -17,11 +20,39 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         super(Recipe.class);
     }
 
+    /**
+     * Find a recipe by the slug
+     *
+     * @param String slug
+     *
+     * @return Recipe
+     */
     public Recipe findBySlug(String slug) {
         List<Recipe> result = JPA.em()
                 .createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'", Recipe.class).getResultList();
         if (!result.isEmpty()) return result.get(0);
         return null;
+    }
+
+    /**
+     * Find a recipe if the email is from the user creator or an admin
+     *
+     * @param String email
+     * @param Integer idRecipe
+     *
+     * @return Recipe
+     */
+    public Recipe findByOwner(String email, Integer idRecipe) {
+        try {
+            User logged = UserService.findByEmailAddress(email);
+            if (logged.isAdmin()) {
+                return find(idRecipe);
+            }
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.user u WHERE m.id = '" + idRecipe
+                    + "' AND u.id = '" + logged.id + "'", Recipe.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     /**

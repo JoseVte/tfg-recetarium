@@ -184,4 +184,13 @@ public class User extends Model implements Serializable {
                 + friends.size() + ", recipesFavorites=" + recipesFavorites.size() + ", ratings=" + ratings.size()
                 + ", lostPassToken=" + lostPassToken + ", lostPassExpire=" + lostPassExpire + "]";
     }
+
+    /**
+     * Check if user is an admin
+     *
+     * @return boolean
+     */
+    public boolean isAdmin() {
+        return type.equals(TypeUser.ADMIN);
+    }
 }

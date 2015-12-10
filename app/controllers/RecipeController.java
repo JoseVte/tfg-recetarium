@@ -77,6 +77,8 @@ public class RecipeController extends AbstractController {
         if (recipeModel.id != id) {
             return util.Json.jsonResult(response(),
                     badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+        } else if (!RecipeService.checkOwner(request().username(), id)) {
+            return unauthorized();
         }
         recipeModel = RecipeService.update(recipeModel);
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
@@ -85,7 +87,7 @@ public class RecipeController extends AbstractController {
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id) {
-        if (RecipeService.delete(id)) {
+        if (RecipeService.delete(id, request().username())) {
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
         }
         return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));

@@ -110,7 +110,7 @@ public class UserControllerTest extends AbstractTest {
             successTest();
         });
     }
-    
+
     @Test
     public void testUserControllerLoggedButUnauthorized() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
@@ -121,16 +121,21 @@ public class UserControllerTest extends AbstractTest {
 
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(comunUser).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
-            
-            WSResponse response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+
+            WSResponse response = WS.url("http://localhost:3333/users/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
-            response = WS.url("http://localhost:3333/users").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+            response = WS.url("http://localhost:3333/users").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get()
+                    .get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
-            response = WS.url("http://localhost:3333/users").setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
+            response = WS.url("http://localhost:3333/users").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
+                    .post(dataOk).get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
-            response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 1)).get(timeout);
+            response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
+                    .put(dataOk.put("id", 1)).get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
-            response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
+            response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
+                    .delete().get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
 
             successTest();

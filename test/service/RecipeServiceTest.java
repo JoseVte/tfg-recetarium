@@ -158,7 +158,7 @@ public class RecipeServiceTest extends AbstractTest {
                 long count = RecipeService.count();
                 assertEquals(count, 2);
 
-                assertTrue(RecipeService.delete(1));
+                assertTrue(RecipeService.delete(1, "test@testing.dev"));
 
                 count = RecipeService.count();
                 assertEquals(count, 1);
@@ -173,7 +173,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                assertFalse(RecipeService.delete(0));
+                assertFalse(RecipeService.delete(0, "test@testing.dev"));
 
                 successTest();
             });
