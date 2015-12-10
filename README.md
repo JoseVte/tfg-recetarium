@@ -49,7 +49,7 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.3.2](/doc/rocket.png) 0.3.2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2)
+#### [![0.3.2](/doc/rocket-blue.png) 0.3.2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2)
 
 - Añadidos los middleware para evitar el acceso a zonas privadas.
 - Versionado de la API con tag en el README.
