@@ -8,6 +8,7 @@ import static play.mvc.Http.Status.BAD_REQUEST;
 import static play.mvc.Http.Status.CREATED;
 import static play.mvc.Http.Status.NOT_FOUND;
 import static play.mvc.Http.Status.OK;
+import static play.mvc.Http.Status.UNAUTHORIZED;
 import static play.test.Helpers.fakeApplication;
 import static play.test.Helpers.inMemoryDatabase;
 import static play.test.Helpers.running;
@@ -18,6 +19,7 @@ import org.junit.Test;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import controllers.AuthController;
 import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
@@ -33,6 +35,7 @@ public class RecipeControllerTest extends AbstractTest {
     ObjectNode dataError5;
     ObjectNode dataError6;
     ObjectNode dataError7;
+    ObjectNode loginJson;
 
     @SuppressWarnings("deprecation")
     public RecipeControllerTest() throws Exception {
@@ -82,6 +85,25 @@ public class RecipeControllerTest extends AbstractTest {
         dataError7.put("slug", "test-2");
         dataError7.put("user", idOk);
         dataError7.put("category", idOk);
+
+        loginJson = Json.newObject();
+        loginJson.put("email", "test@testing.dev");
+        loginJson.put("password", "josevte1");
+    }
+
+    @Test
+    public void testUserControllerUnauthorized() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataOk).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/recipes/1").put(dataOk.put("id", 1)).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/recipes/1").delete().get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+
+            successTest();
+        });
     }
 
     @Test
@@ -127,7 +149,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerPageRecipesOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes?page=1&size=1").get().get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes?page=1&size=1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -149,7 +174,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerCreateRecipeOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataOk).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
 
             assertEquals(CREATED, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -167,7 +195,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerCreateRecipeBadRequest1() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataError1).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError1).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -184,7 +215,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerCreateRecipeBadRequest2() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataError2).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError2).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -201,7 +235,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerCreateRecipeBadRequest3() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataError3).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError3).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -218,7 +255,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerCreateRecipeBadRequest4() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataError4).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError4).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -235,7 +275,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerCreateRecipeBadRequest5() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataError5).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError5).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -252,7 +295,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerCreateRecipeBadRequest6() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataError6).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError6).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -269,7 +315,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerCreateRecipeBadRequest7() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes").post(dataError7).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError7).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -286,7 +335,34 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").put(dataOk.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 1)).get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("id").intValue(), 1);
+            assertEquals(responseJson.get("title").asText(), "New recipe");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateRecipeOkRequestAdmin() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            loginJson = Json.newObject();
+            loginJson.put("email", "admin@admin.dev");
+            loginJson.put("password", "josevte1");
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 1)).get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -304,7 +380,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeBadRequest1() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").put(dataError1.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError1.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -321,7 +400,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeBadRequest2() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").put(dataError2.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError2.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -338,7 +420,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeBadRequest3() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").put(dataError3.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError3.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -355,7 +440,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeBadRequest4() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").put(dataError4.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError4.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -372,7 +460,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeBadRequest5() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").put(dataError5.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError5.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -389,7 +480,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeBadRequest6() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").put(dataError6.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError6.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -406,7 +500,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeBadRequest7() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").put(dataError7.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError7.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -423,7 +520,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeBadRequest8() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/2").put(dataOk.put("id", 1)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/2")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 1)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -440,7 +540,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/5").put(dataOk.put("id", 5)).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/5")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 5)).get(timeout);
 
             assertEquals(BAD_REQUEST, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -457,7 +560,33 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerDeleteRecipeOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/1").delete().get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("msg").asText(), "Deleted 1");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerDeleteRecipeOkRequestAdmin() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            loginJson = Json.newObject();
+            loginJson.put("email", "admin@admin.dev");
+            loginJson.put("password", "josevte1");
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -474,7 +603,10 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerDeleteRecipeNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            WSResponse response = WS.url("http://localhost:3333/recipes/5").delete().get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/5")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
 
             assertEquals(NOT_FOUND, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));

@@ -1,5 +1,7 @@
 ## Usuarios
 
+### Para poder acceder a las funciones de la API de los usuarios debes tener acceso **ADMIN**.
+
 #### Estructura JSON
 
 Los usuarios tienen la siguiente estructura:

@@ -1,7 +1,10 @@
-import play.api.mvc.EssentialFilter;
-import play.filters.cors.CORSFilter;
-import play.http.HttpFilters;
+package util;
+
 import javax.inject.Inject;
+
+import play.api.mvc.EssentialFilter;
+import play.http.HttpFilters;
+import play.filters.cors.CORSFilter;
 
 class Filters implements HttpFilters {
 

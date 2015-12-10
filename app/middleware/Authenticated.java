@@ -1,12 +1,13 @@
-package controllers;
+package middleware;
 
+import controllers.AuthController;
 import models.User;
 import models.service.UserService;
 import play.mvc.Http.Context;
 import play.mvc.Result;
 import play.mvc.Security;
 
-public class Secured extends Security.Authenticator {
+public class Authenticated extends Security.Authenticator {
 
     @Override
     public String getUsername(Context ctx) {

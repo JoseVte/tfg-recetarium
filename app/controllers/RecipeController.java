@@ -4,12 +4,14 @@ import java.util.List;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import middleware.Authenticated;
 import models.Recipe;
 import models.service.RecipeService;
 import play.data.Form;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Result;
+import play.mvc.Security;
 
 public class RecipeController extends AbstractController {
     static Form<Recipe> recipeForm = Form.form(Recipe.class);
@@ -54,6 +56,7 @@ public class RecipeController extends AbstractController {
     }
 
     @Transactional
+    @Security.Authenticated(Authenticated.class)
     public Result create() {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
@@ -64,6 +67,7 @@ public class RecipeController extends AbstractController {
     }
 
     @Transactional
+    @Security.Authenticated(Authenticated.class)
     public Result update(Integer id) {
         Form<Recipe> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
@@ -73,14 +77,17 @@ public class RecipeController extends AbstractController {
         if (recipeModel.id != id) {
             return util.Json.jsonResult(response(),
                     badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+        } else if (!RecipeService.checkOwner(request().username(), id)) {
+            return unauthorized();
         }
         recipeModel = RecipeService.update(recipeModel);
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
     }
 
     @Transactional
+    @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id) {
-        if (RecipeService.delete(id)) {
+        if (RecipeService.delete(id, request().username())) {
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
         }
         return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));

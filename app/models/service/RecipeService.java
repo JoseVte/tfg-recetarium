@@ -65,10 +65,11 @@ public class RecipeService {
     /**
      * Delete a recipe by id
      *
+     * @param String email
      * @param Integer id
      */
-    public static Boolean delete(Integer id) {
-        Recipe recipe = recipeDAO.find(id);
+    public static Boolean delete(Integer id, String email) {
+        Recipe recipe = recipeDAO.findByOwner(email, id);
         if (recipe != null) {
             recipeDAO.delete(recipe);
             return true;
@@ -105,6 +106,18 @@ public class RecipeService {
      */
     public static Long count() {
         return recipeDAO.count();
+    }
+
+    /**
+     * Get a recipe if this is the owner
+     *
+     * @param String email
+     * @param Integer idRecipe
+     *
+     * @return boolean
+     */
+    public static boolean checkOwner(String email, Integer idRecipe) {
+        return null != recipeDAO.findByOwner(email, idRecipe);
     }
 
     /**

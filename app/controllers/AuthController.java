@@ -9,6 +9,7 @@ import javax.inject.Inject;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+import middleware.Authenticated;
 import models.User;
 import models.service.EmailService;
 import models.service.UserService;
@@ -160,7 +161,7 @@ public class AuthController extends Controller {
      * @return Result
      */
     @Transactional
-    @Security.Authenticated(Secured.class)
+    @Security.Authenticated(Authenticated.class)
     public Result logout() {
         response().discardCookie(AUTH_TOKEN);
         return ok();
