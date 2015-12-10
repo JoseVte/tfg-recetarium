@@ -45,11 +45,14 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     public Recipe findByOwner(String email, Integer idRecipe) {
         try {
             User logged = UserService.findByEmailAddress(email);
-            if (logged.isAdmin()) {
-                return find(idRecipe);
+            if (logged != null) {
+                if (logged.isAdmin()) {
+                    return find(idRecipe);
+                }
+                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.user u WHERE m.id = '" + idRecipe
+                        + "' AND u.id = '" + logged.id + "'", Recipe.class).getSingleResult();
             }
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.user u WHERE m.id = '" + idRecipe
-                    + "' AND u.id = '" + logged.id + "'", Recipe.class).getSingleResult();
+            return null;
         } catch (NoResultException e) {
             return null;
         }

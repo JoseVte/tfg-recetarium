@@ -43,11 +43,55 @@ public class UserModelDAOTest extends AbstractTest {
     }
 
     @Test
+    public void testUserDAOFindAnUserByEmailAddress() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                User user = userDAO.findByEmailAddress("test@testing.dev");
+                assertEquals(user.username, "test");
+                assertEquals(user.email, "test@testing.dev");
+                assertEquals(user.type, TypeUser.COMUN);
+                assertEquals(user.recipes.size(), 2);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testUserDAOFindAnUserByEmailAddressAndPassword() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                User user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "josevte1");
+                assertEquals(user.username, "test");
+                assertEquals(user.email, "test@testing.dev");
+                assertEquals(user.type, TypeUser.COMUN);
+                assertEquals(user.recipes.size(), 2);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
     public void testUserDAONotFoundAnUser() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 User user = userDAO.find(0);
+                assertNull(user);
+
+                user = userDAO.findByEmailAddress("");
+                assertNull(user);
+
+                user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "");
+                assertNull(user);
+
+                user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "josevte1");
+                assertNull(user);
+
+                user = userDAO.findByEmailAddressAndPassword("", "");
                 assertNull(user);
 
                 successTest();

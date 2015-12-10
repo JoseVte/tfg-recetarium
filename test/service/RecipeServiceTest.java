@@ -169,11 +169,67 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
+    public void testRecipeServiceDeleteRecipeAsAdmin() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                long count = RecipeService.count();
+                assertEquals(count, 2);
+
+                assertTrue(RecipeService.delete(1, "admin@admin.dev"));
+
+                count = RecipeService.count();
+                assertEquals(count, 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
     public void testRecipeServiceDeleteNotFoundRecipe() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 assertFalse(RecipeService.delete(0, "test@testing.dev"));
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceDeleteNotOwnerRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                assertFalse(RecipeService.delete(1, ""));
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceCheckOwner() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                assertTrue(RecipeService.checkOwner("test@testing.dev", 1));
+                assertTrue(RecipeService.checkOwner("admin@admin.dev", 1));
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceCheckOwnerFail() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                assertFalse(RecipeService.checkOwner("test@testing.dev", 0));
+                assertFalse(RecipeService.checkOwner("", 1));
 
                 successTest();
             });
