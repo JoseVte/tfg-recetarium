@@ -88,7 +88,7 @@ public class UserModelDAOTest extends AbstractTest {
                 user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "");
                 assertNull(user);
 
-                user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "josevte1");
+                user = userDAO.findByEmailAddressAndPassword("", "josevte1");
                 assertNull(user);
 
                 user = userDAO.findByEmailAddressAndPassword("", "");
