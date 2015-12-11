@@ -22,19 +22,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import controllers.UserController.UserRequest;
 import models.base.Model;
-import models.dao.UserDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
 import play.data.validation.Constraints;
-import play.data.validation.ValidationError;
 import util.Encryptation;
 
 @Entity
 @Table(name = "users")
-@JsonPropertyOrder({ "id", "username", "email", "password", "first_name", "last_name", "type", "createdAt",
-        "updatedAt" })
+@JsonPropertyOrder({ "id", "username", "email", "first_name", "last_name", "type", "created_at", "updated_at" })
 public class User extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -47,6 +45,7 @@ public class User extends Model implements Serializable {
     @Column(nullable = false, unique = true)
     public String             email;
 
+    @JsonIgnore
     @Column(nullable = false)
     public String             password;
 
@@ -96,17 +95,11 @@ public class User extends Model implements Serializable {
     public List<Rating>       ratings          = new ArrayList<Rating>();
 
     @Transient
-    private UserDAO           dao;
-
-    @Transient
     private boolean           updatePassword   = true;
 
-    public User() {
-        dao = new UserDAO();
-    }
+    public User() {}
 
     public User(String username, String email, String password, String firstName, String lastName, TypeUser type) {
-        dao = new UserDAO();
         this.username = username;
         this.email = email;
         this.password = password;
@@ -115,21 +108,14 @@ public class User extends Model implements Serializable {
         this.type = type;
     }
 
-    public List<ValidationError> validate() {
-        List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (id != null && dao.find(id) == null) {
-            errors.add(new ValidationError("id", "This user doesn't exist"));
-        }
-        if (!dao.where("email", email, id).isEmpty()) {
-            errors.add(new ValidationError("email", "This e-mail is already registered"));
-        }
-        if (!dao.where("username", username, id).isEmpty()) {
-            errors.add(new ValidationError("username", "This username is already registered"));
-        }
-        if ((id == null || dao.find(id) == null) && (password == null || password.isEmpty())) {
-            errors.add(new ValidationError("password", "This field is required"));
-        }
-        return errors.isEmpty() ? null : errors;
+    public User(UserRequest user) {
+        this.id = user.id;
+        this.username = user.username;
+        this.email = user.email;
+        this.password = user.password;
+        this.firstName = user.firstName;
+        this.lastName = user.lastName;
+        this.type = user.type;
     }
 
     /*
@@ -193,46 +179,5 @@ public class User extends Model implements Serializable {
     @JsonIgnore
     public boolean isAdmin() {
         return type.equals(TypeUser.ADMIN);
-    }
-
-    @JsonIgnore
-    public UserResponse getResponseModel() {
-        return new UserResponse(this);
-    }
-
-    @JsonPropertyOrder({ "id", "username", "email", "first_name", "last_name", "type", "created_at", "updated_at" })
-    public static class UserResponse {
-    	public Integer id;
-        public String username;
-        public String email;
-        public String first_name;
-        public String last_name;
-        public String type;
-        public Date created_at;
-        public Date updated_at;
-        public UserResponse() {}
-		public UserResponse(Integer id, String username, String email, String first_name, String last_name, String type,
-				Date created_at, Date updated_at) {
-			this.id = id;
-			this.username = username;
-			this.email = email;
-			this.first_name = first_name;
-			this.last_name = last_name;
-			this.type = type;
-			this.created_at = created_at;
-			this.updated_at = updated_at;
-		}
-
-        public UserResponse(User user) {
-            this.id = user.id;
-            this.username = user.username;
-            this.email = user.email;
-            this.first_name = user.firstName;
-            this.last_name = user.lastName;
-            this.type = user.type.name();
-            this.created_at = user.getCreatedAt();
-            this.updated_at = user.getUpdatedAt();
-        }
-
     }
 }

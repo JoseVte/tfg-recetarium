@@ -127,7 +127,6 @@ public class Json {
         try {
             // Validate the JWT and process it to the Claims
             JwtClaims jwtClaims = jwtConsumer.processToClaims(jwt);
-            System.out.println(jwtClaims.getSubject());
             return jwtClaims.getSubject();
         } catch (InvalidJwtException | MalformedClaimException e) {
             return null;

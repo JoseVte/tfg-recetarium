@@ -16,7 +16,6 @@ public class Admin extends Security.Authenticator {
         if ((authTokenHeaderValues != null) && (authTokenHeaderValues.length == 1)
                 && (authTokenHeaderValues[0] != null)) {
             user = UserService.checkJWT(authTokenHeaderValues[0]);
-            System.out.println(user);
             if (user != null && user.isAdmin()) {
                 ctx.args.put("user", user);
                 ctx.response().discardCookie(AuthController.AUTH_TOKEN);

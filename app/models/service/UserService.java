@@ -5,6 +5,7 @@ import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
 import controllers.AuthController.Register;
+import controllers.UserController.UserRequest;
 import models.Recipe;
 import models.User;
 import models.dao.UserDAO;
@@ -31,6 +32,20 @@ public class UserService {
      */
     public static User create(User data) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return userDAO.create(data);
+    }
+
+    /**
+     * Create an user
+     *
+     * @param UserRequest data
+     *
+     * @return User
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     */
+    public static User create(UserRequest data) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        User user = new User(data.username, data.email, data.password, data.firstName, data.lastName, data.type);
+        return userDAO.create(user);
     }
 
     /**
