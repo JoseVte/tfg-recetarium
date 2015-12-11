@@ -50,7 +50,7 @@ public class UserController extends AbstractController {
         if (user == null) {
             return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
         }
-        return util.Json.jsonResult(response(), ok(Json.toJson(user)));
+        return util.Json.jsonResult(response(), ok(Json.toJson(user.getResponseModel())));
     }
 
     @Transactional

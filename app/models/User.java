@@ -134,7 +134,7 @@ public class User extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#prePersistData()
      */
     @Override
@@ -152,7 +152,7 @@ public class User extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#handleRelations(util.Model old)
      */
     @Override
@@ -190,7 +190,49 @@ public class User extends Model implements Serializable {
      *
      * @return boolean
      */
+    @JsonIgnore
     public boolean isAdmin() {
         return type.equals(TypeUser.ADMIN);
+    }
+
+    @JsonIgnore
+    public UserResponse getResponseModel() {
+        return new UserResponse(this);
+    }
+
+    @JsonPropertyOrder({ "id", "username", "email", "first_name", "last_name", "type", "created_at", "updated_at" })
+    public static class UserResponse {
+    	public Integer id;
+        public String username;
+        public String email;
+        public String first_name;
+        public String last_name;
+        public String type;
+        public Date created_at;
+        public Date updated_at;
+        public UserResponse() {}
+		public UserResponse(Integer id, String username, String email, String first_name, String last_name, String type,
+				Date created_at, Date updated_at) {
+			this.id = id;
+			this.username = username;
+			this.email = email;
+			this.first_name = first_name;
+			this.last_name = last_name;
+			this.type = type;
+			this.created_at = created_at;
+			this.updated_at = updated_at;
+		}
+
+        public UserResponse(User user) {
+            this.id = user.id;
+            this.username = user.username;
+            this.email = user.email;
+            this.first_name = user.firstName;
+            this.last_name = user.lastName;
+            this.type = user.type.name();
+            this.created_at = user.getCreatedAt();
+            this.updated_at = user.getUpdatedAt();
+        }
+
     }
 }
