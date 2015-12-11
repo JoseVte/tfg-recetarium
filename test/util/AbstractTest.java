@@ -50,11 +50,11 @@ public abstract class AbstractTest extends WithApplication {
 
     public void initializeDataController() {
         InitDataLoader.initializeData();
-        if (OS.equals("Linux")) {
+        if (isJenkins) {
+            System.out.print("Test Name: " + Thread.currentThread().getStackTrace()[4].getMethodName() + "\t\t");
+        } else if (OS.equals("Linux")) {
             System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
                     + Thread.currentThread().getStackTrace()[5].getMethodName() + ANSI_RESET + "\t\t");
-        } else if (isJenkins) {
-            System.out.print("Test Name: " + Thread.currentThread().getStackTrace()[4].getMethodName() + "\t\t");
         } else {
             System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
                     + Thread.currentThread().getStackTrace()[4].getMethodName() + ANSI_RESET + "\t\t");
@@ -63,11 +63,11 @@ public abstract class AbstractTest extends WithApplication {
 
     public void initializeDataModel() {
         InitDataLoader.initializeData();
-        if (OS.equals("Linux")) {
+        if (isJenkins) {
+            System.out.print("Test Name: " + Thread.currentThread().getStackTrace()[9].getMethodName() + "\t\t");
+        } else if (OS.equals("Linux")) {
             System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
                     + Thread.currentThread().getStackTrace()[12].getMethodName() + ANSI_RESET + "\t\t");
-        } else if (isJenkins) {
-            System.out.print("Test Name: " + Thread.currentThread().getStackTrace()[9].getMethodName() + "\t\t");
         } else {
             System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
                     + Thread.currentThread().getStackTrace()[9].getMethodName() + ANSI_RESET + "\t\t");
@@ -76,7 +76,7 @@ public abstract class AbstractTest extends WithApplication {
 
     public void successTest() {
     	if (isJenkins) {
-            System.out.print("[success]");
+            System.out.println("[success]");
         } else {
         	System.out.println("[" + ANSI_GREEN + "success" + ANSI_RESET + "]");
         }
