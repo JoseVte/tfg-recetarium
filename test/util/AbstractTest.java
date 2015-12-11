@@ -59,6 +59,7 @@ public abstract class AbstractTest extends WithApplication {
 
     public void initializeDataModel() {
         InitDataLoader.initializeData();
+        System.out.println(System.getProperty("user.name"));
         if (OS.equals("Linux")) {
             System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
                     + Thread.currentThread().getStackTrace()[12].getMethodName() + ANSI_RESET + "\t\t");
