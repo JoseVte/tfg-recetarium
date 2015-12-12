@@ -44,8 +44,7 @@ public class UserService {
      * @throws NoSuchAlgorithmException
      */
     public static User create(UserRequest data) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        User user = new User(data.username, data.email, data.password, data.firstName, data.lastName, data.type);
-        return userDAO.create(user);
+        return userDAO.create(new User(data));
     }
 
     /**
@@ -57,6 +56,17 @@ public class UserService {
      */
     public static User update(User data) {
         return userDAO.update(data);
+    }
+
+    /**
+     * Update an user
+     *
+     * @param UserRequest data
+     *
+     * @return User
+     */
+    public static User update(UserRequest data) {
+        return userDAO.update(new User(data));
     }
 
     /**

@@ -122,14 +122,8 @@ public class UserControllerTest extends AbstractTest {
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(comunUser).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
 
-            WSResponse response = WS.url("http://localhost:3333/users/1")
-                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
-            assertEquals(UNAUTHORIZED, response.getStatus());
-            response = WS.url("http://localhost:3333/users").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get()
-                    .get(timeout);
-            assertEquals(UNAUTHORIZED, response.getStatus());
-            response = WS.url("http://localhost:3333/users").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
-                    .post(dataOk).get(timeout);
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
             response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
                     .put(dataOk.put("id", 1)).get(timeout);

@@ -74,10 +74,9 @@ public class AuthController extends Controller {
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             return util.Json.jsonResult(response(),
-                        internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
 
-        
     }
 
     /**
@@ -152,7 +151,8 @@ public class AuthController extends Controller {
 
         UserService.changePassword(reset.get().email, reset.get().password);
 
-        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
+        return util.Json.jsonResult(response(),
+                ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
     }
 
     /**
@@ -185,13 +185,13 @@ public class AuthController extends Controller {
 
     public static class Register extends Login {
         @Constraints.Required
-        public String   username;
+        public String username;
 
         @Constraints.Required
-        public String   passwordRepeat;
+        public String passwordRepeat;
 
-        public String   firstName;
-        public String   lastName;
+        public String firstName;
+        public String lastName;
 
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -206,6 +206,12 @@ public class AuthController extends Controller {
                 errors.add(new ValidationError("passwordRepeat", "The passwords must be equals"));
             }
             return errors.isEmpty() ? null : errors;
+        }
+
+        @Override
+        public String toString() {
+            return "User [username=" + username + ", email=" + email + ", password=" + password + ", firstName="
+                    + firstName + ", lastName=" + lastName + "]";
         }
     }
 

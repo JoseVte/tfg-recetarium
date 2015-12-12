@@ -27,7 +27,6 @@ import models.base.Model;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
-import play.data.validation.Constraints;
 import util.Encryptation;
 
 @Entity
@@ -36,12 +35,9 @@ import util.Encryptation;
 public class User extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Constraints.Required
     @Column(nullable = false, unique = true)
     public String             username;
 
-    @Constraints.Required
-    @Constraints.Email
     @Column(nullable = false, unique = true)
     public String             email;
 
@@ -56,7 +52,6 @@ public class User extends Model implements Serializable {
     @JsonProperty(value = "last_name")
     public String             lastName;
 
-    @Constraints.Required
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public TypeUser           type;
@@ -97,7 +92,8 @@ public class User extends Model implements Serializable {
     @Transient
     private boolean           updatePassword   = true;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String username, String email, String password, String firstName, String lastName, TypeUser type) {
         this.username = username;

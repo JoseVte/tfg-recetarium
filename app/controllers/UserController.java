@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import middleware.Admin;
+import middleware.Authenticated;
 import models.TypeUser;
 import models.User;
 import models.dao.UserDAO;
@@ -23,7 +24,7 @@ import play.mvc.Security;
 import views.html.*;
 
 public class UserController extends AbstractController {
-    Form<User> formModel = Form.form(User.class);
+    Form<UserRequest> formModel = Form.form(UserRequest.class);
 
     /**
      * Get the index page
@@ -35,7 +36,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional(readOnly = true)
-    @Security.Authenticated(Admin.class)
+    @Security.Authenticated(Authenticated.class)
     @SuppressWarnings("deprecation")
     public Result list(Integer page, Integer size) {
         List<User> models = UserService.paginate(page - 1, size);
@@ -51,7 +52,7 @@ public class UserController extends AbstractController {
     }
 
     @Transactional(readOnly = true)
-    @Security.Authenticated(Admin.class)
+    @Security.Authenticated(Authenticated.class)
     public Result get(Integer id) {
         User user = UserService.find(id);
         if (user == null) {
@@ -63,7 +64,7 @@ public class UserController extends AbstractController {
     @Transactional
     @Security.Authenticated(Admin.class)
     public Result create() {
-        Form<UserRequest> user = Form.form(UserRequest.class).bindFromRequest();
+        Form<UserRequest> user = formModel.bindFromRequest();
         if (user.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
         }
@@ -80,16 +81,15 @@ public class UserController extends AbstractController {
     @Transactional
     @Security.Authenticated(Admin.class)
     public Result update(Integer id) {
-        Form<UserRequest> user = Form.form(UserRequest.class).bindFromRequest();
+        Form<UserRequest> user = formModel.bindFromRequest();
         if (user.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
         }
-        User userModel = new User(user.get());
-        if (userModel.id != id) {
+        if (user.get().id != id) {
             return util.Json.jsonResult(response(),
                     badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
         }
-        userModel = UserService.update(userModel);
+        User userModel = UserService.update(user.get());
         return util.Json.jsonResult(response(), ok(Json.toJson(userModel)));
     }
 
@@ -103,28 +103,28 @@ public class UserController extends AbstractController {
     }
 
     public static class UserRequest {
-        public Integer            id = null;
+        public Integer  id = null;
 
         @Constraints.Required
-        public String             username;
+        public String   username;
 
         @Constraints.Required
         @Constraints.Email
-        public String             email;
+        public String   email;
 
         @Constraints.Required
-        public String             password;
+        public String   password;
 
         @JsonProperty(value = "first_name")
-        public String             firstName;
+        public String   firstName;
         @JsonProperty(value = "last_name")
-        public String             lastName;
+        public String   lastName;
 
         @Constraints.Required
-        public TypeUser           type;
+        public TypeUser type;
 
         @JsonIgnore
-        private UserDAO           dao;
+        private UserDAO dao;
 
         public UserRequest() {
             dao = new UserDAO();
