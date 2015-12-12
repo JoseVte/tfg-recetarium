@@ -2,7 +2,19 @@
 
 #### Estructura JSON
 
-Las recetas tienen la siguiente estructura:
+El formato de entrada de una receta tiene la siguiente estructura:
+
+```json
+{
+  "id": "int (null si es una nueva receta)",
+  "slug": "string",
+  "title": "string",
+  "description": "string (nullable)",
+  "category": "categoria en JSON (nullable)"
+}
+```
+
+El formato de salida de una receta tiene la siguiente estructura:
 
 ```json
 {
@@ -72,11 +84,12 @@ Devuelve un error `404` si no se encuentra la receta:
 
 #### Crear una receta nueva
 
-Para crear una receta se necesita enviar la [estructura de la receta](#estructura-json) sin el `ID`, `created_at` y `updated_at`:
+Para crear una receta se necesita enviar el `JWT` en la cabecera **X-Auth-Token** y el [formato de entrada de la receta](#estructura-json):
 
 ```
 POST /recipes
 ```
+Si el `JWT` es incorrecto se devuelve el codigo `401`.
 
 Si se crea correctamente devuelve la nueva receta con un codigo `201`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
 
@@ -95,7 +108,7 @@ Si se crea correctamente devuelve la nueva receta con un codigo `201`, pero si o
 
 #### Actualizar una receta ya existente
 
-Para actualizar los datos de una receta se debe enviar toda la [estructura de la receta](#estructura-json) menos `created_at` y `updated_at`:
+Para actualizar los datos de una receta se debe enviar el `JWT` en la cabecera **X-Auth-Token** y el [formato de entrada de la receta](#estructura-json) añadiendo el `ID`:
 
 ```
 PUT   /recipes/{id}
@@ -104,6 +117,8 @@ PATCH /recipes/{id}
 PUT   /recipes/1
 PATCH /recipes/1
 ```
+
+Si el `JWT` es incorrecto o la receta no pertenece al usuario actual (salvo que se trate de un **ADMIN**) se devuelve el codigo `401`.
 
 Si se actualiza correctamente devuelve la receta con los nuevos datos con un codigo `200`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
 
@@ -122,7 +137,7 @@ Si se actualiza correctamente devuelve la receta con los nuevos datos con un cod
 
 #### Borrar una receta
 
-Se borra una receta a partir del `ID`:
+Se borra una receta a partir del `ID`. Para ello tambien se debe enviar el `JWT` en la cabecera **X-Auth-Token**:
 
 ```
 DELETE /recipes/{id}
@@ -137,6 +152,8 @@ Si se borra correctamente devuelve un mensaje advirtiendo de que se ha completad
     "msg": "Deleted {id}"
 }
 ```
+
+Si el `JWT` es incorrecto se devuelve el codigo `401`.
 
 Devuelve un error `404` si no se encuentra la receta:
 

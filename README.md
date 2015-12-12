@@ -10,32 +10,32 @@ API Recetarium
 
 #### Recetas
 
-| Acción | URI |
-| ------ | --- |
-| [Listado por páginas](/doc/recetas-doc.md#paginación) | **GET**    /recipes(?page=*&size=*) |
-| [Obtener por slug](/doc/recetas-doc.md#obtener-una-receta-por-slug) | **GET**    /recipes/{slug} |
-| [Crear](/doc/recetas-doc.md#crear-una-receta-nueva) | **POST**   /recipes |
-| [Actualizar](/doc/recetas-doc.md#actualizar-una-receta-ya-existente) |  **PUT**    /recipes/{id} <br> **PATCH**  /recipes/{id} |
-| [Borrar](/doc/recetas-doc.md#borrar-una-receta) |  **DELETE** /recipes/{id} |
+| Acción | URI | Login |
+| ------ | --- | ----- |
+| [Listado por páginas](/doc/recetas-doc.md#paginación) | **GET**    /recipes(?page=*&size=*) | --- |
+| [Obtener por slug](/doc/recetas-doc.md#obtener-una-receta-por-slug) | **GET**    /recipes/{slug} | --- |
+| [Crear](/doc/recetas-doc.md#crear-una-receta-nueva) | **POST**   /recipes | COMUN |
+| [Actualizar](/doc/recetas-doc.md#actualizar-una-receta-ya-existente) |  **PUT**    /recipes/{id} <br> **PATCH**  /recipes/{id} | COMUN |
+| [Borrar](/doc/recetas-doc.md#borrar-una-receta) |  **DELETE** /recipes/{id} | COMUN |
 
 #### Autentificación
 
-| Acción | URI |
-| ------ | --- |
-| [Loguear un usuario](/doc/auth-doc.md#loguear-un-usuario) | **POST**    /auth/login |
-| [Registrar un usuario](/doc/auth-doc.md#registrar-un-usuario) | **POST**    /auth/register |
-| [Enviar email para reiniciar la password](/doc/auth-doc.md#enviar-email-para-reiniciar-la-password) | **POST**    /auth/reset/password |
-| [Cambia la password](/doc/auth-doc.md#cambiar-la-password) | **PUT**     /auth/reset/password <br> **PATCH**   /auth/reset/password |
+| Acción | URI | Login |
+| ------ | --- | ----- |
+| [Loguear un usuario](/doc/auth-doc.md#loguear-un-usuario) | **POST**    /auth/login | --- |
+| [Registrar un usuario](/doc/auth-doc.md#registrar-un-usuario) | **POST**    /auth/register | --- |
+| [Enviar email para reiniciar la password](/doc/auth-doc.md#enviar-email-para-reiniciar-la-password) | **POST**    /auth/reset/password | --- |
+| [Cambia la password](/doc/auth-doc.md#cambiar-la-password) | **PUT**     /auth/reset/password <br> **PATCH**   /auth/reset/password | --- |
 
 #### Usuarios
 
-| Acción | URI |
-| ------ | --- |
-| [Listado por páginas](/doc/user-doc.md#paginación) | **GET**    /users(?page=*&size=*) |
-| [Obtener por id](/doc/user-doc.md#obtener-un-usuario-por-id) | **GET**    /users/{id} |
-| [Crear](/doc/user-doc.md#crear-un-usuario-nuevo) | **POST**   /users |
-| [Actualizar](/doc/user-doc.md#actualizar-un-usuario-ya-existente) |  **PUT**    /users/{id} <br> **PATCH**  /users/{id} |
-| [Borrar](/doc/user-doc.md#borrar-un-usuario) |  **DELETE** /users/{id} |
+| Acción | URI | Login |
+| ------ | --- | ----- |
+| [Listado por páginas](/doc/user-doc.md#paginación) | **GET**    /users(?page=*&size=*) | COMUN |
+| [Obtener por id](/doc/user-doc.md#obtener-un-usuario-por-id) | **GET**    /users/{id} | COMUN |
+| [Crear](/doc/user-doc.md#crear-un-usuario-nuevo) | **POST**   /users | COMUN |
+| [Actualizar](/doc/user-doc.md#actualizar-un-usuario-ya-existente) |  **PUT**    /users/{id} <br> **PATCH**  /users/{id} | COMUN |
+| [Borrar](/doc/user-doc.md#borrar-un-usuario) |  **DELETE** /users/{id} | COMUN |
 
 -----
 
@@ -49,11 +49,11 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.3.2-hotfix](/doc/rocket-blue.png) 0.3.2-hotfix](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2-hotfix)
+#### [![0.3.3](/doc/rocket-blue.png) 0.3.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.3)
 
-- Nombre de los test fixeado en Jenkins
+- Nuevos formatos de JSON para el input y output de los usuarios y recetas.
 
-###### [![0.3.2](/doc/release.png) 0.3.2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2)
+###### [![0.3.2](/doc/release.png 0.3.2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2)
 
 - Añadidos los middleware para evitar el acceso a zonas privadas.
 - Versionado de la API con tag en el README.
