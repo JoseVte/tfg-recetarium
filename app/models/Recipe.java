@@ -16,15 +16,13 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import controllers.RecipeController.RecipeRequest;
 import models.base.Model;
-import models.dao.RecipeDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 import models.service.CategoryService;
 import models.service.UserService;
-import play.data.validation.Constraints;
-import play.data.validation.ValidationError;
 
 @Entity
 @Table(name = "recipes")
@@ -32,16 +30,13 @@ import play.data.validation.ValidationError;
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Constraints.Required
     @Column(unique = true, nullable = false)
     public String             slug;
 
-    @Constraints.Required
     @Column(nullable = false)
     public String             title;
     public String             description;
 
-    @Constraints.Required
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     public User               user;
@@ -71,11 +66,9 @@ public class Recipe extends Model implements Serializable {
     public List<Media>        media            = new ArrayList<Media>();
 
     public Recipe() {
-        dao = new RecipeDAO();
     }
 
     public Recipe(String slug, String title, String description, User user) {
-        dao = new RecipeDAO();
         this.slug = slug;
         this.title = title;
         this.description = description;
@@ -90,26 +83,18 @@ public class Recipe extends Model implements Serializable {
         this.category = category;
     }
 
-    public List<ValidationError> validate() {
-        List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (id != null && dao.find(id) == null) {
-            errors.add(new ValidationError("id", "This recipe doesn't exist"));
-        }
-        if (!((RecipeDAO) dao).check("slug", slug, id).isEmpty()) {
-            errors.add(new ValidationError("slug", "This slug is already used"));
-        }
-        if (user != null && UserService.find(user.id) == null) {
-            errors.add(new ValidationError("user", "The user doesn't exist"));
-        }
-        if (category != null && CategoryService.find(category.id) == null) {
-            errors.add(new ValidationError("category", "The category doesn't exist"));
-        }
-        return errors.isEmpty() ? null : errors;
+    public Recipe(RecipeRequest recipe) {
+        this.id = recipe.id;
+        this.slug = recipe.slug;
+        this.title = recipe.title;
+        this.description = recipe.description;
+        this.user = UserService.findByEmailAddress(recipe.email);
+        this.category = CategoryService.find(recipe.category_id);
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#prePersistData()
      */
     @Override
@@ -119,12 +104,13 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#handleRelations(util.Model old)
      */
     @Override
     public void handleRelations(Model old) {
         Recipe recipe = (Recipe) old;
+        user = recipe.user;
         comments = recipe.comments;
         favorites = recipe.favorites;
         ratings = recipe.ratings;
@@ -134,7 +120,7 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

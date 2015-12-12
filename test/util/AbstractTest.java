@@ -30,7 +30,7 @@ public abstract class AbstractTest extends WithApplication {
     protected TagDAO           tagDAO;
     protected String           token;
     protected String           OS;
-    protected boolean		   isJenkins;
+    protected boolean          isJenkins;
 
     public AbstractTest() {
         userDAO = new UserDAO();
@@ -75,10 +75,10 @@ public abstract class AbstractTest extends WithApplication {
     }
 
     public void successTest() {
-    	if (isJenkins) {
+        if (isJenkins) {
             System.out.println("[success]");
         } else {
-        	System.out.println("[" + ANSI_GREEN + "success" + ANSI_RESET + "]");
+            System.out.println("[" + ANSI_GREEN + "success" + ANSI_RESET + "]");
         }
     }
 }

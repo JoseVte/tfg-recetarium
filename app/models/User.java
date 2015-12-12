@@ -22,31 +22,26 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import controllers.UserController.UserRequest;
 import models.base.Model;
-import models.dao.UserDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
-import play.data.validation.Constraints;
-import play.data.validation.ValidationError;
 import util.Encryptation;
 
 @Entity
 @Table(name = "users")
-@JsonPropertyOrder({ "id", "username", "email", "password", "first_name", "last_name", "type", "createdAt",
-        "updatedAt" })
+@JsonPropertyOrder({ "id", "username", "email", "first_name", "last_name", "type", "created_at", "updated_at" })
 public class User extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Constraints.Required
     @Column(nullable = false, unique = true)
     public String             username;
 
-    @Constraints.Required
-    @Constraints.Email
     @Column(nullable = false, unique = true)
     public String             email;
 
+    @JsonIgnore
     @Column(nullable = false)
     public String             password;
 
@@ -57,7 +52,6 @@ public class User extends Model implements Serializable {
     @JsonProperty(value = "last_name")
     public String             lastName;
 
-    @Constraints.Required
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public TypeUser           type;
@@ -96,17 +90,12 @@ public class User extends Model implements Serializable {
     public List<Rating>       ratings          = new ArrayList<Rating>();
 
     @Transient
-    private UserDAO           dao;
-
-    @Transient
     private boolean           updatePassword   = true;
 
     public User() {
-        dao = new UserDAO();
     }
 
     public User(String username, String email, String password, String firstName, String lastName, TypeUser type) {
-        dao = new UserDAO();
         this.username = username;
         this.email = email;
         this.password = password;
@@ -115,26 +104,19 @@ public class User extends Model implements Serializable {
         this.type = type;
     }
 
-    public List<ValidationError> validate() {
-        List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (id != null && dao.find(id) == null) {
-            errors.add(new ValidationError("id", "This user doesn't exist"));
-        }
-        if (!dao.where("email", email, id).isEmpty()) {
-            errors.add(new ValidationError("email", "This e-mail is already registered"));
-        }
-        if (!dao.where("username", username, id).isEmpty()) {
-            errors.add(new ValidationError("username", "This username is already registered"));
-        }
-        if ((id == null || dao.find(id) == null) && (password == null || password.isEmpty())) {
-            errors.add(new ValidationError("password", "This field is required"));
-        }
-        return errors.isEmpty() ? null : errors;
+    public User(UserRequest user) {
+        this.id = user.id;
+        this.username = user.username;
+        this.email = user.email;
+        this.password = user.password;
+        this.firstName = user.firstName;
+        this.lastName = user.lastName;
+        this.type = user.type;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#prePersistData()
      */
     @Override
@@ -152,7 +134,7 @@ public class User extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#handleRelations(util.Model old)
      */
     @Override
@@ -190,6 +172,7 @@ public class User extends Model implements Serializable {
      *
      * @return boolean
      */
+    @JsonIgnore
     public boolean isAdmin() {
         return type.equals(TypeUser.ADMIN);
     }

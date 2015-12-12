@@ -122,14 +122,8 @@ public class UserControllerTest extends AbstractTest {
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(comunUser).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
 
-            WSResponse response = WS.url("http://localhost:3333/users/1")
-                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
-            assertEquals(UNAUTHORIZED, response.getStatus());
-            response = WS.url("http://localhost:3333/users").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get()
-                    .get(timeout);
-            assertEquals(UNAUTHORIZED, response.getStatus());
-            response = WS.url("http://localhost:3333/users").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
-                    .post(dataOk).get(timeout);
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
             response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
                     .put(dataOk.put("id", 1)).get(timeout);
@@ -426,6 +420,26 @@ public class UserControllerTest extends AbstractTest {
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
             assertEquals(responseJson.get("email").get(0).asText(), "This field is required");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testUserControllerUpdateUserBadRequest3() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 2)).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("error").asText(), "The IDs don't coincide");
 
             successTest();
         });

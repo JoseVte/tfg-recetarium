@@ -2,6 +2,7 @@ package models.service;
 
 import java.util.List;
 
+import controllers.RecipeController.RecipeRequest;
 import models.Category;
 import models.Recipe;
 import models.Tag;
@@ -30,6 +31,17 @@ public class RecipeService {
     }
 
     /**
+     * Create a recipe
+     *
+     * @param RecipeRequest data
+     *
+     * @return Recipe
+     */
+    public static Recipe create(RecipeRequest data) {
+        return recipeDAO.create(new Recipe(data));
+    }
+
+    /**
      * Update a recipe
      *
      * @param Recipe data
@@ -38,6 +50,17 @@ public class RecipeService {
      */
     public static Recipe update(Recipe data) {
         return recipeDAO.update(data);
+    }
+
+    /**
+     * Update a recipe
+     *
+     * @param RecipeRequest data
+     *
+     * @return Recipe
+     */
+    public static Recipe update(RecipeRequest data) {
+        return recipeDAO.update(new Recipe(data));
     }
 
     /**

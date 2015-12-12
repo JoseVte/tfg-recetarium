@@ -61,6 +61,7 @@ public class InitDataLoader {
             if (trx != null && trx.isActive()) {
                 trx.rollback();
             }
+            System.err.println(e.getMessage());
         } finally {
             // Close the manager
             em.close();
