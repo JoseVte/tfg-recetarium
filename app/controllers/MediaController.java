@@ -15,8 +15,6 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 public class MediaController extends Controller {
-
-    public static char FILE_SEPARARTOR = File.separatorChar;
     
     @Transactional
     @Security.Authenticated(Authenticated.class)
@@ -27,7 +25,7 @@ public class MediaController extends Controller {
         if (file != null) {
             Recipe recipe = RecipeService.find(idRecipe);
             String fileName = file.getFilename();
-            String path = "public" + FILE_SEPARARTOR + "files" + FILE_SEPARARTOR + idRecipe;
+            String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe;
             File dir = new File(path);
             
             // Create the dir if not exists

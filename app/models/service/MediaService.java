@@ -1,5 +1,10 @@
 package models.service;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import models.Media;
@@ -7,6 +12,7 @@ import models.dao.MediaDAO;
 
 public class MediaService {
     private static MediaDAO dao;
+    public static char FILE_SEPARARTOR = File.separatorChar;
 
     static {
         dao = new MediaDAO();
@@ -54,6 +60,14 @@ public class MediaService {
     public static Boolean delete(Integer id, String email) {
         Media media = dao.findByOwner(email, id);
         if (media != null) {
+            try {
+                String pathDir = "public" + FILE_SEPARARTOR + "files" + FILE_SEPARARTOR + media.recipe.id;
+                Path path = Paths.get(pathDir + media.filename);
+                Files.delete(path);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                return false;
+            }
             dao.delete(media);
             return true;
         } else {
