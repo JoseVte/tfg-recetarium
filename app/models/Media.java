@@ -25,7 +25,6 @@ import play.data.validation.ValidationError;
 public class Media extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
-    @Constraints.Required
     @Column(nullable = false)
     public String             filename;
 
@@ -53,7 +52,7 @@ public class Media extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#prePersistData()
      */
     @Override
@@ -62,7 +61,7 @@ public class Media extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#handleRelations(util.Model old)
      */
     @Override
@@ -73,7 +72,7 @@ public class Media extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

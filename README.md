@@ -49,9 +49,17 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.3.3](/doc/rocket-blue.png) 0.3.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.3)
+#### [![0.3.4](/doc/rocket-blue.png) 0.3.4](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.4)
+
+- 
+
+###### [![0.3.3](/doc/release.png) 0.3.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.3)
 
 - Nuevos formatos de JSON para el input y output de los usuarios y recetas.
+
+###### [![0.3.2-hotfix](/doc/release.png) 0.3.2-hotfix](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2-hotfix)
+
+- Nombre de los test fixeado en Jenkins
 
 ###### [![0.3.2](/doc/release.png) 0.3.2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2)
 

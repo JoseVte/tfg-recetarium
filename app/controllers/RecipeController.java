@@ -110,7 +110,6 @@ public class RecipeController extends AbstractController {
         @Constraints.Required
         public String     title;
         public String     description;
-
         public Integer    category_id = null;
 
         @JsonIgnore

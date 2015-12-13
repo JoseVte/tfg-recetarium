@@ -49,9 +49,10 @@ public class MediaService {
      * Delete a media by id
      *
      * @param Integer id
+     * @param String email
      */
-    public static Boolean delete(Integer id) {
-        Media media = dao.find(id);
+    public static Boolean delete(Integer id, String email) {
+        Media media = dao.findByOwner(email, id);
         if (media != null) {
             dao.delete(media);
             return true;
@@ -88,5 +89,18 @@ public class MediaService {
      */
     public static Long count() {
         return dao.count();
+    }
+    
+    /**
+     * Where clause
+     *
+     * @param Integer recipe_id
+     * @param String filename
+     * @param Integer id
+     *
+     * @return List<Media>
+     */
+    public static List<Media> check(Integer recipe_id, String filename, Integer id) {
+        return dao.check(recipe_id, filename, id);
     }
 }
