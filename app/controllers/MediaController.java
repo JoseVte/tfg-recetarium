@@ -1,6 +1,10 @@
 package controllers;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import middleware.Authenticated;
 import models.Media;
@@ -23,29 +27,31 @@ public class MediaController extends Controller {
         FilePart file = body.getFile("file");
         
         if (file != null) {
-            Recipe recipe = RecipeService.find(idRecipe);
             String fileName = file.getFilename();
             String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe;
             File dir = new File(path);
+            Recipe recipe = RecipeService.findByOwner(request().username(), idRecipe);
+            Media media = new Media(fileName, recipe);
             
             // Create the dir if not exists
             if (!dir.exists() && !dir.mkdirs()) {
-                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file.")));
+                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
             }
-            
-            // Update if the file is duplicated
-            if (!MediaService.check(idRecipe, fileName, null).isEmpty()) {
-                return TODO;
-            }
+
             File fileStored = file.getFile();
             fileStored.renameTo(new File(path, fileName));
 
-            Media media = new Media(fileName, recipe);
-            MediaService.create(media);
+            // Update if the file is duplicated
+            Media exist =  MediaService.find(idRecipe, fileName);
+            if (exist != null) {
+                MediaService.update(exist);
+            } else {
+                MediaService.create(media);
+            }
             
-            return ok("File uploaded");
+            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
         } else {
-            return badRequest();
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file is required")));
         }
     }
 
@@ -53,7 +59,16 @@ public class MediaController extends Controller {
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id) {
-        if (MediaService.delete(id, request().username())) {
+        Media media = MediaService.find(id);
+        if (media != null && MediaService.delete(id, request().username())) {
+            try {
+                String pathDir = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + media.recipe.id;
+                Path path = Paths.get(pathDir + media.filename);
+                Files.delete(path);
+            } catch (IOException e) {
+                System.err.println(e.getMessage());
+                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error deleting the file")));
+            }
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
         }
         return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));

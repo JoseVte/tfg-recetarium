@@ -1,10 +1,6 @@
 package models.service;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import models.Media;
@@ -50,6 +46,18 @@ public class MediaService {
     public static Media find(Integer id) {
         return dao.find(id);
     }
+    
+    /**
+     * Find a media by id
+     *
+     * @param Integer id
+     *
+     * @return Media
+     */
+    public static Media find(Integer idRecipe, String filename) {
+        List<Media> list = dao.check(idRecipe, filename, null);
+        return (list.isEmpty() ? null : list.get(0));
+    }
 
     /**
      * Delete a media by id
@@ -60,14 +68,6 @@ public class MediaService {
     public static Boolean delete(Integer id, String email) {
         Media media = dao.findByOwner(email, id);
         if (media != null) {
-            try {
-                String pathDir = "public" + FILE_SEPARARTOR + "files" + FILE_SEPARARTOR + media.recipe.id;
-                Path path = Paths.get(pathDir + media.filename);
-                Files.delete(path);
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
-                return false;
-            }
             dao.delete(media);
             return true;
         } else {
@@ -103,18 +103,5 @@ public class MediaService {
      */
     public static Long count() {
         return dao.count();
-    }
-    
-    /**
-     * Where clause
-     *
-     * @param Integer recipe_id
-     * @param String filename
-     * @param Integer id
-     *
-     * @return List<Media>
-     */
-    public static List<Media> check(Integer recipe_id, String filename, Integer id) {
-        return dao.check(recipe_id, filename, id);
     }
 }
