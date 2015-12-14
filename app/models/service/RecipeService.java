@@ -84,6 +84,18 @@ public class RecipeService {
     public static Recipe findBySlug(String slug) {
         return recipeDAO.findBySlug(slug);
     }
+    
+    /**
+     * Find a recipe by slug
+     *
+     * @param String email
+     * @param Integer idRecipe
+     *
+     * @return Recipe
+     */
+    public static Recipe findByOwner(String email, Integer idRecipe) {
+        return recipeDAO.findByOwner(email, idRecipe);
+    }
 
     /**
      * Delete a recipe by id

@@ -31,5 +31,10 @@ PUT     /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Intege
 PATCH   /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)
 DELETE  /recipes/$id<[0-9]+>      controllers.RecipeController.delete(id: Integer)
 
+## Media
+GET     /media/$idRecipe<[0-9]+>/*file      controllers.MediaController.get(idRecipe: Integer, file: String)
+POST    /media/$idRecipe<[0-9]+>            controllers.MediaController.upload(idRecipe: Integer)
+DELETE  /media/$id<[0-9]+>                  controllers.MediaController.delete(id: Integer)
+
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

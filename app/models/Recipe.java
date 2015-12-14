@@ -89,7 +89,7 @@ public class Recipe extends Model implements Serializable {
         this.title = recipe.title;
         this.description = recipe.description;
         this.user = UserService.findByEmailAddress(recipe.email);
-        this.category = CategoryService.find(recipe.category_id);
+        if (recipe.category_id != null) this.category = CategoryService.find(recipe.category_id);
     }
 
     /*
