@@ -44,7 +44,7 @@ GET /users?page=2
 GET /users?size=3
 GET /users?page=2&size=3
 ```
-Si el `JWT` es incorrecto se devuelve el codigo `401`.
+Si el `JWT` es incorrecto se devuelve el código `401`.
 
 Devuelve una lista de usuarios con los links de paginacion:
 
@@ -78,7 +78,7 @@ GET /users/{id}
 GET /users/1
 ```
 
-Si el `JWT` es incorrecto se devuelve el codigo `401`.
+Si el `JWT` es incorrecto se devuelve el código `401`.
 
 Devuelve un error `404` si no se encuentra el usuario:
 
@@ -96,9 +96,9 @@ Para crear un usuario se necesita enviar el `JWT` del login de un admin en la ca
 POST /users
 ```
 
-Si el `JWT` es incorrecto o no es un admin se devuelve el codigo `401`.
+Si el `JWT` es incorrecto o no es un admin se devuelve el código `401`.
 
-Si se crea correctamente devuelve el nuevo usuario con un codigo `201`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
+Si se crea correctamente devuelve el nuevo usuario con un código `201`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
 
 ```json
 {
@@ -125,9 +125,9 @@ PUT   /users/1
 PATCH /users/1
 ```
 
-Si el `JWT` es incorrecto o no es un admin se devuelve el codigo `401`.
+Si el `JWT` es incorrecto o no es un admin se devuelve el código `401`.
 
-Si se actualiza correctamente devuelve el usuario con los nuevos datos con un codigo `200`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
+Si se actualiza correctamente devuelve el usuario con los nuevos datos con un código `200`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
 
 ```json
 {
@@ -160,7 +160,7 @@ Si se borra correctamente devuelve un mensaje advirtiendo de que se ha completad
 }
 ```
 
-Si el `JWT` es incorrecto o no es un admin se devuelve el codigo `401`.
+Si el `JWT` es incorrecto o no es un admin se devuelve el código `401`.
 
 Devuelve un error `404` si no se encuentra el usuario:
 

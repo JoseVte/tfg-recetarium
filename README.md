@@ -37,6 +37,14 @@ API Recetarium
 | [Actualizar](/doc/user-doc.md#actualizar-un-usuario-ya-existente) |  **PUT**    /users/{id} <br> **PATCH**  /users/{id} | ADMIN |
 | [Borrar](/doc/user-doc.md#borrar-un-usuario) |  **DELETE** /users/{id} | ADMIN |
 
+#### Archivos
+
+| Acción | URI | Login |
+| ------ | --- | :----: |
+| [Obtener por nombre del archivo](/doc/archivos-doc.md#obtener-por-nombre-del-archivo) | **GET**    /media/{idReceta}/{nombreFichero} | --- |
+| [Subida del archivo](/doc/archivos-doc.md#subida-del-archivo) | **POST**   /media/{idReceta} | OWNER / ADMIN |
+| [Borrar archivo](/doc/archivos-doc.md#borrar-archivo) |  **DELETE** /media/{id} | OWNER / ADMIN |
+
 -----
 
 ## DOCUMENTACIÓN EXPANDIDA
@@ -44,6 +52,7 @@ API Recetarium
 - [Autentificación](/doc/auth-doc.md)
 - [Recetas](/doc/recetas-doc.md)
 - [Usuarios](/doc/user-doc.md)
+- [Archivos](/doc/archivos-doc.md)
 
 -----
 
@@ -51,7 +60,7 @@ API Recetarium
 
 #### [![0.3.4](/doc/rocket-blue.png) 0.3.4](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.4)
 
-- 
+- Subida, lectura y borrado de archivos en el servidor.
 
 ###### [![0.3.3](/doc/release.png) 0.3.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.3)
 

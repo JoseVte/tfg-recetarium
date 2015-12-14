@@ -60,6 +60,11 @@ public class MediaController extends Controller {
             Recipe recipe = RecipeService.findByOwner(request().username(), idRecipe);
             Media media = new Media(fileName, recipe);
             
+            // Check if recipe exist
+            if (recipe == null) {
+                return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + idRecipe)));
+            }
+            
             // Create the dir if not exists
             if (!dir.exists() && !dir.mkdirs()) {
                 return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
@@ -96,7 +101,7 @@ public class MediaController extends Controller {
                 System.err.println(e.getMessage());
                 return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error deleting the file")));
             }
-            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
+            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted file " + id)));
         }
         return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file " + id)));
     }

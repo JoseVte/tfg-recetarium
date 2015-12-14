@@ -89,9 +89,9 @@ Para crear una receta se necesita enviar el `JWT` en la cabecera **X-Auth-Token*
 ```
 POST /recipes
 ```
-Si el `JWT` es incorrecto se devuelve el codigo `401`.
+Si el `JWT` es incorrecto se devuelve el código `401`.
 
-Si se crea correctamente devuelve la nueva receta con un codigo `201`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
+Si se crea correctamente devuelve la nueva receta con un código `201`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
 
 ```json
 {
@@ -118,9 +118,9 @@ PUT   /recipes/1
 PATCH /recipes/1
 ```
 
-Si el `JWT` es incorrecto o la receta no pertenece al usuario actual (salvo que se trate de un **ADMIN**) se devuelve el codigo `401`.
+Si el `JWT` es incorrecto o la receta no pertenece al usuario actual (salvo que se trate de un **ADMIN**) se devuelve el código `401`.
 
-Si se actualiza correctamente devuelve la receta con los nuevos datos con un codigo `200`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
+Si se actualiza correctamente devuelve la receta con los nuevos datos con un código `200`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
 
 ```json
 {
@@ -153,7 +153,7 @@ Si se borra correctamente devuelve un mensaje advirtiendo de que se ha completad
 }
 ```
 
-Si el `JWT` es incorrecto se devuelve el codigo `401`.
+Si el `JWT` es incorrecto se devuelve el código `401`.
 
 Devuelve un error `404` si no se encuentra la receta:
 
