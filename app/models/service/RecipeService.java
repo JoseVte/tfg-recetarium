@@ -2,6 +2,7 @@ package models.service;
 
 import java.util.List;
 
+import controllers.RecipeController.RecipeRequest;
 import models.Category;
 import models.Recipe;
 import models.Tag;
@@ -30,6 +31,17 @@ public class RecipeService {
     }
 
     /**
+     * Create a recipe
+     *
+     * @param RecipeRequest data
+     *
+     * @return Recipe
+     */
+    public static Recipe create(RecipeRequest data) {
+        return recipeDAO.create(new Recipe(data));
+    }
+
+    /**
      * Update a recipe
      *
      * @param Recipe data
@@ -38,6 +50,17 @@ public class RecipeService {
      */
     public static Recipe update(Recipe data) {
         return recipeDAO.update(data);
+    }
+
+    /**
+     * Update a recipe
+     *
+     * @param RecipeRequest data
+     *
+     * @return Recipe
+     */
+    public static Recipe update(RecipeRequest data) {
+        return recipeDAO.update(new Recipe(data));
     }
 
     /**
@@ -61,14 +84,27 @@ public class RecipeService {
     public static Recipe findBySlug(String slug) {
         return recipeDAO.findBySlug(slug);
     }
+    
+    /**
+     * Find a recipe by slug
+     *
+     * @param String email
+     * @param Integer idRecipe
+     *
+     * @return Recipe
+     */
+    public static Recipe findByOwner(String email, Integer idRecipe) {
+        return recipeDAO.findByOwner(email, idRecipe);
+    }
 
     /**
      * Delete a recipe by id
      *
+     * @param String email
      * @param Integer id
      */
-    public static Boolean delete(Integer id) {
-        Recipe recipe = recipeDAO.find(id);
+    public static Boolean delete(Integer id, String email) {
+        Recipe recipe = recipeDAO.findByOwner(email, id);
         if (recipe != null) {
             recipeDAO.delete(recipe);
             return true;
@@ -105,6 +141,18 @@ public class RecipeService {
      */
     public static Long count() {
         return recipeDAO.count();
+    }
+
+    /**
+     * Get a recipe if this is the owner
+     *
+     * @param String email
+     * @param Integer idRecipe
+     *
+     * @return boolean
+     */
+    public static boolean checkOwner(String email, Integer idRecipe) {
+        return null != recipeDAO.findByOwner(email, idRecipe);
     }
 
     /**

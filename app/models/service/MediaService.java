@@ -1,5 +1,6 @@
 package models.service;
 
+import java.io.File;
 import java.util.List;
 
 import models.Media;
@@ -7,6 +8,7 @@ import models.dao.MediaDAO;
 
 public class MediaService {
     private static MediaDAO dao;
+    public static char FILE_SEPARARTOR = File.separatorChar;
 
     static {
         dao = new MediaDAO();
@@ -44,14 +46,27 @@ public class MediaService {
     public static Media find(Integer id) {
         return dao.find(id);
     }
+    
+    /**
+     * Find a media by id
+     *
+     * @param Integer id
+     *
+     * @return Media
+     */
+    public static Media find(Integer idRecipe, String filename) {
+        List<Media> list = dao.check(idRecipe, filename, null);
+        return (list.isEmpty() ? null : list.get(0));
+    }
 
     /**
      * Delete a media by id
      *
      * @param Integer id
+     * @param String email
      */
-    public static Boolean delete(Integer id) {
-        Media media = dao.find(id);
+    public static Boolean delete(Integer id, String email) {
+        Media media = dao.findByOwner(email, id);
         if (media != null) {
             dao.delete(media);
             return true;

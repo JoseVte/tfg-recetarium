@@ -88,7 +88,7 @@ public class UserControllerTest extends AbstractTest {
         dataError7.put("type", "OTHER");
 
         loginJson = Json.newObject();
-        loginJson.put("email", "test@testing.dev");
+        loginJson.put("email", "admin@admin.dev");
         loginJson.put("password", "josevte1");
     }
 
@@ -105,6 +105,31 @@ public class UserControllerTest extends AbstractTest {
             response = WS.url("http://localhost:3333/users/1").put(dataOk.put("id", 1)).get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
             response = WS.url("http://localhost:3333/users/1").delete().get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testUserControllerLoggedButUnauthorized() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            ObjectNode comunUser = Json.newObject();
+            comunUser.put("email", "test@testing.dev");
+            comunUser.put("password", "josevte1");
+
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(comunUser).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+
+            WSResponse response = WS.url("http://localhost:3333/users")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
+                    .put(dataOk.put("id", 1)).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/users/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token)
+                    .delete().get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
 
             successTest();
@@ -395,6 +420,26 @@ public class UserControllerTest extends AbstractTest {
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
             assertEquals(responseJson.get("email").get(0).asText(), "This field is required");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testUserControllerUpdateUserBadRequest3() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/users/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 2)).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("error").asText(), "The IDs don't coincide");
 
             successTest();
         });

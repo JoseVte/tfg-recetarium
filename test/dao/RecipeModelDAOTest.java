@@ -89,6 +89,67 @@ public class RecipeModelDAOTest extends AbstractTest {
     }
 
     @Test
+    public void testRecipeDAOFindByOwnerRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = recipeDAO.findByOwner("test@testing.dev", 1);
+                assertEquals(recipe.id.intValue(), 1);
+                assertEquals(recipe.title, "Test");
+                assertEquals(recipe.description, "Description test");
+                assertEquals(recipe.user.id.intValue(), 1);
+                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.tags.size(), 1);
+                assertEquals(recipe.favorites.size(), 1);
+                assertEquals(recipe.ratings.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeDAOFindByOwnerRecipeAdmin() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = recipeDAO.findByOwner("admin@admin.dev", 1);
+                assertEquals(recipe.id.intValue(), 1);
+                assertEquals(recipe.title, "Test");
+                assertEquals(recipe.description, "Description test");
+                assertEquals(recipe.user.id.intValue(), 1);
+                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.tags.size(), 1);
+                assertEquals(recipe.favorites.size(), 1);
+                assertEquals(recipe.ratings.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeDAONotFoundByOwnerRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = recipeDAO.findByOwner("", 1);
+                assertNull(recipe);
+
+                recipe = recipeDAO.findByOwner("test@testing.dev", 0);
+                assertNull(recipe);
+
+                recipe = recipeDAO.findByOwner("", 0);
+                assertNull(recipe);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
     public void testRecipeDAOFindAllRecipes() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {

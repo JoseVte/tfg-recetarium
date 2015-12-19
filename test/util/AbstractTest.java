@@ -29,6 +29,8 @@ public abstract class AbstractTest extends WithApplication {
     protected MediaDAO         mediaDAO;
     protected TagDAO           tagDAO;
     protected String           token;
+    protected String           OS;
+    protected boolean          isJenkins;
 
     public AbstractTest() {
         userDAO = new UserDAO();
@@ -37,6 +39,8 @@ public abstract class AbstractTest extends WithApplication {
         commentDAO = new CommentDAO();
         mediaDAO = new MediaDAO();
         tagDAO = new TagDAO();
+        OS = System.getProperty("os.name");
+        isJenkins = (System.getenv("JOB_NAME") != null);
     }
 
     @Override
@@ -46,17 +50,35 @@ public abstract class AbstractTest extends WithApplication {
 
     public void initializeDataController() {
         InitDataLoader.initializeData();
-        System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
-                + Thread.currentThread().getStackTrace()[4].getMethodName() + ANSI_RESET + "\t\t");
+        if (isJenkins) {
+            System.out.print("Test Name: " + Thread.currentThread().getStackTrace()[4].getMethodName() + "\t\t");
+        } else if (OS.equals("Linux")) {
+            System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
+                    + Thread.currentThread().getStackTrace()[5].getMethodName() + ANSI_RESET + "\t\t");
+        } else {
+            System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
+                    + Thread.currentThread().getStackTrace()[4].getMethodName() + ANSI_RESET + "\t\t");
+        }
     }
 
     public void initializeDataModel() {
         InitDataLoader.initializeData();
-        System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
-                + Thread.currentThread().getStackTrace()[9].getMethodName() + ANSI_RESET + "\t\t");
+        if (isJenkins) {
+            System.out.print("Test Name: " + Thread.currentThread().getStackTrace()[9].getMethodName() + "\t\t");
+        } else if (OS.equals("Linux")) {
+            System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
+                    + Thread.currentThread().getStackTrace()[12].getMethodName() + ANSI_RESET + "\t\t");
+        } else {
+            System.out.print(ANSI_YELLOW + "Test Name: " + ANSI_PURPLE
+                    + Thread.currentThread().getStackTrace()[9].getMethodName() + ANSI_RESET + "\t\t");
+        }
     }
 
     public void successTest() {
-        System.out.println("[" + ANSI_GREEN + "success" + ANSI_RESET + "]");
+        if (isJenkins) {
+            System.out.println("[success]");
+        } else {
+            System.out.println("[" + ANSI_GREEN + "success" + ANSI_RESET + "]");
+        }
     }
 }

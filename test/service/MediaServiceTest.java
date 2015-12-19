@@ -117,7 +117,25 @@ public class MediaServiceTest extends AbstractTest {
                 long count = MediaService.count();
                 assertEquals(count, 1);
 
-                assertTrue(MediaService.delete(1));
+                assertTrue(MediaService.delete(1, "test@testing.dev"));
+
+                count = MediaService.count();
+                assertEquals(count, 0);
+
+                successTest();
+            });
+        });
+    }
+    
+    @Test
+    public void testMediaServiceDeleteMediaAdmin() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                long count = MediaService.count();
+                assertEquals(count, 1);
+
+                assertTrue(MediaService.delete(1, "admin@admin.dev"));
 
                 count = MediaService.count();
                 assertEquals(count, 0);
@@ -132,7 +150,9 @@ public class MediaServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                assertFalse(MediaService.delete(0));
+                assertFalse(MediaService.delete(0, "test@testing.dev"));
+                assertFalse(MediaService.delete(1, ""));
+                assertFalse(MediaService.delete(0, ""));
 
                 successTest();
             });
