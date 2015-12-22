@@ -12,11 +12,8 @@ import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.io.FileUtils;
 
-import com.dropbox.core.DbxAppInfo;
 import com.dropbox.core.DbxClient;
-import com.dropbox.core.DbxEntry;
 import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.DbxWebAuthNoRedirect;
 
 import middleware.Authenticated;
 import models.Media;
@@ -33,8 +30,6 @@ import play.mvc.Security;
 
 
 public class MediaController extends Controller {
-	static final String APP_KEY = "pgj5yw2g1dh6jnc";
-	static final String APP_SECRET = "6jyknzm4t2i4lc6";
 	static final String ACCESS_TOKEN = Play.application().configuration().getString("dropbox.access.token");
 
     @Transactional(readOnly = true)
@@ -42,9 +37,7 @@ public class MediaController extends Controller {
         try {
     		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
         	if (Play.isProd()) {
-        		DbxAppInfo appInfo = new DbxAppInfo(APP_KEY, APP_SECRET);
 	        	DbxRequestConfig config = new DbxRequestConfig("Recetarium", Locale.getDefault().toString());
-	        	DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
 	        	DbxClient client = new DbxClient(config, ACCESS_TOKEN);
 
 	            FileOutputStream output = new FileOutputStream("public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe + MediaService.FILE_SEPARARTOR + file);
