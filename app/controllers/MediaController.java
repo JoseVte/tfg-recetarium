@@ -1,20 +1,29 @@
 package controllers;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Locale;
 
 import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.io.FileUtils;
+
+import com.dropbox.core.DbxAppInfo;
+import com.dropbox.core.DbxClient;
+import com.dropbox.core.DbxEntry;
+import com.dropbox.core.DbxRequestConfig;
+import com.dropbox.core.DbxWebAuthNoRedirect;
 
 import middleware.Authenticated;
 import models.Media;
 import models.Recipe;
 import models.service.MediaService;
 import models.service.RecipeService;
+import play.Play;
 import play.db.jpa.Transactional;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
@@ -22,15 +31,29 @@ import play.mvc.Http.MultipartFormData.FilePart;
 import play.mvc.Result;
 import play.mvc.Security;
 
+
 public class MediaController extends Controller {
+	static final String APP_KEY = "pgj5yw2g1dh6jnc";
+	static final String APP_SECRET = "6jyknzm4t2i4lc6";
+	static final String ACCESS_TOKEN = Play.application().configuration().getString("dropbox.access.token");
 
     @Transactional(readOnly = true)
     public Result get(Integer idRecipe, String file) {
         try {
-            MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-            File f = new File("public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe + MediaService.FILE_SEPARARTOR + file);
-            return ok(FileUtils.readFileToByteArray(f)).as(mimeTypesMap.getContentType(f));
+    		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+        	if (Play.isProd()) {
+        		DbxAppInfo appInfo = new DbxAppInfo(APP_KEY, APP_SECRET);
+	        	DbxRequestConfig config = new DbxRequestConfig("Recetarium", Locale.getDefault().toString());
+	        	DbxWebAuthNoRedirect webAuth = new DbxWebAuthNoRedirect(config, appInfo);
+	        	DbxClient client = new DbxClient(config, ACCESS_TOKEN);
+
+	            FileOutputStream output = new FileOutputStream("public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe + MediaService.FILE_SEPARARTOR + file);
+	            client.getFile("/" + idRecipe + "/" + file, null, output);
+        	}
+        	File f = new File("public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe + MediaService.FILE_SEPARARTOR + file);
+        	return ok(FileUtils.readFileToByteArray(f)).as(mimeTypesMap.getContentType(f));
         } catch (Exception e) {
+        	System.err.println(e);
             return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: " + file)));
         }
     }

@@ -24,6 +24,7 @@ import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 import models.service.CategoryService;
 import models.service.UserService;
+import util.serializer.RecipeCommentsSerializer;
 import util.serializer.RecipeTagsSerializer;
 
 @Entity
@@ -49,7 +50,7 @@ public class Recipe extends Model implements Serializable {
     @JoinColumn(name = "category_id", nullable = true)
     public Category           category;
 
-    @JsonIgnore
+    @JsonSerialize(using = RecipeCommentsSerializer.class)
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment>      comments         = new ArrayList<Comment>();
 
