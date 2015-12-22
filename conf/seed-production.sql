@@ -29,8 +29,12 @@ LOCK TABLES `recipes` WRITE;
 
 INSERT INTO `recipes` (`id`, `title`, `slug`, `description`, `user_id`, `created_at`, `updated_at`)
 VALUES
-	(1, 'Primera receta de la aplicación', 'primera-receta', 'Descripción de la primera receta', 1, now(), now()),
-	(2, 'Segunda receta de la aplicación', 'segunda-receta', 'Descripción de la segunda receta', 1, now(), now());
+	(1, 'Primera receta de la aplicación', 'primera-receta',
+	'{"ingredients": [ {"name": "Ingrediente 1", "count": "100 g"}, {"name": "Ingrediente 2", "count": "120 g"}, {"name": "Ingrediente 3", "count": "110 g"} ], "steps": "Pasos para la receta"}'
+	, 1, now(), now()),
+	(2, 'Segunda receta de la aplicación', 'segunda-receta', 
+	'{"ingredients": [ {"name": "Ingrediente 1", "count": "100 g"}, {"name": "Ingrediente 2", "count": "120 g"}, {"name": "Ingrediente 3", "count": "110 g"} ], "steps": "Pasos para la receta"}'
+	, 1, now(), now());
 
 /*!40000 ALTER TABLE `recipes` ENABLE KEYS */;
 UNLOCK TABLES;

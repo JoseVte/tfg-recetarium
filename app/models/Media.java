@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import models.base.Model;
@@ -20,7 +21,7 @@ import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 
 @Entity
-@JsonPropertyOrder({ "id", "filename", "recipe", "created_at", "updated_at" })
+@JsonPropertyOrder({ "id", "filename", "created_at", "updated_at" })
 @Table(name = "media", uniqueConstraints = { @UniqueConstraint(columnNames = { "filename", "recipe_id" }) })
 public class Media extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -28,6 +29,7 @@ public class Media extends Model implements Serializable {
     @Column(nullable = false)
     public String             filename;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     public Recipe             recipe;

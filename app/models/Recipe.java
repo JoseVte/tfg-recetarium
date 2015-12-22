@@ -15,6 +15,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import controllers.RecipeController.RecipeRequest;
 import models.base.Model;
@@ -23,6 +24,7 @@ import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 import models.service.CategoryService;
 import models.service.UserService;
+import util.serializer.RecipeTagsSerializer;
 
 @Entity
 @Table(name = "recipes")
@@ -35,6 +37,8 @@ public class Recipe extends Model implements Serializable {
 
     @Column(nullable = false)
     public String             title;
+
+    @Column(columnDefinition = "text")
     public String             description;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -57,11 +61,10 @@ public class Recipe extends Model implements Serializable {
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Rating>       ratings          = new ArrayList<Rating>();
 
-    @JsonIgnore
+    @JsonSerialize(using = RecipeTagsSerializer.class)
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<RecipeTags>   tags             = new ArrayList<RecipeTags>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Media>        media            = new ArrayList<Media>();
 

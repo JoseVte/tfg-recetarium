@@ -1,7 +1,6 @@
 package controllers;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -9,9 +8,7 @@ import java.nio.file.Paths;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import org.apache.commons.codec.binary.Base64;
-
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.apache.commons.io.FileUtils;
 
 import middleware.Authenticated;
 import models.Media;
@@ -19,7 +16,6 @@ import models.Recipe;
 import models.service.MediaService;
 import models.service.RecipeService;
 import play.db.jpa.Transactional;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -27,44 +23,36 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 public class MediaController extends Controller {
-    
+
     @Transactional(readOnly = true)
     public Result get(Integer idRecipe, String file) {
         try {
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
             File f = new File("public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe + MediaService.FILE_SEPARARTOR + file);
-            FileInputStream inFile = new FileInputStream(f);
-            byte data[] = new byte[(int) f.length()];
-            inFile.read(data);
-            String fileString = Base64.encodeBase64URLSafeString(data);
-            ObjectNode fileJson = Json.newObject();
-            fileJson.put("file", fileString);
-            fileJson.put("content_type", mimeTypesMap.getContentType(f));
-            inFile.close();
-            return util.Json.jsonResult(response(), ok(fileJson));
+            return ok(FileUtils.readFileToByteArray(f)).as(mimeTypesMap.getContentType(f));
         } catch (Exception e) {
             return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: " + file)));
         }
     }
-    
+
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result upload(Integer idRecipe) {
         MultipartFormData body = request().body().asMultipartFormData();
         FilePart file = body.getFile("file");
-        
+
         if (file != null) {
             String fileName = file.getFilename();
             String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe;
             File dir = new File(path);
             Recipe recipe = RecipeService.findByOwner(request().username(), idRecipe);
             Media media = new Media(fileName, recipe);
-            
+
             // Check if recipe exist
             if (recipe == null) {
                 return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + idRecipe)));
             }
-            
+
             // Create the dir if not exists
             if (!dir.exists() && !dir.mkdirs()) {
                 return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
@@ -80,7 +68,7 @@ public class MediaController extends Controller {
             } else {
                 MediaService.create(media);
             }
-            
+
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
         } else {
             return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file is required")));
