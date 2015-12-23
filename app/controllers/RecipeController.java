@@ -11,7 +11,6 @@ import models.Recipe;
 import models.dao.RecipeDAO;
 import models.service.CategoryService;
 import models.service.RecipeService;
-import models.service.UserService;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;

@@ -29,8 +29,157 @@ LOCK TABLES `recipes` WRITE;
 
 INSERT INTO `recipes` (`id`, `title`, `slug`, `description`, `user_id`, `created_at`, `updated_at`)
 VALUES
-	(1, 'Primera receta de la aplicación', 'primera-receta', 'Descripción de la primera receta', 1, now(), now()),
-	(2, 'Segunda receta de la aplicación', 'segunda-receta', 'Descripción de la segunda receta', 1, now(), now());
+	(1, 'Tarta de 3 chocolates', 'tarta-de-3-chocolates',
+	'{
+      "ingredients": [
+        {
+          "name": "galletas maria",
+          "count": "200 g"
+        },
+        {
+          "name": "mantequilla",
+          "count": "100 g"
+        },
+        {
+          "name": "chocolate negro de repostería",
+          "count": "150 g"
+        },
+        {
+          "name": "chocolate con leche de repostería",
+          "count": "150 g"
+        },
+        {
+          "name": "chocolate blanco de repostería",
+          "count": "150 g"
+        },
+        {
+          "name": "nata líquida con 35%MG",
+          "count": "600 ml"
+        },
+        {
+          "name": "leche",
+          "count": "600 ml"
+        },
+        {
+          "name": "sobres de cuajada",
+          "count": "3"
+        }
+      ],
+      "steps": "Comenzaremos preparando la base, para ello trituramos con un robot de cocina o bien pasándoles un rodillo a las galletas metidas dentro de una bolsa de plástico. Cuando estén en polvo fino les añadimos los 100 gramos de mantequilla derretida y formamos una masa que iremos pegando en la base de un molde para tartas desmontable de 20 centímetros forrado con papel de horno por la parte de abajo. Reservamos en la nevera. Seguiremos preparando la capa de chocolate negro. Ponemos para ello un cacito con la nata y 100 mililitros de leche a calentar, dejando los otros 100 aparte y en los cuales disolveremos el sobre de cuajada bien vigilando que no queden grumos. Una vez que esta caliente la leche y la nata añadimos el chocolate negro en trozos menudos y removemos con varillas hasta que se disuelva bien en el líquido. Añadimos el resto de la leche con la cuajada disuelta y llevamos sin dejar de remover a ebullición, cociendo la mezcla durante dos minutos más o menos vigilando que no se pegue al fondo del cacito. Es importante que hierva para que la cuajada funcione y la crema quede sólida. Vertemos la crema de chocolate negro encima de la base y dejamos reposar para que vaya cuajando mientras preparamos la del chocolate con leche. Para prepara la del chocolate con leche seguimos las mismas instrucciones que para el anterior, lo único que cambia es el tipo de chocolate. Una vez cocida esta crema la vertemos encima de la de chocolate negro vertiéndola con cuidado por encima de una espátula para que no nos agujeree la capa de chocolate negro. Volvemos a dejar reposar mientras preparamos la capa de chocolate blanco. Realizamos el mismo proceso que las otras dos veces, pero con el chocolate blanco, y acabamos echando la capa de chocolate blanco como capa final. Dejamos un mínimo de seis horas en la nevera para que cuaje perfectamente y desmoldamos con cuidado una vez bien fría.",
+      "time": "30 min",
+      "difficulty": "fácil",
+      "num_persons": 0
+    }', 1, now(), now()),
+	(2, 'Arroz y marisco', 'arroz-y-marisco',
+	'{
+      "ingredients": [
+        {
+          "name": "arroz",
+          "count": "250 ml"
+        },
+        {
+          "name": "gambas rojas medianas",
+          "count": "8"
+        },
+        {
+          "name": "bonito fresco",
+          "count": "100 g"
+        },
+        {
+          "name": "mejillones",
+          "count": "12"
+        },
+        {
+          "name": "sepa mediana",
+          "count": "1"
+        },
+        {
+          "name": "tomate grande rallado",
+          "count": "1"
+        },
+        {
+          "name": "perejil picado",
+          "count": ""
+        },
+        {
+          "name": "ajo picado",
+          "count": "1 diente"
+        },
+        {
+          "name": "pimienta negra molida",
+          "count": ""
+        },
+        {
+          "name": "aceite de oliva virgen extra",
+          "count": "5 cdas"
+        },
+        {
+          "name": "caldo de cocer los mejillones y camarón",
+          "count": "650 ml"
+        },
+        {
+          "name": "colorante alimentario",
+          "count": ""
+        }
+      ],
+      "steps": "Lo primero que haremos es limpiar bien los calamares y la sepia así como cortarlos en anillas y trozos pequeños respectivamente; el tomate lo rallaremos y reservaremos, así como el ajo y el perejil finamente picado. (2) Las almejas las ponemos en agua con sal al menos media hora antes de lavarlas para que puedan soltar la arena que puedan llevar; los mejillones los lavamos bien y después los abrimos en una olla aparte para aprovechar el caldo. Cortamos el bonito a tacos pequeños. (3) En la pieza oval ponemos el aceite y calentamos a fuego fuerte, cuando en el “visiotherm” la franja roja este llegando a la figura de “chuleta” pondremos a sofreír el bonito y las gambas, tapamos, esperamos unos minutos a que la franja roja llegue al 90 o más. (4) Luego destapamos, damos la vuelta y añadimos sal al bonito, volvemos a tapar y esperamos a que vuelva a subir la temperatura al 98 (la gamba debe soltar bien los jugos), destapamos y añadimos los calamares y la sepia, le añadimos sal y tapamos. (5) Repetimos la misma operación tapando y esperando para dar la vuelta (es conveniente pasar un papel absorbente de cocina para eliminar el agua de condensación que queda en el interior de la tapadera, ya que si no lo hacemos esta agua vuelve a caer en el sofrito). (6) Cuando se evaporé el agua que pueda haber soltado el calamar y la sepia será el momento de añadir el tomate, le ponemos sal, pimienta, el ajo y perejil mezclamos bien y dejamos que el tomate se sofría, adquiera un color oscuro y comencemos a ver el aceite como se separa por los limites del sofrito. (7) Entonces estará bien hecho el sofrito.Incorporamos las almejas, tapamos y esperamos a que se abran, cuando se pierda el agua añadimos el arroz, mezclamos con el sofrito y le damos varias vueltas para sofreír un poco el arroz. (8) Añadimos el agua de cocción de los mejillones una vez colada junto con el resto del caldo a utilizar (nosotros en este caso hemos aprovechado un caldo de cocer camarón pero puede ser caldo de pescado). (9) A continuación, añadimos colorante alimentario si queremos que el arroz tenga el color amarillo característico, ponemos los mejillones que habíamos abierto previamente y rectificamos de sal. (10) Taparemos y programaremos el “audiotherm” 25 minutos en función cocer “zanahoria”,ponemos el fuego al máximo y cuando la franja roja llegue a dicha función y nos avise bajamos el fuego y esperamos esos 25 minutos. (11) Cuando pasen los 25 minutos apagamos el fuego, después destapamos, secamos el interior de la tapadera y volvemos a tapar dejando reposar unos minutos. Ya esta listo para servir.",
+      "time": "45 min",
+      "difficulty": "media",
+      "num_persons": "4"
+    }', 1, now(), now()),
+    (3, 'Sushi variado', 'sushi-variado',
+	'{
+      "ingredients": [
+        {
+          "name": "arroz blanco",
+          "count": "300 g"
+        },
+        {
+          "name": "ajimoto",
+          "count": "2 ccds"
+        },
+        {
+          "name": "vinagre blanco",
+          "count": "75 g"
+        },
+        {
+          "name": "lgo nori",
+          "count": "2 hojas"
+        },
+        {
+          "name": "plátano",
+          "count": "1"
+        },
+        {
+          "name": "queso de untar",
+          "count": "2 cdas"
+        },
+        {
+          "name": "pepino",
+          "count": "1"
+        },
+        {
+          "name": "surimi",
+          "count": "3 barritas"
+        },
+        {
+          "name": "huevo",
+          "count": "1"
+        },
+        {
+          "name": "azúcar",
+          "count": "1 cda"
+        },
+        {
+          "name": "aceite de girasol",
+          "count": ""
+        }
+      ],
+      "steps": "(1) Ponemos en remojo el arroz durante media hora. (2) Quitamos el agua restante y aplastamos bien en arroz contra el suelo del recipiente. (3) Añadimos agua fría y removemos para que suelte el almidón. (4) Repetimos el paso 2) y 3) tantas veces como sea necesario, sabremos cuando parar cuando el agua salga totalmente transparente. (5) Agregamos en una olla el arroz. Por cada taza de arroz, se añade 1/4 de taza de agua. (6) Ponemos la olla a fuego fuerte con la tapa puesta, cuando empiece a hervir, lo bajamos al mínimo. Cuando vuelva a hervir, apagamos el fuego y dejamos reposar durante 15 minutos con la tapa. (7) Preparamos la mezcla para añadir a nuestro arroz de sushi. En una taza, añadimos el vinagre de arroz y el ajimoto y removemos. (8) En una bandeja, agregamos el arroz, estirándolo bien. Una vez estirado, vamos agregando y repartiendo la mezcla del vinagre, intentando que llegue a toda la bandeja. (9) Dejamos que se enfríe a temperatura ambiente, aunque si queremos que vaya más rápido, podemos abanicarlo. (10) En una sartén, agregamos la mezcla del huevo batico con el azúcar para formar una tortilla dulce. (11) Troceamos en tiras finas el plátano, el pepino y el surimi. (12) Sobre la esterilla, ponemos paprl film y encima el alga nori, dejando la cara brillante hacia la esterilla. Con ayuda de un pincel, humedecemos el alga con un poco de vinagre de arroz. (13) Una vez frío el arroz, lo colocamos sobre el alga, dejando un espacio en los bordes laterales para poder cerrar. En el centro agregamos el queso de untar a modo de hilera de arriba hacia debajo. En el mismo sentido, el plátano. (14) Vamos enrollando desde un extremo con ayuda de la esterilla y el papel, haciendo presión para que el rulo quede compacto. Una vez que queda enrollado, con un pincel, sellamos el extremo con vinagre de arroz. (15) Repetimos desde el paso 12) pero esta vez, en el centro colocamos las tiras de surimi, pepino y las tiras de la tortilla que hemos hecho. Se vuelve a enrollar y sellar con cuidado. (16) Con un cuchillo jamonero y con mucho cuidado, vamos cortando los cilindros de sushi del grosor que queramos. (17) No os olvidéis de acompañarlo con salsa de soja, wasabi, jengibre o con lo que más os guste.",
+      "time": "50 min",
+      "difficulty": "difícil",
+      "num_persons": "2"
+    }', 1, now(), now());
 
 /*!40000 ALTER TABLE `recipes` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -94,8 +243,10 @@ LOCK TABLES `tags` WRITE;
 
 INSERT INTO `tags` (`id`, `text`, `created_at`, `updated_at`)
 VALUES
-	(1, 'Aperitivo', now(), now()),
-	(2, 'Postre', now(), now());
+	(1, 'Chocolate', now(), now()),
+	(2, 'Postre', now(), now()),
+    (3, 'Arroz', now(), now()),
+    (4, 'Marisco', now(), now());
 
 /*!40000 ALTER TABLE `tags` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -108,7 +259,10 @@ LOCK TABLES `recipe_tags` WRITE;
 INSERT INTO `recipe_tags` (`id`, `recipe_id`, `tag_id`)
 VALUES
 	(1, 1, 1),
-	(2, 1, 2);
+	(2, 1, 2),
+    (3, 2, 3),
+	(4, 2, 4),
+    (5, 3, 4);
 
 /*!40000 ALTER TABLE `recipe_tags` ENABLE KEYS */;
 UNLOCK TABLES;

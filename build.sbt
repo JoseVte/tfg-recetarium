@@ -20,7 +20,9 @@ libraryDependencies ++= Seq(
   "org.codehaus.jackson" % "jackson-mapper-asl" % "1.8.5",
   "org.yaml" % "snakeyaml" % "1.16",
   "org.bitbucket.b_c" % "jose4j" % "0.4.4",
-  "com.typesafe.play" %% "play-mailer" % "3.0.1"
+  "com.typesafe.play" %% "play-mailer" % "3.0.1",
+  "commons-io" % "commons-io" % "2.4",
+  "com.dropbox.core" % "dropbox-core-sdk" % "[1.7,1.8)"
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the
