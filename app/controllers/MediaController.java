@@ -3,6 +3,7 @@ package controllers;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,8 +41,9 @@ public class MediaController extends Controller {
 	        	DbxRequestConfig config = new DbxRequestConfig("Recetarium", Locale.getDefault().toString());
 	        	DbxClient client = new DbxClient(config, ACCESS_TOKEN);
 
-	            FileOutputStream output = new FileOutputStream("public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe + MediaService.FILE_SEPARARTOR + file);
+	            OutputStream output = new FileOutputStream("public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe + MediaService.FILE_SEPARARTOR + file);
 	            client.getFile("/" + idRecipe + "/" + file, null, output);
+	            output.close();
         	}
         	File f = new File("public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe + MediaService.FILE_SEPARARTOR + file);
         	return ok(FileUtils.readFileToByteArray(f)).as(mimeTypesMap.getContentType(f));
