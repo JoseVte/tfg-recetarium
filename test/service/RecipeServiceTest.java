@@ -28,7 +28,7 @@ public class RecipeServiceTest extends AbstractTest {
                 Recipe recipe = RecipeService.find(1);
                 assertEquals(recipe.title, "Test");
                 assertEquals(recipe.slug, "test");
-                assertEquals(recipe.description, "Description test");
+                assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text.toString(), "test");
                 assertEquals(recipe.media.size(), 1);
@@ -62,7 +62,7 @@ public class RecipeServiceTest extends AbstractTest {
                 Recipe recipe = RecipeService.findBySlug("test");
                 assertEquals(recipe.id.intValue(), 1);
                 assertEquals(recipe.title, "Test");
-                assertEquals(recipe.description, "Description test");
+                assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text.toString(), "test");
                 assertEquals(recipe.media.size(), 1);

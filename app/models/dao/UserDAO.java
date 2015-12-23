@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import controllers.AuthController.Register;
 import models.Recipe;
-import models.TypeUser;
 import models.User;
 import models.base.CrudDAO;
+import models.enums.TypeUser;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;

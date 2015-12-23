@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import middleware.Admin;
 import middleware.Authenticated;
-import models.TypeUser;
 import models.User;
 import models.dao.UserDAO;
+import models.enums.TypeUser;
 import models.service.UserService;
 import play.Logger;
 import play.data.Form;

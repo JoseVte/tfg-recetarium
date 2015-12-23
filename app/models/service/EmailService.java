@@ -3,8 +3,8 @@ package models.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import models.TypeUser;
 import models.User;
+import models.enums.TypeUser;
 import play.libs.mailer.Email;
 import play.libs.mailer.MailerClient;
 import views.html.emails.*;
