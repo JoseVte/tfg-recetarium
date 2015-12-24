@@ -27,7 +27,7 @@ UNLOCK TABLES;
 LOCK TABLES `recipes` WRITE;
 /*!40000 ALTER TABLE `recipes` DISABLE KEYS */;
 
-INSERT INTO `recipes` (`id`, `title`, `slug`, `description`, `user_id`, `created_at`, `updated_at`)
+INSERT INTO `recipes` (`id`, `title`, `slug`, `steps`, `duration` , `num_persons`, `difficulty`,  `user_id`, `created_at`, `updated_at`)
 VALUES
 	(1, 'Tarta de 3 chocolates', 'tarta-de-3-chocolates',
 	'{
@@ -69,7 +69,7 @@ VALUES
       "time": "30 min",
       "difficulty": "fácil",
       "num_persons": 0
-    }', 1, now(), now()),
+    }', '00:30:00', 0, 'EASY', 1, now(), now()),
 	(2, 'Arroz y marisco', 'arroz-y-marisco',
 	'{
       "ingredients": [
@@ -126,7 +126,7 @@ VALUES
       "time": "45 min",
       "difficulty": "media",
       "num_persons": "4"
-    }', 1, now(), now()),
+    }', '00:45:00', 4, 'MEDIUM', 1, now(), now()),
     (3, 'Sushi variado', 'sushi-variado',
 	'{
       "ingredients": [
@@ -179,7 +179,7 @@ VALUES
       "time": "50 min",
       "difficulty": "difícil",
       "num_persons": "2"
-    }', 1, now(), now());
+    }', '00:50:00', 2, 'HARD', 1, now(), now());
 
 /*!40000 ALTER TABLE `recipes` ENABLE KEYS */;
 UNLOCK TABLES;

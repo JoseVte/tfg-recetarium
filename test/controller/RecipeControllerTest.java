@@ -32,32 +32,71 @@ public class RecipeControllerTest extends AbstractTest {
     ObjectNode dataError2;
     ObjectNode dataError3;
     ObjectNode dataError4;
+    ObjectNode dataError5;
+    ObjectNode dataError6;
+    ObjectNode dataError7;
+    ObjectNode dataError8;
     ObjectNode loginJson;
 
-    @SuppressWarnings("deprecation")
     public RecipeControllerTest() throws Exception {
         dataOk = Json.newObject();
         dataOk.put("title", "New recipe");
         dataOk.put("slug", "new-recipe");
         dataOk.put("category_id", 1);
+        dataOk.put("difficulty", "EASY");
+        dataOk.put("duration", "00:10:00");
 
         dataError1 = Json.newObject();
         dataError1.put("title", "");
         dataError1.put("slug", "new-recipe");
+        dataError1.put("difficulty", "EASY");
+        dataError1.put("duration", "00:10:00");
 
         dataError2 = Json.newObject();
         dataError2.put("title", "New recipe");
         dataError2.put("slug", "");
+        dataError2.put("difficulty", "EASY");
+        dataError2.put("duration", "00:10:00");
 
         dataError3 = Json.newObject();
         dataError3.put("title", "New recipe");
         dataError3.put("slug", "new-recipe");
         dataError3.put("category_id", 0);
+        dataError3.put("difficulty", "EASY");
+        dataError3.put("duration", "00:10:00");
 
         dataError4 = Json.newObject();
         dataError4.put("title", "New recipe");
         dataError4.put("slug", "test-2");
         dataError4.put("category_id", 1);
+        dataError4.put("difficulty", "EASY");
+        dataError4.put("duration", "00:10:00");
+
+        dataError5 = Json.newObject();
+        dataError5.put("title", "New recipe");
+        dataError5.put("slug", "new-recipe");
+        dataError5.put("category_id", 1);
+        dataError5.put("duration", "00:10:00");
+
+        dataError6 = Json.newObject();
+        dataError6.put("title", "New recipe");
+        dataError6.put("slug", "new-recipe");
+        dataError6.put("category_id", 1);
+        dataError6.put("difficulty", "EASY");
+
+        dataError7 = Json.newObject();
+        dataError7.put("title", "New recipe");
+        dataError7.put("slug", "new-recipe");
+        dataError7.put("category_id", 1);
+        dataError7.put("difficulty", "EASY");
+        dataError7.put("duration", "asdf");
+
+        dataError8 = Json.newObject();
+        dataError8.put("title", "New recipe");
+        dataError8.put("slug", "new-recipe");
+        dataError8.put("category_id", 1);
+        dataError8.put("difficulty", "asdf");
+        dataError8.put("duration", "00:10:00");
 
         loginJson = Json.newObject();
         loginJson.put("email", "test@testing.dev");
@@ -93,7 +132,7 @@ public class RecipeControllerTest extends AbstractTest {
             assertEquals(responseJson.get("id").intValue(), 1);
             assertEquals(responseJson.get("title").asText(), "Test");
             assertEquals(responseJson.get("slug").asText(), "test");
-            assertEquals(responseJson.get("description").asText(), "Description test");
+            assertEquals(responseJson.get("steps").asText(), "Description test");
             assertEquals(responseJson.get("user").get("id").intValue(), 1);
             assertEquals(responseJson.get("category").get("id").intValue(), 1);
 
@@ -245,6 +284,86 @@ public class RecipeControllerTest extends AbstractTest {
     }
 
     @Test
+    public void testRecipeControllerCreateRecipeBadRequest5() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError5).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("difficulty").get(0).asText(), "This field is required");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCreateRecipeBadRequest6() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError6).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("duration").get(0).asText(), "This field is required");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCreateRecipeBadRequest7() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError7).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("duration").get(0).asText(), "Invalid value");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCreateRecipeBadRequest8() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError8).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("difficulty").get(0).asText(), "Invalid value");
+
+            successTest();
+        });
+    }
+
+    @Test
     public void testRecipeControllerUpdateRecipeOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
@@ -371,6 +490,86 @@ public class RecipeControllerTest extends AbstractTest {
 
     @Test
     public void testRecipeControllerUpdateRecipeBadRequest5() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError5.put("id", 1)).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("difficulty").get(0).asText(), "This field is required");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateRecipeBadRequest6() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError6.put("id", 1)).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("duration").get(0).asText(), "This field is required");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateRecipeBadRequest7() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError7.put("id", 1)).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("duration").get(0).asText(), "Invalid value");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateRecipeBadRequest8() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError8.put("id", 1)).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("difficulty").get(0).asText(), "Invalid value");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateRecipeBadRequestInvalidID() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);

@@ -36,7 +36,8 @@ import util.serializer.RecipeTagsSerializer;
 
 @Entity
 @Table(name = "recipes")
-@JsonPropertyOrder({ "id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "user", "category", "tags", "comments", "media", "created_at", "updated_at" })
+@JsonPropertyOrder({ "id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "user",
+        "category", "tags", "comments", "media", "created_at", "updated_at" })
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -48,21 +49,21 @@ public class Recipe extends Model implements Serializable {
 
     @Column(columnDefinition = "text")
     public String             steps;
-    
+
     @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Ingredient> ingredients = new ArrayList<Ingredient>();
-    
+    public List<Ingredient>   ingredients      = new ArrayList<Ingredient>();
+
     @Temporal(TemporalType.TIME)
     @Column(nullable = false)
-    public Date duration;
-    
+    public Date               duration;
+
     @JsonProperty(value = "num_persons")
     @Column(nullable = false, name = "num_persons", columnDefinition = "int(5) default '0'")
-    public Integer numPersons = 0;
-    
+    public Integer            numPersons       = 0;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public Enum<RecipeDifficulty> difficulty;
+    public RecipeDifficulty   difficulty;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -94,17 +95,14 @@ public class Recipe extends Model implements Serializable {
     public Recipe() {
     }
 
-    public Recipe(String slug, String title, String description, User user) {
+    public Recipe(String slug, String title, String steps, Date duration, RecipeDifficulty diff, Integer numPersons,
+            User user, Category category) {
         this.slug = slug;
         this.title = title;
-        this.steps = description;
-        this.user = user;
-    }
-
-    public Recipe(String slug, String title, String description, User user, Category category) {
-        this.slug = slug;
-        this.title = title;
-        this.steps = description;
+        this.steps = steps;
+        this.duration = duration;
+        this.difficulty = diff;
+        this.numPersons = numPersons;
         this.user = user;
         this.category = category;
     }
@@ -113,30 +111,35 @@ public class Recipe extends Model implements Serializable {
         this.id = recipe.id;
         this.slug = recipe.slug;
         this.title = recipe.title;
-        this.steps = recipe.description;
+        this.steps = recipe.steps;
+        this.duration = recipe.durationParsed;
+        this.difficulty = recipe.difficulty;
+        if (recipe.num_persons != null)
+            this.numPersons = recipe.num_persons;
         this.user = UserService.findByEmailAddress(recipe.email);
-        if (recipe.category_id != null) this.category = CategoryService.find(recipe.category_id);
+        if (recipe.category_id != null)
+            this.category = CategoryService.find(recipe.category_id);
     }
 
     /*
      * (non-Javadoc)
-     *
      * @see util.Model#prePersistData()
      */
     @Override
     public void prePersistData() {
-        if (steps != null && steps.isEmpty()) steps = null;
+        if (steps != null && steps.isEmpty())
+            steps = null;
     }
 
     /*
      * (non-Javadoc)
-     *
      * @see util.Model#handleRelations(util.Model old)
      */
     @Override
     public void handleRelations(Model old) {
         Recipe recipe = (Recipe) old;
         user = recipe.user;
+        ingredients = recipe.ingredients;
         comments = recipe.comments;
         favorites = recipe.favorites;
         ratings = recipe.ratings;
@@ -146,15 +149,15 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     *
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "Recipe [id=" + id + ", slug=" + slug + ", title=" + title + ", description=" + steps + ", user="
-                + user.id + ", section=" + (category != null ? category.text : "") + ", comments=" + comments.size()
-                + ", favorites=" + favorites.size() + ", ratings=" + ratings.size() + ", tags=" + tags.size()
-                + ", media=" + media.size() + "]";
+        return "Recipe [id=" + id + ", slug=" + slug + ", title=" + title + ", steps=" + steps + ", duration="
+                + duration + ", numPersons=" + numPersons + ", difficulty=" + difficulty + ", ingredients="
+                + ingredients.size() + ", user=" + user.id + ", section=" + (category != null ? category.text : "")
+                + ", comments=" + comments.size() + ", favorites=" + favorites.size() + ", ratings=" + ratings.size()
+                + ", tags=" + tags.size() + ", media=" + media.size() + "]";
     }
 
 }

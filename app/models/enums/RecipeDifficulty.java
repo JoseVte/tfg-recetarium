@@ -1,5 +1,5 @@
 package models.enums;
 
 public enum RecipeDifficulty {
-	EASY, MEDIUM, HARD
+    EASY, MEDIUM, HARD
 }

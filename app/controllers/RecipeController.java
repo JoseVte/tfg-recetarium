@@ -1,6 +1,10 @@
 package controllers;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -9,6 +13,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import middleware.Authenticated;
 import models.Recipe;
 import models.dao.RecipeDAO;
+import models.enums.RecipeDifficulty;
 import models.service.CategoryService;
 import models.service.RecipeService;
 import play.data.Form;
@@ -22,6 +27,7 @@ import play.mvc.Security;
 public class RecipeController extends AbstractController {
     static Form<RecipeRequest> recipeForm = Form.form(RecipeRequest.class);
 
+    @Override
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size) {
         List<Recipe> models = RecipeService.paginate(page - 1, size);
@@ -36,6 +42,7 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), ok(result));
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Result get(Integer id) {
         Recipe recipe = RecipeService.find(id);
@@ -61,6 +68,7 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
     }
 
+    @Override
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result create() {
@@ -74,6 +82,7 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
 
+    @Override
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result update(Integer id) {
@@ -91,6 +100,7 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
     }
 
+    @Override
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id) {
@@ -101,24 +111,35 @@ public class RecipeController extends AbstractController {
     }
 
     public static class RecipeRequest {
-        public Integer    id          = null;
+        public Integer          id          = null;
 
         @Constraints.Required
-        public String     slug;
+        public String           slug;
 
         @Constraints.Required
-        public String     title;
-        public String     description;
-        public Integer    category_id = null;
+        public String           title;
+        public String           steps;
+
+        @Constraints.Required
+        public RecipeDifficulty difficulty;
+
+        @Constraints.Required
+        public String           duration;
+        public Integer          num_persons = 0;
+        public Integer          category_id = null;
 
         @JsonIgnore
-        public String email;
-        
+        public String           email;
         @JsonIgnore
-        private RecipeDAO dao;
+        public Date             durationParsed;
+        @JsonIgnore
+        private RecipeDAO       dao;
+        @JsonIgnore
+        private DateFormat      format;
 
         public RecipeRequest() {
             dao = new RecipeDAO();
+            format = new SimpleDateFormat("HH:mm:ss");
         }
 
         public List<ValidationError> validate() {
@@ -131,6 +152,11 @@ public class RecipeController extends AbstractController {
             }
             if (category_id != null && CategoryService.find(category_id) == null) {
                 errors.add(new ValidationError("category", "The category doesn't exist"));
+            }
+            try {
+                durationParsed = format.parse(duration);
+            } catch (ParseException e) {
+                errors.add(new ValidationError("duration", "Invalid value"));
             }
             return errors.isEmpty() ? null : errors;
         }

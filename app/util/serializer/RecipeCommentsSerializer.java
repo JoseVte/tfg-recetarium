@@ -12,13 +12,15 @@ import models.Comment;
 
 public class RecipeCommentsSerializer extends JsonSerializer<List<Comment>> {
 
-	@Override
-	public void serialize(List<Comment> value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
-		jgen.writeStartArray();
-		for(Comment comment : value) {
-			if (comment.parent == null) jgen.writeObject(comment);
-		}
-		jgen.writeEndArray();
-	}
+    @Override
+    public void serialize(List<Comment> value, JsonGenerator jgen, SerializerProvider provider)
+            throws IOException, JsonProcessingException {
+        jgen.writeStartArray();
+        for (Comment comment : value) {
+            if (comment.parent == null) jgen.writeObject(comment);
+            jgen.writeObject(comment);
+        }
+        jgen.writeEndArray();
+    }
 
 }

@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import models.manytomany.RecipeTags;
 
 public class RecipeTagsSerializer extends JsonSerializer<List<RecipeTags>> {
-    
+
     @Override
     public void serialize(List<RecipeTags> value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         jgen.writeStartArray();
