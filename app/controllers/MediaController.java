@@ -1,11 +1,7 @@
 package controllers;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -45,31 +41,12 @@ public class MediaController extends Controller {
                 return util.Json.jsonResult(response(),
                         internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
             }
-            System.out.println(dir.getAbsolutePath());
+            System.out.println(Play.isDev() + " " + Play.isProd() + " " + Play.mode().toString());
 
             if (Play.isProd()) {
                 DbxRequestConfig config = new DbxRequestConfig("Recetarium", Locale.getDefault().toString());
                 DbxClient client = new DbxClient(config, ACCESS_TOKEN);
-
-                URL url = new URL(client.createTemporaryDirectUrl("/" + idRecipe + "/" + file).url);
-                System.out.println(url.toString());
-                URLConnection connection = url.openConnection();
-                InputStream in = connection.getInputStream();
-                System.out.println(f.getAbsolutePath());
-                FileOutputStream fos = new FileOutputStream(f);
-                byte[] buf = new byte[512];
-                while (true) {
-                    int len = in.read(buf);
-                    if (len == -1) {
-                        break;
-                    }
-                    fos.write(buf, 0, len);
-                }
-                in.close();
-                fos.flush();
-                fos.close();
-                System.out.println(f.canRead() + " " + f.canWrite() + " " + f.getTotalSpace());
-                // return redirect(client.createTemporaryDirectUrl("/" + idRecipe + "/" + file).url);
+                return redirect(client.createTemporaryDirectUrl("/" + idRecipe + "/" + file).url);
             }
             return ok(FileUtils.readFileToByteArray(f)).as(mimeTypesMap.getContentType(f));
         } catch (Exception e) {
