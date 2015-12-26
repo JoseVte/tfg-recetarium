@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import models.base.Model;
@@ -21,21 +22,26 @@ public class Ingredient extends Model implements Serializable {
 
     @Column(nullable = false)
     public String             name;
-    
-    @Column(nullable = false)
     public String             count;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     public Recipe             recipe;
 
-	@Override
-	public void prePersistData() {}
+    public Ingredient() {
+    }
 
-	@Override
-	public void handleRelations(Model old) {
+    public Ingredient(String name, String count) {
+        super();
+        this.name = name;
+        this.count = count;
+    }
+
+    @Override
+    public void handleRelations(Model old) {
         Media media = (Media) old;
         this.setCreatedAt(media.getCreatedAt());
-	}
+    }
 
 }

@@ -32,8 +32,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Register an user
      *
-     * @param Register register
-     *
+     * @param Register
+     *            register
      * @return User
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
@@ -47,11 +47,14 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Where clause
      *
-     * @param String field
-     * @param Object value
-     * @param Integer id
-     * @param String comparison
-     *
+     * @param String
+     *            field
+     * @param Object
+     *            value
+     * @param Integer
+     *            id
+     * @param String
+     *            comparison
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id, String comparison) {
@@ -62,10 +65,12 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Where clause
      *
-     * @param String field
-     * @param Object value
-     * @param Integer id
-     *
+     * @param String
+     *            field
+     * @param Object
+     *            value
+     * @param Integer
+     *            id
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id) {
@@ -75,9 +80,10 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Where clause
      *
-     * @param String field
-     * @param Object value
-     *
+     * @param String
+     *            field
+     * @param Object
+     *            value
      * @return List<User>
      */
     public List<User> where(String field, Object value) {
@@ -87,8 +93,10 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Validates a password using a hash.
      *
-     * @param password the password to check
-     * @param correctHash the hash of the valid password
+     * @param password
+     *            the password to check
+     * @param correctHash
+     *            the hash of the valid password
      * @return true if the password is correct, false if not
      */
     public static boolean validatePassword(String password, String correctHash)
@@ -99,8 +107,10 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Validates a password using a hash.
      *
-     * @param password the password to check
-     * @param correctHash the hash of the valid password
+     * @param password
+     *            the password to check
+     * @param correctHash
+     *            the hash of the valid password
      * @return true if the password is correct, false if not
      */
     public static boolean validatePassword(char[] password, String correctHash)
@@ -124,7 +134,6 @@ public class UserDAO extends CrudDAO<User> {
      * Create a token for the user
      *
      * @param user
-     *
      * @return String
      */
     @SuppressWarnings("deprecation")
@@ -145,7 +154,6 @@ public class UserDAO extends CrudDAO<User> {
      * Check the auth token
      *
      * @param jwt
-     *
      * @return User
      */
     public User checkJWT(String jwt) {
@@ -160,7 +168,6 @@ public class UserDAO extends CrudDAO<User> {
 
             return user;
         } catch (Exception e) {
-            Logger.error(e.getMessage());
             return null;
         }
     }
@@ -169,7 +176,6 @@ public class UserDAO extends CrudDAO<User> {
      * Get the token valid of an user
      *
      * @param user
-     *
      * @return VerificationToken
      */
     public VerificationToken getLostPasswordToken(User user) {
@@ -183,7 +189,6 @@ public class UserDAO extends CrudDAO<User> {
      * Find an user by email
      *
      * @param email
-     *
      * @return User
      */
     public User findByEmailAddress(String email) {
@@ -201,7 +206,6 @@ public class UserDAO extends CrudDAO<User> {
      *
      * @param email
      * @param password
-     *
      * @return User
      */
     public User findByEmailAddressAndPassword(String email, String password) {

@@ -23,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
+import controllers.RecipeController.IngredientRequest;
 import controllers.RecipeController.RecipeRequest;
 import models.base.Model;
 import models.enums.RecipeDifficulty;
@@ -30,6 +31,7 @@ import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 import models.service.CategoryService;
+import models.service.RecipeService;
 import models.service.UserService;
 import util.serializer.RecipeCommentsSerializer;
 import util.serializer.RecipeTagsSerializer;
@@ -119,11 +121,15 @@ public class Recipe extends Model implements Serializable {
         this.user = UserService.findByEmailAddress(recipe.email);
         if (recipe.category_id != null)
             this.category = CategoryService.find(recipe.category_id);
+        this.ingredients = new ArrayList<Ingredient>();
+        for (IngredientRequest ingredient : recipe.ingredients) {
+            this.ingredients.add(new Ingredient(ingredient.name, ingredient.count));
+        }
     }
 
     /*
      * (non-Javadoc)
-     * @see util.Model#prePersistData()
+     * @see models.base.Model#prePersistData()
      */
     @Override
     public void prePersistData() {
@@ -133,13 +139,21 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * @see util.Model#handleRelations(util.Model old)
+     * @see models.base.Model#postPersistData()
+     */
+    @Override
+    public void postPersistData() {
+        RecipeService.updateIngredients(this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see models.base.Model#handleRelations(util.Model old)
      */
     @Override
     public void handleRelations(Model old) {
         Recipe recipe = (Recipe) old;
         user = recipe.user;
-        ingredients = recipe.ingredients;
         comments = recipe.comments;
         favorites = recipe.favorites;
         ratings = recipe.ratings;

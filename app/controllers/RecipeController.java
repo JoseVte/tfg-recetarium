@@ -55,8 +55,8 @@ public class RecipeController extends AbstractController {
     /**
      * Get one recipe by slug
      *
-     * @param String slug
-     *
+     * @param String
+     *            slug
      * @return Result
      */
     @Transactional(readOnly = true)
@@ -110,32 +110,42 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
     }
 
+    public static class IngredientRequest {
+        @Constraints.Required
+        public String name;
+        public String count;
+
+        public IngredientRequest() {
+        }
+    }
+
     public static class RecipeRequest {
-        public Integer          id          = null;
+        public Integer                 id          = null;
 
         @Constraints.Required
-        public String           slug;
+        public String                  slug;
 
         @Constraints.Required
-        public String           title;
-        public String           steps;
+        public String                  title;
+        public String                  steps;
 
         @Constraints.Required
-        public RecipeDifficulty difficulty;
+        public RecipeDifficulty        difficulty;
 
         @Constraints.Required
-        public String           duration;
-        public Integer          num_persons = 0;
-        public Integer          category_id = null;
+        public String                  duration;
+        public Integer                 num_persons = 0;
+        public Integer                 category_id = null;
+        public List<IngredientRequest> ingredients = new ArrayList<IngredientRequest>();
 
         @JsonIgnore
-        public String           email;
+        public String                  email;
         @JsonIgnore
-        public Date             durationParsed;
+        public Date                    durationParsed;
         @JsonIgnore
-        private RecipeDAO       dao;
+        private RecipeDAO              dao;
         @JsonIgnore
-        private DateFormat      format;
+        private DateFormat             format;
 
         public RecipeRequest() {
             dao = new RecipeDAO();

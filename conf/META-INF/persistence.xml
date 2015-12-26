@@ -23,6 +23,7 @@
         <class>models.Media</class>
         <class>models.Category</class>
         <class>models.Tag</class>
+        <class>models.Ingredient</class>
         <class>models.manytomany.Favorite</class>
         <class>models.manytomany.Friend</class>
         <class>models.manytomany.Rating</class>
