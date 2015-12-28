@@ -4,6 +4,7 @@ TRUNCATE TABLE favorites;
 TRUNCATE TABLE friends;
 TRUNCATE TABLE ratings;
 TRUNCATE TABLE ingredients;
+TRUNCATE TABLE media;
 TRUNCATE TABLE recipe_tags;
 TRUNCATE TABLE recipes;
 TRUNCATE TABLE tags;
@@ -83,6 +84,20 @@ VALUES
     ('aceite de girasol', null, 3, now(), now());
 
 /*!40000 ALTER TABLE `ingredients` ENABLE KEYS */;
+UNLOCK TABLES;
+
+## MEDIA ##
+
+LOCK TABLES `media` WRITE;
+/*!40000 ALTER TABLE `media` DISABLE KEYS */;
+
+INSERT INTO `media` (`id`, `filename`, `recipe_id`, `created_at`, `updated_at`)
+VALUES
+	(1, 'main.jpg', 1, now(), now()),
+	(2, 'main.jpg', 2, now(), now()),
+	(3, 'main.jpg', 3, now(), now());
+
+/*!40000 ALTER TABLE `media` ENABLE KEYS */;
 UNLOCK TABLES;
 
 ## COMMENTS ##
