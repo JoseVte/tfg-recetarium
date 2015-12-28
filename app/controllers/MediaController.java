@@ -33,6 +33,12 @@ public class MediaController extends Controller {
     @Transactional(readOnly = true)
     public Result get(Integer idRecipe, String file) {
         try {
+            if (Play.isProd()) {
+                DbxRequestConfig config = new DbxRequestConfig("Recetarium", Locale.getDefault().toString());
+                DbxClient client = new DbxClient(config, ACCESS_TOKEN);
+                return redirect(client.createTemporaryDirectUrl("/" + idRecipe + "/" + file).url);
+            }
+
             String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe;
             File dir = new File(path);
             File f = new File(path + MediaService.FILE_SEPARARTOR + file);
@@ -41,13 +47,7 @@ public class MediaController extends Controller {
                 return util.Json.jsonResult(response(),
                         internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
             }
-            System.out.println(Play.isDev() + " " + Play.isProd() + " " + Play.mode().toString());
 
-            if (Play.isProd()) {
-                DbxRequestConfig config = new DbxRequestConfig("Recetarium", Locale.getDefault().toString());
-                DbxClient client = new DbxClient(config, ACCESS_TOKEN);
-                return redirect(client.createTemporaryDirectUrl("/" + idRecipe + "/" + file).url);
-            }
             return ok(FileUtils.readFileToByteArray(f)).as(mimeTypesMap.getContentType(f));
         } catch (Exception e) {
             e.printStackTrace();
