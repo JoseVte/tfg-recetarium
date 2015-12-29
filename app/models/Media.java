@@ -17,7 +17,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import models.base.Model;
 import models.dao.MediaDAO;
-import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 
 @Entity
@@ -30,7 +29,7 @@ public class Media extends Model implements Serializable {
     public String             filename;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "recipe_id")
     public Recipe             recipe;
 
