@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import controllers.UserController.UserRequest;
 import models.base.Model;
+import models.enums.TypeUser;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;

@@ -1,7 +1,6 @@
 package util;
 
 import java.security.Key;
-import java.util.Date;
 import java.util.List;
 
 import org.jose4j.jws.AlgorithmIdentifiers;
@@ -15,11 +14,9 @@ import org.jose4j.keys.AesKey;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
-import models.User;
 import models.base.Model;
 import play.Play;
 import play.mvc.Http.Response;
@@ -60,8 +57,8 @@ public class Json {
      * Add the content-type json to response
      *
      * @param response
-     * @param Result httpResponse
-     *
+     * @param Result
+     *            httpResponse
      * @return Result
      */
     public static Result jsonResult(Response response, Result httpResponse) {
@@ -72,8 +69,8 @@ public class Json {
     /**
      * Create a token for the user
      *
-     * @param subject String
-     *
+     * @param subject
+     *            String
      * @return String
      */
     public static String createJwt(String subject) throws JoseException {
@@ -103,8 +100,8 @@ public class Json {
     /**
      * Check the auth token
      *
-     * @param jwt String
-     *
+     * @param jwt
+     *            String
      * @return String
      */
     public static String checkJwt(String jwt) {

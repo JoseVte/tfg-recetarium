@@ -31,6 +31,7 @@ public class Comment extends Model implements Serializable {
     @Column(nullable = false)
     public String             text;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "recipe_id")
     public Recipe             recipe;
@@ -39,11 +40,12 @@ public class Comment extends Model implements Serializable {
     @JoinColumn(name = "user_id")
     public User               user;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_comment_id")
     public Comment            parent;
 
-    @JsonIgnore
+    //@JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment>      replies;
 

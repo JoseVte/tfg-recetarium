@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.NoResultException;
 
 import models.Category;
+import models.Ingredient;
 import models.Recipe;
 import models.Tag;
 import models.User;
@@ -23,8 +24,8 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     /**
      * Find a recipe by the slug
      *
-     * @param String slug
-     *
+     * @param String
+     *            slug
      * @return Recipe
      */
     public Recipe findBySlug(String slug) {
@@ -37,9 +38,10 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     /**
      * Find a recipe if the email is from the user creator or an admin
      *
-     * @param String email
-     * @param Integer idRecipe
-     *
+     * @param String
+     *            email
+     * @param Integer
+     *            idRecipe
      * @return Recipe
      */
     public Recipe findByOwner(String email, Integer idRecipe) {
@@ -61,11 +63,14 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     /**
      * Where clause
      *
-     * @param String field
-     * @param Object value
-     * @param Integer id
-     * @param String comparison
-     *
+     * @param String
+     *            field
+     * @param Object
+     *            value
+     * @param Integer
+     *            id
+     * @param String
+     *            comparison
      * @return List<Recipe>
      */
     public List<Recipe> check(String field, Object value, Integer id, String comparison) {
@@ -76,10 +81,12 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     /**
      * Where clause
      *
-     * @param String field
-     * @param Object value
-     * @param Integer id
-     *
+     * @param String
+     *            field
+     * @param Object
+     *            value
+     * @param Integer
+     *            id
      * @return List<Recipe>
      */
     public List<Recipe> check(String field, Object value, Integer id) {
@@ -226,5 +233,28 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         JPA.em().flush();
         if (category != null) JPA.em().refresh(category);
         JPA.em().refresh(recipe);
+    }
+
+    /**
+     * Add all ingredients for a recipe
+     *
+     * @param recipe
+     */
+    public void addIngredients(Recipe recipe) {
+        for (Ingredient ingredient : recipe.ingredients) {
+            ingredient.recipe = recipe;
+            JPA.em().persist(ingredient);
+        }
+        JPA.em().flush();
+    }
+
+    /**
+     * Delete all ingredients for a recipe
+     *
+     * @param recipe
+     */
+    public void deleteIngredients(Recipe recipe) {
+        JPA.em().createQuery("DELETE FROM " + Ingredient.class.getName() + " WHERE recipe_id = " + recipe.id)
+                .executeUpdate();
     }
 }
