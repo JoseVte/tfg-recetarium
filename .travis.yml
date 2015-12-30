@@ -1,8 +1,17 @@
 language: java
-before_script: 
-  - wget https://downloads.typesafe.com/typesafe-activator/1.3.7/typesafe-activator-1.3.7-minimal.zip
-  - unzip -q typesafe-activator-1.3.7-minimal.zip
-script: typesafe-activator-1.3.7-minimal/activator test
+sudo: false
+jdk:
+    - oraclejdk8
+before_script:
+    - curl --create-dirs -L -o $HOME/.sbt/launchers/0.13.9/sbt-launch.jar http://dl.bintray.com/typesafe/ivy-releases/org.scala-sbt/sbt-launch/0.13.9/sbt-launch.jar
+script:
+    - sbt test
+cache:
+    directories:
+        - $HOME/.ivy2/cache
+before_cache:
+    # Delete all ivydata files since ivy touches them on each build
+    - find $HOME/.ivy2/cache -name "ivydata-*.properties" | xargs rm
 notifications:
   # Email notifications are disabled to not annoy anybody.
   # See http://about.travis-ci.org/docs/user/build-configuration/ to learn more
