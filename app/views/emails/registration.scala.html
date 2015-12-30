@@ -1,4 +1,4 @@
-@(user:User)
+@(user:User)(url:String)
 <!DOCTYPE html>
 <html>
     <head>
@@ -9,7 +9,7 @@
             <h3>Welcome to Recetarium: @user.firstName @user.lastName</h3>
             <p>You now can create new recipes for all users</p>
             <br>
-            <p><a href="">www.recetarium.com</a></p>
+            <p><a href="@url">@url</a></p>
         </div>
     </body>
 </html>
