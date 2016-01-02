@@ -20,10 +20,12 @@ import com.dropbox.core.DbxWriteMode;
 import middleware.Authenticated;
 import models.Media;
 import models.Recipe;
+import models.User;
 import models.service.MediaService;
 import models.service.RecipeService;
 import play.Play;
 import play.db.jpa.Transactional;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
 import play.mvc.Http.MultipartFormData.FilePart;
@@ -32,7 +34,7 @@ import play.mvc.Security;
 
 public class MediaController extends Controller {
     static final String ACCESS_TOKEN = Play.application().configuration().getString("dropbox.access.token");
-    static final String APP_NAME = Play.application().configuration().getString("dropbox.app.name");
+    static final String APP_NAME     = Play.application().configuration().getString("dropbox.app.name");
 
     @Transactional(readOnly = true)
     public Result get(Integer idRecipe, String file) {
@@ -68,7 +70,7 @@ public class MediaController extends Controller {
 
         if (file != null) {
             String fileName = file.getFilename();
-            Recipe recipe = RecipeService.findByOwner(request().username(), idRecipe);
+            Recipe recipe = RecipeService.findByOwner(Json.fromJson(Json.parse(request().username()), User.class).email, idRecipe);
             Media media = new Media(fileName, recipe);
 
             // Check if recipe exist
@@ -76,14 +78,15 @@ public class MediaController extends Controller {
                 return util.Json.jsonResult(response(),
                         notFound(util.Json.generateJsonErrorMessages("Not found " + idRecipe)));
             }
-            
+
             if (Play.isProd()) {
                 FileInputStream inputStream = null;
                 try {
                     DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());
                     DbxClient client = new DbxClient(config, ACCESS_TOKEN);
                     inputStream = new FileInputStream(file.getFile());
-                    client.uploadFile("/" + idRecipe + "/" + fileName, DbxWriteMode.force(), file.getFile().length(), inputStream);
+                    client.uploadFile("/" + idRecipe + "/" + fileName, DbxWriteMode.force(), file.getFile().length(),
+                            inputStream);
                 } catch (DbxException | IOException e) {
                     e.printStackTrace();
                     return util.Json.jsonResult(response(),
@@ -91,18 +94,20 @@ public class MediaController extends Controller {
                 } finally {
                     try {
                         if (inputStream != null) inputStream.close();
-                    } catch (IOException e) {}
+                    } catch (IOException e) {
+                    }
                 }
             } else {
-                String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe;
+                String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR
+                        + idRecipe;
                 File dir = new File(path);
-    
+
                 // Create the dir if not exists
                 if (!dir.exists() && !dir.mkdirs()) {
                     return util.Json.jsonResult(response(),
                             internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
                 }
-    
+
                 File fileStored = file.getFile();
                 fileStored.renameTo(new File(path, fileName));
             }
@@ -127,7 +132,7 @@ public class MediaController extends Controller {
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id) {
         Media media = MediaService.find(id);
-        if (media != null && MediaService.delete(id, request().username())) {
+        if (media != null && MediaService.delete(id, Json.fromJson(Json.parse(request().username()), User.class).email)) {
             try {
                 if (Play.isProd()) {
                     DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());

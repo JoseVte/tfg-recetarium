@@ -58,7 +58,15 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.3.4](/doc/rocket-blue.png) 0.3.4](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.4)
+#### [![0.4.0](/doc/rocket-blue.png) 0.4.0](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.0)
+
+- Gestion de ficheros con dropbox
+- Cambio del servidor CI a Travis
+- Añadidas las URL en los mails
+- Cambios en la estructura del modelo de la receta
+- Fix en el JWT y añadido token sin expiración
+
+###### [![0.3.4](/doc/release.png) 0.3.4](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.4)
 
 - Subida, lectura y borrado de archivos en el servidor.
 

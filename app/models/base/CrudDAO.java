@@ -18,8 +18,7 @@ public class CrudDAO<T extends Model> {
     /**
      * Create a model
      *
-     * @param Model
-     *            model
+     * @param Model model
      * @return Model
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
@@ -38,8 +37,7 @@ public class CrudDAO<T extends Model> {
     /**
      * Find a model by id
      *
-     * @param Integer
-     *            id
+     * @param Integer id
      * @return Model
      */
     @SuppressWarnings("unchecked")
@@ -50,8 +48,7 @@ public class CrudDAO<T extends Model> {
     /**
      * Update a model
      *
-     * @param Model
-     *            model
+     * @param Model model
      * @return Model
      */
     @SuppressWarnings("unchecked")
@@ -67,8 +64,7 @@ public class CrudDAO<T extends Model> {
     /**
      * Delete a model by id
      *
-     * @param Model
-     *            model
+     * @param Model model
      */
     public void delete(Model model) {
         JPA.em().remove(model);
@@ -87,10 +83,8 @@ public class CrudDAO<T extends Model> {
     /**
      * Get the page of models
      *
-     * @param Integer
-     *            page
-     * @param Integer
-     *            size
+     * @param Integer page
+     * @param Integer size
      * @return List<Model>
      */
     @SuppressWarnings("unchecked")

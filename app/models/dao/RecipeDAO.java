@@ -24,8 +24,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     /**
      * Find a recipe by the slug
      *
-     * @param String
-     *            slug
+     * @param String slug
      * @return Recipe
      */
     public Recipe findBySlug(String slug) {
@@ -38,10 +37,8 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     /**
      * Find a recipe if the email is from the user creator or an admin
      *
-     * @param String
-     *            email
-     * @param Integer
-     *            idRecipe
+     * @param String email
+     * @param Integer idRecipe
      * @return Recipe
      */
     public Recipe findByOwner(String email, Integer idRecipe) {
@@ -63,14 +60,10 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     /**
      * Where clause
      *
-     * @param String
-     *            field
-     * @param Object
-     *            value
-     * @param Integer
-     *            id
-     * @param String
-     *            comparison
+     * @param String field
+     * @param Object value
+     * @param Integer id
+     * @param String comparison
      * @return List<Recipe>
      */
     public List<Recipe> check(String field, Object value, Integer id, String comparison) {
@@ -81,12 +74,9 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     /**
      * Where clause
      *
-     * @param String
-     *            field
-     * @param Object
-     *            value
-     * @param Integer
-     *            id
+     * @param String field
+     * @param Object value
+     * @param Integer id
      * @return List<Recipe>
      */
     public List<Recipe> check(String field, Object value, Integer id) {

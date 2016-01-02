@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import middleware.Authenticated;
 import models.Recipe;
+import models.User;
 import models.dao.RecipeDAO;
 import models.enums.RecipeDifficulty;
 import models.service.CategoryService;
@@ -55,8 +56,8 @@ public class RecipeController extends AbstractController {
     /**
      * Get one recipe by slug
      *
-     * @param String
-     *            slug
+     * @param String slug
+     *
      * @return Result
      */
     @Transactional(readOnly = true)
@@ -68,6 +69,23 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
     }
 
+    /**
+     * Check if the slug exist
+     *
+     * @param String slug
+     *
+     * @return Result
+     */
+    @Transactional(readOnly = true)
+    @Security.Authenticated(Authenticated.class)
+    public Result checkSlug(String slug) {
+        Recipe recipe = RecipeService.findBySlug(slug);
+        if (recipe == null) {
+            return util.Json.jsonResult(response(), ok());
+        }
+        return util.Json.jsonResult(response(), badRequest());
+    }
+
     @Override
     @Transactional
     @Security.Authenticated(Authenticated.class)
@@ -77,7 +95,7 @@ public class RecipeController extends AbstractController {
             return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
         RecipeRequest aux = recipe.get();
-        aux.email = request().username();
+        aux.email = Json.fromJson(Json.parse(request().username()), User.class).email;
         Recipe newRecipe = RecipeService.create(aux);
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
@@ -93,7 +111,7 @@ public class RecipeController extends AbstractController {
         if (recipe.get().id != id) {
             return util.Json.jsonResult(response(),
                     badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
-        } else if (!RecipeService.checkOwner(request().username(), id)) {
+        } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
             return unauthorized();
         }
         Recipe recipeModel = RecipeService.update(recipe.get());
@@ -104,7 +122,7 @@ public class RecipeController extends AbstractController {
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id) {
-        if (RecipeService.delete(id, request().username())) {
+        if (RecipeService.delete(id, Json.fromJson(Json.parse(request().username()), User.class).email)) {
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
         }
         return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));

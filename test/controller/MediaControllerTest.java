@@ -16,10 +16,11 @@ import play.libs.ws.WSResponse;
 import util.AbstractTest;
 
 public class MediaControllerTest extends AbstractTest {
-    int        timeout = 4000;
+    int timeout = 4000;
 
-    public MediaControllerTest() {}
-    
+    public MediaControllerTest() {
+    }
+
     @Test
     public void testMediaControllerUnauthorized() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {

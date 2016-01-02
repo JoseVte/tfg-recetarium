@@ -44,6 +44,7 @@ public abstract class Model extends Timestamp {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -53,6 +54,7 @@ public abstract class Model extends Timestamp {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

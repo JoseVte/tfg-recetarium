@@ -22,8 +22,7 @@ public class RecipeService {
     /**
      * Create a recipe
      *
-     * @param Recipe
-     *            data
+     * @param Recipe data
      * @return Recipe
      */
     public static Recipe create(Recipe data) {
@@ -33,8 +32,7 @@ public class RecipeService {
     /**
      * Create a recipe
      *
-     * @param RecipeRequest
-     *            data
+     * @param RecipeRequest data
      * @return Recipe
      */
     public static Recipe create(RecipeRequest data) {
@@ -44,8 +42,7 @@ public class RecipeService {
     /**
      * Update a recipe
      *
-     * @param Recipe
-     *            data
+     * @param Recipe data
      * @return Recipe
      */
     public static Recipe update(Recipe data) {
@@ -55,8 +52,7 @@ public class RecipeService {
     /**
      * Update a recipe
      *
-     * @param RecipeRequest
-     *            data
+     * @param RecipeRequest data
      * @return Recipe
      */
     public static Recipe update(RecipeRequest data) {
@@ -66,8 +62,7 @@ public class RecipeService {
     /**
      * Find a recipe by id
      *
-     * @param Integer
-     *            id
+     * @param Integer id
      * @return Recipe
      */
     public static Recipe find(Integer id) {
@@ -77,8 +72,7 @@ public class RecipeService {
     /**
      * Find a recipe by slug
      *
-     * @param String
-     *            slug
+     * @param String slug
      * @return Recipe
      */
     public static Recipe findBySlug(String slug) {
@@ -88,10 +82,8 @@ public class RecipeService {
     /**
      * Find a recipe by slug
      *
-     * @param String
-     *            email
-     * @param Integer
-     *            idRecipe
+     * @param String email
+     * @param Integer idRecipe
      * @return Recipe
      */
     public static Recipe findByOwner(String email, Integer idRecipe) {
@@ -101,10 +93,8 @@ public class RecipeService {
     /**
      * Delete a recipe by id
      *
-     * @param String
-     *            email
-     * @param Integer
-     *            id
+     * @param String email
+     * @param Integer id
      */
     public static Boolean delete(Integer id, String email) {
         Recipe recipe = recipeDAO.findByOwner(email, id);
@@ -128,10 +118,8 @@ public class RecipeService {
     /**
      * Get the page of recipes
      *
-     * @param Integer
-     *            page
-     * @param Integer
-     *            size
+     * @param Integer page
+     * @param Integer size
      * @return List<Recipe>
      */
     public static List<Recipe> paginate(Integer page, Integer size) {
@@ -150,10 +138,8 @@ public class RecipeService {
     /**
      * Get a recipe if this is the owner
      *
-     * @param String
-     *            email
-     * @param Integer
-     *            idRecipe
+     * @param String email
+     * @param Integer idRecipe
      * @return boolean
      */
     public static boolean checkOwner(String email, Integer idRecipe) {

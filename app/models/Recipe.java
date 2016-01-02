@@ -116,11 +116,9 @@ public class Recipe extends Model implements Serializable {
         this.steps = recipe.steps;
         this.duration = recipe.durationParsed;
         this.difficulty = recipe.difficulty;
-        if (recipe.num_persons != null)
-            this.numPersons = recipe.num_persons;
+        if (recipe.num_persons != null) this.numPersons = recipe.num_persons;
         this.user = UserService.findByEmailAddress(recipe.email);
-        if (recipe.category_id != null)
-            this.category = CategoryService.find(recipe.category_id);
+        if (recipe.category_id != null) this.category = CategoryService.find(recipe.category_id);
         this.ingredients = new ArrayList<Ingredient>();
         for (IngredientRequest ingredient : recipe.ingredients) {
             this.ingredients.add(new Ingredient(ingredient.name, ingredient.count));
@@ -129,16 +127,17 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see models.base.Model#prePersistData()
      */
     @Override
     public void prePersistData() {
-        if (steps != null && steps.isEmpty())
-            steps = null;
+        if (steps != null && steps.isEmpty()) steps = null;
     }
 
     /*
      * (non-Javadoc)
+     * 
      * @see models.base.Model#postPersistData()
      */
     @Override
@@ -148,6 +147,7 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see models.base.Model#handleRelations(util.Model old)
      */
     @Override
@@ -163,6 +163,7 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override

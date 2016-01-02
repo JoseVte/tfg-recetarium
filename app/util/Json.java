@@ -57,8 +57,7 @@ public class Json {
      * Add the content-type json to response
      *
      * @param response
-     * @param Result
-     *            httpResponse
+     * @param Result httpResponse
      * @return Result
      */
     public static Result jsonResult(Response response, Result httpResponse) {
@@ -69,23 +68,20 @@ public class Json {
     /**
      * Create a token for the user
      *
-     * @param subject
-     *            String
+     * @param subject String
+     * @param setExpiration
      * @return String
      */
-    public static String createJwt(String subject) throws JoseException {
+    public static String createJwt(String subject, boolean setExpiration) throws JoseException {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
+        int expiration = Play.application().configuration().getInt("jwt.expiry.minutes");
         Key key = new HmacKey(keySecret.getBytes());
 
         JwtClaims claims = new JwtClaims();
-        claims.setExpirationTimeMinutesInTheFuture(60); // time when the token
-                                                        // will expire (60
-                                                        // minutes from now)
+        if (setExpiration) claims.setExpirationTimeMinutesInTheFuture(expiration);
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast(2); // time before which the token
-                                                // is not yet valid (2 minutes
-                                                // ago)
+        claims.setNotBeforeMinutesInThePast(2);
         claims.setSubject(subject);
 
         JsonWebSignature jws = new JsonWebSignature();
@@ -100,26 +96,17 @@ public class Json {
     /**
      * Check the auth token
      *
-     * @param jwt
-     *            String
+     * @param jwt String
      * @return String
      */
     public static String checkJwt(String jwt) {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         Key key = new AesKey(keySecret.getBytes());
 
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setRequireExpirationTime() // the
-                                                                                      // JWT
-                                                                                      // must
-                                                                                      // have
-                                                                                      // an
-                                                                                      // expiration
-                                                                                      // time
-                .setAllowedClockSkewInSeconds(30) // allow some leeway in
-                                                  // validating time based
-                                                  // claims to account for clock
-                                                  // skew
-                .setRequireSubject().setVerificationKey(key).build();
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
+                .setAllowedClockSkewInSeconds(30)
+                .setRequireSubject()
+                .setVerificationKey(key).build();
 
         try {
             // Validate the JWT and process it to the Claims

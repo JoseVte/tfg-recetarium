@@ -32,8 +32,7 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Register an user
      *
-     * @param Register
-     *            register
+     * @param Register register
      * @return User
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
@@ -47,14 +46,10 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Where clause
      *
-     * @param String
-     *            field
-     * @param Object
-     *            value
-     * @param Integer
-     *            id
-     * @param String
-     *            comparison
+     * @param String field
+     * @param Object value
+     * @param Integer id
+     * @param String comparison
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id, String comparison) {
@@ -65,12 +60,9 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Where clause
      *
-     * @param String
-     *            field
-     * @param Object
-     *            value
-     * @param Integer
-     *            id
+     * @param String field
+     * @param Object value
+     * @param Integer id
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id) {
@@ -80,10 +72,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Where clause
      *
-     * @param String
-     *            field
-     * @param Object
-     *            value
+     * @param String field
+     * @param Object value
      * @return List<User>
      */
     public List<User> where(String field, Object value) {
@@ -93,10 +83,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Validates a password using a hash.
      *
-     * @param password
-     *            the password to check
-     * @param correctHash
-     *            the hash of the valid password
+     * @param password the password to check
+     * @param correctHash the hash of the valid password
      * @return true if the password is correct, false if not
      */
     public static boolean validatePassword(String password, String correctHash)
@@ -107,10 +95,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Validates a password using a hash.
      *
-     * @param password
-     *            the password to check
-     * @param correctHash
-     *            the hash of the valid password
+     * @param password the password to check
+     * @param correctHash the hash of the valid password
      * @return true if the password is correct, false if not
      */
     public static boolean validatePassword(char[] password, String correctHash)
@@ -134,16 +120,18 @@ public class UserDAO extends CrudDAO<User> {
      * Create a token for the user
      *
      * @param user
+     * @param setExpiration
      * @return String
      */
     @SuppressWarnings("deprecation")
-    public String createJWT(User user) {
+    public String createJWT(User user, boolean setExpiration) {
         try {
             ObjectMapper json = new ObjectMapper();
             ObjectNode object = json.createObjectNode();
             object.put("user", Json.toJson(user));
+            object.put("setExpiration", setExpiration);
 
-            return util.Json.createJwt(object.toString());
+            return util.Json.createJwt(object.toString(), setExpiration);
         } catch (JoseException e) {
             Logger.error(e.getMessage());
             return new String();
@@ -163,8 +151,6 @@ public class UserDAO extends CrudDAO<User> {
             JsonNode json = Json.parse(util.Json.checkJwt(jwt));
             if (!json.has("user")) throw new Exception("Token malformed");
             User user = Json.fromJson(json.get("user"), User.class);
-
-            jwt = this.createJWT(user);
 
             return user;
         } catch (Exception e) {

@@ -50,8 +50,7 @@ public class MediaService {
     /**
      * Find a media by id
      * 
-     * @param Integer
-     *            id
+     * @param Integer id
      * @return Media
      */
     public static Media find(Integer idRecipe, String filename) {

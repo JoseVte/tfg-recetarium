@@ -45,7 +45,7 @@ public class Comment extends Model implements Serializable {
     @JoinColumn(name = "parent_comment_id")
     public Comment            parent;
 
-    //@JsonIgnore
+    // @JsonIgnore
     @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment>      replies;
 

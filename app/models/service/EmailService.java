@@ -13,7 +13,7 @@ import views.html.emails.*;
 public class EmailService {
     private MailerClient mailerClient;
     private final String emailInfo = "Recetarium <info@recetarium.com>";
-    private final String url = Play.application().configuration().getString("frontend.url");
+    private final String url       = Play.application().configuration().getString("frontend.url");
 
     public EmailService(play.libs.mailer.MailerClient mailer) {
         mailerClient = mailer;
