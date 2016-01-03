@@ -183,10 +183,10 @@ public class AuthController extends Controller {
         public String username;
 
         @Constraints.Required
-        public String passwordRepeat;
+        public String password_repeat;
 
-        public String firstName;
-        public String lastName;
+        public String first_name;
+        public String last_name;
 
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -196,7 +196,7 @@ public class AuthController extends Controller {
             if (!UserService.where("username", username).isEmpty()) {
                 errors.add(new ValidationError("username", "This username is already registered"));
             }
-            if (password != null && passwordRepeat != null && !password.equals(passwordRepeat)) {
+            if (password != null && password_repeat != null && !password.equals(password_repeat)) {
                 errors.add(new ValidationError("password", "The passwords must be equals"));
                 errors.add(new ValidationError("passwordRepeat", "The passwords must be equals"));
             }
@@ -206,7 +206,7 @@ public class AuthController extends Controller {
         @Override
         public String toString() {
             return "User [username=" + username + ", email=" + email + ", password=" + password + ", firstName="
-                    + firstName + ", lastName=" + lastName + "]";
+                    + first_name + ", lastName=" + last_name + "]";
         }
     }
 

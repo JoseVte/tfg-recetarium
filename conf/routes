@@ -30,8 +30,13 @@ POST    /recipes                  controllers.RecipeController.create()
 PUT     /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)
 PATCH   /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)
 DELETE  /recipes/$id<[0-9]+>      controllers.RecipeController.delete(id: Integer)
-
 HEAD     /recipes/*slug/check      controllers.RecipeController.checkSlug(slug: String)
+
+## Categories
+GET      /categories             controllers.CategoryController.list()
+
+## Tags
+GET     /tags                    controllers.TagController.list(search: String ?= "")
 
 ## Media
 GET     /media/$idRecipe<[0-9]+>/*file      controllers.MediaController.get(idRecipe: Integer, file: String)

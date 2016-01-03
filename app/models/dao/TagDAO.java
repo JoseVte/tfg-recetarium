@@ -42,6 +42,17 @@ public class TagDAO extends CrudDAO<Tag> {
     }
 
     /**
+     * Search all tags
+     *
+     * @param search
+     *
+     * @return List<Tag>
+     */
+    public List<Tag> search(String search) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE text like '%" + search + "%'", Tag.class).getResultList();
+    }
+
+    /**
      * Add a tag to a recipe
      *
      * @param tag

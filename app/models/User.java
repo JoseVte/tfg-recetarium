@@ -110,8 +110,8 @@ public class User extends Model implements Serializable {
         this.username = user.username;
         this.email = user.email;
         this.password = user.password;
-        this.firstName = user.firstName;
-        this.lastName = user.lastName;
+        this.firstName = user.first_name;
+        this.lastName = user.last_name;
         this.type = user.type;
     }
 

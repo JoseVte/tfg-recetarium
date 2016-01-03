@@ -84,6 +84,17 @@ public class TagService {
     }
 
     /**
+     * Search all tags
+     *
+     * @param search
+     *
+     * @return List<Tag>
+     */
+    public static List<Tag> search(String search) {
+        return dao.search(search);
+    }
+
+    /**
      * Get the number of total of tags
      *
      * @return Long

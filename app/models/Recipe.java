@@ -157,7 +157,6 @@ public class Recipe extends Model implements Serializable {
         comments = recipe.comments;
         favorites = recipe.favorites;
         ratings = recipe.ratings;
-        tags = recipe.tags;
         media = recipe.media;
     }
 

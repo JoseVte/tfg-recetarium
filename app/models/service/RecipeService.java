@@ -1,5 +1,6 @@
 package models.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import controllers.RecipeController.RecipeRequest;
@@ -164,6 +165,28 @@ public class RecipeService {
             }
         }
         return false;
+    }
+
+    /**
+     * Add all tags into a recipe
+     *
+     * @param tagIds
+     * @param recipeId
+     */
+    public static void addTags(List<Integer> tagIds, Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (recipe != null) {
+            List<Tag> tags = new ArrayList<Tag>();
+            for(Integer tagId : tagIds) {
+                Tag tag = new Tag();
+                tag.id = tagId;
+                RecipeTags tagged = new RecipeTags(tag, recipe);
+                if (!recipe.tags.contains(tagged)) {
+                    tags.add(tag);
+                }
+            }
+            RecipeDAO.addTags(tags, recipe);
+        }
     }
 
     /**

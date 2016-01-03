@@ -97,6 +97,10 @@ public class RecipeController extends AbstractController {
         RecipeRequest aux = recipe.get();
         aux.email = Json.fromJson(Json.parse(request().username()), User.class).email;
         Recipe newRecipe = RecipeService.create(aux);
+        RecipeService.addTags(aux.tags, newRecipe.id);
+        /*for(Integer tagId : aux.tags) {
+            RecipeService.addTag(tagId, newRecipe.id);
+        }*/
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
 
@@ -155,6 +159,7 @@ public class RecipeController extends AbstractController {
         public Integer                 num_persons = 0;
         public Integer                 category_id = null;
         public List<IngredientRequest> ingredients = new ArrayList<IngredientRequest>();
+        public List<Integer>           tags = new ArrayList<Integer>();
 
         @JsonIgnore
         public String                  email;
@@ -181,6 +186,7 @@ public class RecipeController extends AbstractController {
             if (category_id != null && CategoryService.find(category_id) == null) {
                 errors.add(new ValidationError("category", "The category doesn't exist"));
             }
+            // TODO Checkear tags
             try {
                 durationParsed = format.parse(duration);
             } catch (ParseException e) {

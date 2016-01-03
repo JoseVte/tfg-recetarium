@@ -38,8 +38,8 @@ public class UserDAO extends CrudDAO<User> {
      * @throws NoSuchAlgorithmException
      */
     public User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        User user = new User(register.username, register.email, register.password, register.firstName,
-                register.lastName, TypeUser.COMUN);
+        User user = new User(register.username, register.email, register.password, register.first_name,
+                register.last_name, TypeUser.COMUN);
         return this.create(user);
     }
 

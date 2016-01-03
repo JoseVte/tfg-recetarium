@@ -97,6 +97,20 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         JPA.em().refresh(tag);
         JPA.em().refresh(recipe);
     }
+    
+    /**
+     * Add all tags into a recipe
+     *
+     * @param tags
+     * @param recipe
+     */
+    public static void addTags(List<Tag> tags, Recipe recipe) {
+        for (Tag tag : tags) {
+            JPA.em().persist(new RecipeTags(tag, recipe));
+        }
+        JPA.em().flush();
+        JPA.em().refresh(recipe);
+    }
 
     /**
      * Delete a tag of a recipe
