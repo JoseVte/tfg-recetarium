@@ -48,55 +48,55 @@ public class AuthControllerTest extends AbstractTest {
         registerJson = Json.newObject();
         registerJson.put("username", "Yasuo");
         registerJson.put("password", "password");
-        registerJson.put("passwordRepeat", "password");
+        registerJson.put("password_repeat", "password");
         registerJson.put("email", "newtest@test.dev");
 
         badRegisterJson1 = Json.newObject();
         badRegisterJson1.put("username", "");
         badRegisterJson1.put("password", "password");
-        badRegisterJson1.put("passwordRepeat", "password");
+        badRegisterJson1.put("password_repeat", "password");
         badRegisterJson1.put("email", "newtest@test.dev");
 
         badRegisterJson2 = Json.newObject();
         badRegisterJson2.put("username", "test");
         badRegisterJson2.put("password", "password");
-        badRegisterJson2.put("passwordRepeat", "password");
+        badRegisterJson2.put("password_repeat", "password");
         badRegisterJson2.put("email", "newtest@test.dev");
 
         badRegisterJson3 = Json.newObject();
         badRegisterJson3.put("username", "Yasuo");
         badRegisterJson3.put("password", "");
-        badRegisterJson3.put("passwordRepeat", "password");
+        badRegisterJson3.put("password_repeat", "password");
         badRegisterJson3.put("email", "newtest@test.dev");
 
         badRegisterJson4 = Json.newObject();
         badRegisterJson4.put("username", "Yasuo");
         badRegisterJson4.put("password", "password");
-        badRegisterJson4.put("passwordRepeat", "");
+        badRegisterJson4.put("password_repeat", "");
         badRegisterJson4.put("email", "newtest@test.dev");
 
         badRegisterJson5 = Json.newObject();
         badRegisterJson5.put("username", "Yasuo");
         badRegisterJson5.put("password", "password");
-        badRegisterJson5.put("passwordRepeat", "password2");
+        badRegisterJson5.put("password_repeat", "password2");
         badRegisterJson5.put("email", "newtest@test.dev");
 
         badRegisterJson6 = Json.newObject();
         badRegisterJson6.put("username", "Yasuo");
         badRegisterJson6.put("password", "password");
-        badRegisterJson6.put("passwordRepeat", "password");
+        badRegisterJson6.put("password_repeat", "password");
         badRegisterJson6.put("email", "");
 
         badRegisterJson7 = Json.newObject();
         badRegisterJson7.put("username", "Yasuo");
         badRegisterJson7.put("password", "password");
-        badRegisterJson7.put("passwordRepeat", "password");
+        badRegisterJson7.put("password_repeat", "password");
         badRegisterJson7.put("email", "newtest");
 
         badRegisterJson8 = Json.newObject();
         badRegisterJson8.put("username", "Yasuo");
         badRegisterJson8.put("password", "password");
-        badRegisterJson8.put("passwordRepeat", "password");
+        badRegisterJson8.put("password_repeat", "password");
         badRegisterJson8.put("email", "test@testing.dev");
     }
 
@@ -201,7 +201,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("passwordRepeat").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("password_repeat").get(0).asText(), "This field is required");
 
             successTest();
         });
@@ -218,7 +218,7 @@ public class AuthControllerTest extends AbstractTest {
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
             assertEquals(responseJson.get("password").get(0).asText(), "The passwords must be equals");
-            assertEquals(responseJson.get("passwordRepeat").get(0).asText(), "The passwords must be equals");
+            assertEquals(responseJson.get("password_repeat").get(0).asText(), "The passwords must be equals");
 
             successTest();
         });

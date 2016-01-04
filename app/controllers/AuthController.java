@@ -198,7 +198,7 @@ public class AuthController extends Controller {
             }
             if (password != null && password_repeat != null && !password.equals(password_repeat)) {
                 errors.add(new ValidationError("password", "The passwords must be equals"));
-                errors.add(new ValidationError("passwordRepeat", "The passwords must be equals"));
+                errors.add(new ValidationError("password_repeat", "The passwords must be equals"));
             }
             return errors.isEmpty() ? null : errors;
         }
