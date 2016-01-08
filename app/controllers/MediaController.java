@@ -6,16 +6,21 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import com.dropbox.core.DbxClient;
+import com.dropbox.core.DbxEntry;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxRequestConfig;
 import com.dropbox.core.DbxWriteMode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import middleware.Authenticated;
 import models.Media;
@@ -65,66 +70,126 @@ public class MediaController extends Controller {
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result upload(Integer idRecipe) {
+        FileInputStream inputStream = null;
+        DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());
+        DbxClient client = new DbxClient(config, ACCESS_TOKEN);
         MultipartFormData body = request().body().asMultipartFormData();
-        FilePart file = body.getFile("file");
-
-        if (file != null) {
-            String fileName = file.getFilename();
-            Recipe recipe = RecipeService.findByOwner(Json.fromJson(Json.parse(request().username()), User.class).email, idRecipe);
-            Media media = new Media(fileName, recipe);
-
-            // Check if recipe exist
-            if (recipe == null) {
+        String[] defaultValue = {"false"};
+        boolean isMain = Boolean.parseBoolean(body.asFormUrlEncoded().getOrDefault("is_main", defaultValue)[0]);
+        boolean isMultiple = Boolean.parseBoolean(body.asFormUrlEncoded().getOrDefault("is_multiple", defaultValue)[0]);
+        
+        Recipe recipe = RecipeService.findByOwner(Json.fromJson(Json.parse(request().username()), User.class).email, idRecipe);
+        // Check if recipe exist
+        if (recipe == null) {
+            return util.Json.jsonResult(response(),
+                    notFound(util.Json.generateJsonErrorMessages("Not found " + idRecipe)));
+        }
+    
+        if (isMultiple) {
+            List<FilePart> files = body.getFiles();
+            if(files.isEmpty()) {
                 return util.Json.jsonResult(response(),
-                        notFound(util.Json.generateJsonErrorMessages("Not found " + idRecipe)));
-            }
+                        badRequest(util.Json.generateJsonErrorMessages("No files have been included in the request.")));
+            } else {
+                List<ObjectNode> msg = new ArrayList<ObjectNode>();
+                DbxEntry.File fileDropbox = null;
+                Media media = null;
+                for (FilePart file : files) {
+                    if (Play.isProd()) {
+                        try {
+                            inputStream = new FileInputStream(file.getFile());
+                            fileDropbox = client.uploadFile("/" + idRecipe + "/" + file.getFilename(), DbxWriteMode.add(), file.getFile().length(), inputStream);
+                            msg.add(util.Json.generateJsonInfoMessages("File '" + fileDropbox.name + "' uploaded"));
+                            media = new Media(fileDropbox.name, recipe);
+                        } catch (DbxException | IOException e) {
+                            msg.add(util.Json.generateJsonErrorMessages("Error uploading the file: " + e.getMessage()));
+                        } finally {
+                            try {
+                                if (inputStream != null) inputStream.close();
+                            } catch (IOException e) {
+                            }
+                        }
+                    } else {
+                        String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe;
+                        File dir = new File(path);
 
-            if (Play.isProd()) {
-                FileInputStream inputStream = null;
-                try {
-                    DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());
-                    DbxClient client = new DbxClient(config, ACCESS_TOKEN);
-                    inputStream = new FileInputStream(file.getFile());
-                    client.uploadFile("/" + idRecipe + "/" + fileName, DbxWriteMode.force(), file.getFile().length(),
-                            inputStream);
-                } catch (DbxException | IOException e) {
-                    e.printStackTrace();
-                    return util.Json.jsonResult(response(),
-                            internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
-                } finally {
-                    try {
-                        if (inputStream != null) inputStream.close();
-                    } catch (IOException e) {
+                        // Create the dir if not exists
+                        if (!dir.exists() && !dir.mkdirs()) {
+                            msg.add(util.Json.generateJsonErrorMessages("Error uploading the file"));
+                        } else {
+                            File fileExist = new File(path, file.getFilename());
+                            File fileStored = file.getFile();
+                            boolean exists = false;
+                            int i = 0;
+                            while(!exists) {
+                                if(!fileExist.exists()) {
+                                    fileStored.renameTo(fileExist);
+                                    exists = true;
+                                } else {
+                                    i++;
+                                    fileExist = new File(path, FilenameUtils.getName(file.getFilename()) + "_" + i + "." + FilenameUtils.getExtension(file.getFilename()));
+                                }
+                            }
+                            msg.add(util.Json.generateJsonInfoMessages("File '" + fileExist.getName() + "' uploaded"));
+                            media = new Media(fileExist.getName(), recipe);
+                        }
+                    }
+                    if (media != null){
+                        MediaService.create(media);
                     }
                 }
-            } else {
-                String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR
-                        + idRecipe;
-                File dir = new File(path);
+                
+                return util.Json.jsonResult(response(), ok(Json.toJson(msg)));
+            }
+        } else {
+            FilePart file = body.getFile("file");
+            if (file != null) {
+                String fileName = isMain ? "main." + FilenameUtils.getExtension(file.getFilename()) : file.getFilename();
+                Media media = new Media(fileName, recipe);
+                if (Play.isProd()) {
+                    try {
+                        inputStream = new FileInputStream(file.getFile());
+                        client.uploadFile("/" + idRecipe + "/" + fileName, DbxWriteMode.force(), file.getFile().length(),
+                                inputStream);
+                    } catch (DbxException | IOException e) {
+                        e.printStackTrace();
+                        return util.Json.jsonResult(response(),
+                                internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
+                    } finally {
+                        try {
+                            if (inputStream != null) inputStream.close();
+                        } catch (IOException e) {
+                        }
+                    }
+                } else {
+                    String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR
+                            + idRecipe;
+                    File dir = new File(path);
 
-                // Create the dir if not exists
-                if (!dir.exists() && !dir.mkdirs()) {
-                    return util.Json.jsonResult(response(),
-                            internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
+                    // Create the dir if not exists
+                    if (!dir.exists() && !dir.mkdirs()) {
+                        return util.Json.jsonResult(response(),
+                                internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
+                    }
+
+                    File fileStored = file.getFile();
+                    fileStored.renameTo(new File(path, fileName));
                 }
 
-                File fileStored = file.getFile();
-                fileStored.renameTo(new File(path, fileName));
-            }
+                // Update if the file is duplicated
+                Media exist = MediaService.find(idRecipe, fileName);
+                if (exist != null) {
+                    MediaService.update(exist);
+                } else {
+                    MediaService.create(media);
+                }
 
-            // Update if the file is duplicated
-            Media exist = MediaService.find(idRecipe, fileName);
-            if (exist != null) {
-                MediaService.update(exist);
+                return util.Json.jsonResult(response(),
+                        ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
             } else {
-                MediaService.create(media);
+                return util.Json.jsonResult(response(),
+                        badRequest(util.Json.generateJsonErrorMessages("The file is required")));
             }
-
-            return util.Json.jsonResult(response(),
-                    ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
-        } else {
-            return util.Json.jsonResult(response(),
-                    badRequest(util.Json.generateJsonErrorMessages("The file is required")));
         }
     }
 
