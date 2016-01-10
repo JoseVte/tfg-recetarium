@@ -33,6 +33,20 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         if (!result.isEmpty()) return result.get(0);
         return null;
     }
+    
+    /**
+     * Find a recipe by the slug and id
+     *
+     * @param String slug
+     * @return Recipe
+     */
+    public Recipe findBySlugAndId(String slug, Integer id) {
+        try {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND id != " + id, Recipe.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
 
     /**
      * Find a recipe if the email is from the user creator or an admin

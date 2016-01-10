@@ -1,5 +1,6 @@
 package models.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.Recipe;
@@ -11,6 +12,15 @@ import play.db.jpa.JPA;
 public class TagDAO extends CrudDAO<Tag> {
     public TagDAO() {
         super(Tag.class);
+    }
+    
+    public List<Integer> create(List<Tag> tags) {
+        List<Integer> ids = new ArrayList<Integer>();
+        for (Tag tag : tags) {
+            create(tag);
+            ids.add(tag.id);
+        }
+        return ids;
     }
 
     /**

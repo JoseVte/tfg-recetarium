@@ -1,5 +1,6 @@
 package models.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import models.Recipe;
@@ -23,6 +24,14 @@ public class TagService {
      */
     public static Tag create(Tag data) {
         return dao.create(data);
+    }
+    
+    public static List<Integer> create(List<String> names) {
+        List<Tag> tags = new ArrayList<Tag>();
+        for (String name : names) {
+            tags.add(new Tag(name));
+        }
+        return dao.create(tags);
     }
 
     /**

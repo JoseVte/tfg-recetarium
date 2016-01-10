@@ -17,6 +17,7 @@ import models.dao.RecipeDAO;
 import models.enums.RecipeDifficulty;
 import models.service.CategoryService;
 import models.service.RecipeService;
+import models.service.TagService;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
@@ -78,12 +79,33 @@ public class RecipeController extends AbstractController {
      */
     @Transactional(readOnly = true)
     @Security.Authenticated(Authenticated.class)
-    public Result checkSlug(String slug) {
-        Recipe recipe = RecipeService.findBySlug(slug);
+    public Result checkSlug(String slug, Integer id) {
+        Recipe recipe = RecipeService.findBySlugAndId(slug, id);
         if (recipe == null) {
             return util.Json.jsonResult(response(), ok());
         }
         return util.Json.jsonResult(response(), badRequest());
+    }
+
+    /**
+     * Check if the recipe is mine
+     *
+     * @param String slug
+     *
+     * @return Result
+     */
+    @Transactional(readOnly = true)
+    @Security.Authenticated(Authenticated.class)
+    public Result isMine(String slug) {
+        Recipe recipe = RecipeService.findBySlug(slug);
+        if (recipe != null) {
+            if (RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email,
+                    recipe.id)) {
+                return ok();
+            }
+            return util.Json.jsonResult(response(), unauthorized());
+        }
+        return util.Json.jsonResult(response(), notFound());
     }
 
     @Override
@@ -97,10 +119,8 @@ public class RecipeController extends AbstractController {
         RecipeRequest aux = recipe.get();
         aux.email = Json.fromJson(Json.parse(request().username()), User.class).email;
         Recipe newRecipe = RecipeService.create(aux);
+        aux.tags.addAll(TagService.create(aux.newTags));
         RecipeService.addTags(aux.tags, newRecipe.id);
-        /*for(Integer tagId : aux.tags) {
-            RecipeService.addTag(tagId, newRecipe.id);
-        }*/
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
 
@@ -159,7 +179,8 @@ public class RecipeController extends AbstractController {
         public Integer                 num_persons = 0;
         public Integer                 category_id = null;
         public List<IngredientRequest> ingredients = new ArrayList<IngredientRequest>();
-        public List<Integer>           tags = new ArrayList<Integer>();
+        public List<Integer>           tags        = new ArrayList<Integer>();
+        public List<String>            newTags     = new ArrayList<String>();
 
         @JsonIgnore
         public String                  email;
