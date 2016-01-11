@@ -3,6 +3,7 @@ package controllers;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -52,7 +53,7 @@ public class MediaController extends Controller {
 
             String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe;
             File dir = new File(path);
-            File f = new File(path + MediaService.FILE_SEPARARTOR + file);
+            File f = new File(path + MediaService.FILE_SEPARARTOR + URLDecoder.decode(file, "UTF-8"));
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
             if (!dir.exists() && !dir.mkdirs()) {
                 return util.Json.jsonResult(response(),
@@ -154,7 +155,8 @@ public class MediaController extends Controller {
                 if (Play.isProd()) {
                     try {
                         inputStream = new FileInputStream(file.getFile());
-                        client.uploadFile("/" + idRecipe + "/" + fileName, DbxWriteMode.force(),
+                        DbxWriteMode mode = isMain ? DbxWriteMode.force() : DbxWriteMode.add();
+                        client.uploadFile("/" + idRecipe + "/" + fileName, mode ,
                                 file.getFile().length(), inputStream);
                     } catch (DbxException | IOException e) {
                         e.printStackTrace();
@@ -177,13 +179,31 @@ public class MediaController extends Controller {
                                 internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
                     }
 
-                    File fileStored = file.getFile();
-                    fileStored.renameTo(new File(path, fileName));
+                    if (!isMain) {
+                        File fileExist = new File(path, file.getFilename());
+                        File fileStored = file.getFile();
+                        boolean exists = false;
+                        int i = 0;
+                        while (!exists) {
+                            if (!fileExist.exists()) {
+                                fileStored.renameTo(fileExist);
+                                exists = true;
+                            } else {
+                                i++;
+                                fileName = FilenameUtils.getName(file.getFilename()) + "_" + i + "." + FilenameUtils.getExtension(file.getFilename());
+                                fileExist = new File(path, fileName);
+                            }
+                        }
+                        media = new Media(fileExist.getName(), recipe);
+                    } else {
+                        File fileStored = file.getFile();
+                        fileStored.renameTo(new File(path, fileName));
+                    }
                 }
 
                 // Update if the file is duplicated
                 Media exist = MediaService.find(idRecipe, fileName);
-                if (exist != null) {
+                if (exist != null && isMain) {
                     MediaService.update(exist);
                 } else {
                     MediaService.create(media);
@@ -211,7 +231,7 @@ public class MediaController extends Controller {
                     client.delete("/" + media.recipe.id + "/" + media.filename);
                 } else {
                     String pathDir = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR
-                            + media.recipe.id;
+                            + media.recipe.id + MediaService.FILE_SEPARARTOR;
                     Path path = Paths.get(pathDir + media.filename);
                     Files.delete(path);
                 }
