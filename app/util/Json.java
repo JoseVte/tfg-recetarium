@@ -103,9 +103,7 @@ public class Json {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         Key key = new AesKey(keySecret.getBytes());
 
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder()
-                .setAllowedClockSkewInSeconds(30)
-                .setRequireSubject()
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setAllowedClockSkewInSeconds(30).setRequireSubject()
                 .setVerificationKey(key).build();
 
         try {

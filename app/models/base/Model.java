@@ -31,8 +31,9 @@ public abstract class Model extends Timestamp {
 
     /**
      * Fix the data after store
+     * @param create TODO
      */
-    public void postPersistData() {
+    public void postPersistData(boolean create) {
     }
 
     /**

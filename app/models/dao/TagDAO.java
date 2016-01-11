@@ -3,6 +3,8 @@ package models.dao;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import models.Recipe;
 import models.Tag;
 import models.base.CrudDAO;
@@ -13,11 +15,25 @@ public class TagDAO extends CrudDAO<Tag> {
     public TagDAO() {
         super(Tag.class);
     }
-    
+
+    /**
+     * Create all tags
+     *
+     * @param tags
+     *
+     * @return List<Integer>
+     */
     public List<Integer> create(List<Tag> tags) {
         List<Integer> ids = new ArrayList<Integer>();
+        Tag aux = null;
         for (Tag tag : tags) {
-            create(tag);
+            aux = findBy("text", tag.text);
+            if (aux == null) {
+                create(tag);
+            } else {
+                tag = aux;
+            }
+            
             ids.add(tag.id);
         }
         return ids;
@@ -59,7 +75,8 @@ public class TagDAO extends CrudDAO<Tag> {
      * @return List<Tag>
      */
     public List<Tag> search(String search) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE text like '%" + search + "%'", Tag.class).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE text like '%" + search + "%'", Tag.class)
+                .getResultList();
     }
 
     /**

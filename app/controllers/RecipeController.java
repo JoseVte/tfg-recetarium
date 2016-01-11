@@ -11,11 +11,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import middleware.Authenticated;
+import models.Ingredient;
 import models.Recipe;
 import models.User;
 import models.dao.RecipeDAO;
 import models.enums.RecipeDifficulty;
 import models.service.CategoryService;
+import models.service.IngredientService;
 import models.service.RecipeService;
 import models.service.TagService;
 import play.data.Form;
@@ -27,7 +29,8 @@ import play.mvc.Result;
 import play.mvc.Security;
 
 public class RecipeController extends AbstractController {
-    static Form<RecipeRequest> recipeForm = Form.form(RecipeRequest.class);
+    static Form<RecipeRequest>     recipeForm     = Form.form(RecipeRequest.class);
+    static Form<IngredientRequest> ingredientForm = Form.form(IngredientRequest.class);
 
     @Override
     @Transactional(readOnly = true)
@@ -119,9 +122,56 @@ public class RecipeController extends AbstractController {
         RecipeRequest aux = recipe.get();
         aux.email = Json.fromJson(Json.parse(request().username()), User.class).email;
         Recipe newRecipe = RecipeService.create(aux);
+        IngredientService.create(aux.ingredients, newRecipe);
         aux.tags.addAll(TagService.create(aux.newTags));
         RecipeService.addTags(aux.tags, newRecipe.id);
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
+    }
+
+    /**
+     * Add an ingredient to a recipe
+     *
+     * @param Integer id
+     *
+     * @return Result
+     */
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result addIngredient(Integer id) {
+        Form<IngredientRequest> ingredient = ingredientForm.bindFromRequest();
+        if (ingredient.hasErrors()) {
+            return util.Json.jsonResult(response(), badRequest(ingredient.errorsAsJson()));
+        } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
+            return unauthorized();
+        }
+        Ingredient ingredientModel = RecipeService.addIngredient(id, ingredient.get());
+        if (ingredientModel == null) {
+            return util.Json.jsonResult(response(),
+                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+        }
+        return util.Json.jsonResult(response(), ok(Json.toJson(ingredientModel)));
+    }
+
+    /**
+     * Remove an ingredient to a recipe
+     *
+     * @param Integer id
+     *
+     * @return Result
+     */
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result deleteIngredient(Integer id, Integer ingredientId) {
+        if (id == null || ingredientId == null) {
+            return util.Json.jsonResult(response(), badRequest());
+        } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
+            return unauthorized();
+        }
+        if (!RecipeService.deleteIngredient(id, ingredientId)) {
+            return util.Json.jsonResult(response(),
+                    notFound(util.Json.generateJsonErrorMessages("Not found " + ingredientId)));
+        }
+        return util.Json.jsonResult(response(), ok());
     }
 
     @Override
@@ -138,7 +188,12 @@ public class RecipeController extends AbstractController {
         } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
             return unauthorized();
         }
+        RecipeRequest aux = recipe.get();
         Recipe recipeModel = RecipeService.update(recipe.get());
+        IngredientService.update(aux.ingredients, recipeModel);
+        aux.tags.addAll(TagService.create(aux.newTags));
+        RecipeService.deleteTags(recipeModel.id);
+        RecipeService.addTags(aux.tags, recipeModel.id);
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
     }
 
@@ -153,9 +208,11 @@ public class RecipeController extends AbstractController {
     }
 
     public static class IngredientRequest {
+        public Integer id = null;
+
         @Constraints.Required
-        public String name;
-        public String count;
+        public String  name;
+        public String  count;
 
         public IngredientRequest() {
         }
@@ -207,7 +264,7 @@ public class RecipeController extends AbstractController {
             if (category_id != null && CategoryService.find(category_id) == null) {
                 errors.add(new ValidationError("category", "The category doesn't exist"));
             }
-            // TODO Checkear tags
+            // TODO Checkear tags e ingredientes
             try {
                 durationParsed = format.parse(duration);
             } catch (ParseException e) {

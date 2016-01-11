@@ -173,7 +173,7 @@ public class AuthController extends Controller {
 
     public static class Login extends RecoverPassword {
         @Constraints.Required
-        public String password;
+        public String  password;
 
         public boolean setExpiration = true;
     }

@@ -34,6 +34,10 @@ HEAD    /recipes/*slug/check                    controllers.RecipeController.che
 HEAD    /recipes/*slug/check/$id<[0-9]+>        controllers.RecipeController.checkSlug(slug: String, id: Integer)
 HEAD    /recipes/*slug/mine                     controllers.RecipeController.isMine(slug: String)
 
+## Ingredients
+POST    /recipes/$id<[0-9]+>/ingredient                               controllers.RecipeController.addIngredient(id: Integer)
+DELETE  /recipes/$id<[0-9]+>/ingredient/$ingredientId<[0-9]+>         controllers.RecipeController.deleteIngredient(id: Integer, ingredientId: Integer)
+
 ## Categories
 GET      /categories             controllers.CategoryController.list()
 

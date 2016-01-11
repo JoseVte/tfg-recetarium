@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import controllers.RecipeController.IngredientRequest;
 import models.base.Model;
 
 @Entity
@@ -38,10 +39,17 @@ public class Ingredient extends Model implements Serializable {
         this.count = count;
     }
 
+    public Ingredient(IngredientRequest ingredientRequest) {
+        super();
+        this.id = ingredientRequest.id;
+        this.name = ingredientRequest.name;
+        this.count = ingredientRequest.count;
+    }
+
     @Override
     public void handleRelations(Model old) {
-        Media media = (Media) old;
-        this.setCreatedAt(media.getCreatedAt());
+        Ingredient ingredient = (Ingredient) old;
+        this.setCreatedAt(ingredient.getCreatedAt());
     }
 
     @Override

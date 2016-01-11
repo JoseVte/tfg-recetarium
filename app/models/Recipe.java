@@ -18,6 +18,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -52,7 +55,7 @@ public class Recipe extends Model implements Serializable {
     @Column(columnDefinition = "text")
     public String             steps;
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Ingredient>   ingredients      = new ArrayList<Ingredient>();
 
     @Temporal(TemporalType.TIME)
@@ -67,31 +70,32 @@ public class Recipe extends Model implements Serializable {
     @Column(nullable = false)
     public RecipeDifficulty   difficulty;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     public User               user;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
     @JoinColumn(name = "category_id", nullable = true)
     public Category           category;
 
     @JsonSerialize(using = RecipeCommentsSerializer.class)
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Comment>      comments         = new ArrayList<Comment>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Favorite>     favorites        = new ArrayList<Favorite>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Rating>       ratings          = new ArrayList<Rating>();
 
     @JsonSerialize(using = RecipeTagsSerializer.class)
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<RecipeTags>   tags             = new ArrayList<RecipeTags>();
 
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Media>        media            = new ArrayList<Media>();
 
     public Recipe() {
@@ -119,10 +123,6 @@ public class Recipe extends Model implements Serializable {
         if (recipe.num_persons != null) this.numPersons = recipe.num_persons;
         this.user = UserService.findByEmailAddress(recipe.email);
         if (recipe.category_id != null) this.category = CategoryService.find(recipe.category_id);
-        this.ingredients = new ArrayList<Ingredient>();
-        for (IngredientRequest ingredient : recipe.ingredients) {
-            this.ingredients.add(new Ingredient(ingredient.name, ingredient.count));
-        }
     }
 
     /*
@@ -138,21 +138,12 @@ public class Recipe extends Model implements Serializable {
     /*
      * (non-Javadoc)
      * 
-     * @see models.base.Model#postPersistData()
-     */
-    @Override
-    public void postPersistData() {
-        RecipeService.updateIngredients(this);
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
      * @see models.base.Model#handleRelations(util.Model old)
      */
     @Override
     public void handleRelations(Model old) {
         Recipe recipe = (Recipe) old;
+        ingredients = recipe.ingredients;
         user = recipe.user;
         comments = recipe.comments;
         favorites = recipe.favorites;

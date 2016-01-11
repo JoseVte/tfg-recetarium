@@ -33,7 +33,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         if (!result.isEmpty()) return result.get(0);
         return null;
     }
-    
+
     /**
      * Find a recipe by the slug and id
      *
@@ -42,7 +42,8 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe findBySlugAndId(String slug, Integer id) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND id != " + id, Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND id != " + id,
+                    Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -111,7 +112,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         JPA.em().refresh(tag);
         JPA.em().refresh(recipe);
     }
-    
+
     /**
      * Add all tags into a recipe
      *
@@ -139,6 +140,18 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         // Reload entities
         JPA.em().flush();
         JPA.em().refresh(tag);
+        JPA.em().refresh(recipe);
+    }
+    
+    /**
+     * Delete all tag of a recipe
+     *
+     * @param recipe
+     */
+    public static void deleteTags(Recipe recipe) {
+        JPA.em().createQuery("DELETE FROM " + RecipeTags.class.getName() + " WHERE recipe_id = " + recipe.id) .executeUpdate();
+        // Reload entities
+        JPA.em().flush();
         JPA.em().refresh(recipe);
     }
 

@@ -25,7 +25,14 @@ public class TagService {
     public static Tag create(Tag data) {
         return dao.create(data);
     }
-    
+
+    /**
+     * Create all tags from names
+     *
+     * @param names
+     *
+     * @return List<Integer>
+     */
     public static List<Integer> create(List<String> names) {
         List<Tag> tags = new ArrayList<Tag>();
         for (String name : names) {

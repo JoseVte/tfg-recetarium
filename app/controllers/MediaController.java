@@ -74,20 +74,21 @@ public class MediaController extends Controller {
         DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());
         DbxClient client = new DbxClient(config, ACCESS_TOKEN);
         MultipartFormData body = request().body().asMultipartFormData();
-        String[] defaultValue = {"false"};
+        String[] defaultValue = { "false" };
         boolean isMain = Boolean.parseBoolean(body.asFormUrlEncoded().getOrDefault("is_main", defaultValue)[0]);
         boolean isMultiple = Boolean.parseBoolean(body.asFormUrlEncoded().getOrDefault("is_multiple", defaultValue)[0]);
-        
-        Recipe recipe = RecipeService.findByOwner(Json.fromJson(Json.parse(request().username()), User.class).email, idRecipe);
+
+        Recipe recipe = RecipeService.findByOwner(Json.fromJson(Json.parse(request().username()), User.class).email,
+                idRecipe);
         // Check if recipe exist
         if (recipe == null) {
             return util.Json.jsonResult(response(),
                     notFound(util.Json.generateJsonErrorMessages("Not found " + idRecipe)));
         }
-    
+
         if (isMultiple) {
             List<FilePart> files = body.getFiles();
-            if(files.isEmpty()) {
+            if (files.isEmpty()) {
                 return util.Json.jsonResult(response(),
                         badRequest(util.Json.generateJsonErrorMessages("No files have been included in the request.")));
             } else {
@@ -98,7 +99,8 @@ public class MediaController extends Controller {
                     if (Play.isProd()) {
                         try {
                             inputStream = new FileInputStream(file.getFile());
-                            fileDropbox = client.uploadFile("/" + idRecipe + "/" + file.getFilename(), DbxWriteMode.add(), file.getFile().length(), inputStream);
+                            fileDropbox = client.uploadFile("/" + idRecipe + "/" + file.getFilename(),
+                                    DbxWriteMode.add(), file.getFile().length(), inputStream);
                             msg.add(util.Json.generateJsonInfoMessages("File '" + fileDropbox.name + "' uploaded"));
                             media = new Media(fileDropbox.name, recipe);
                         } catch (DbxException | IOException e) {
@@ -110,7 +112,8 @@ public class MediaController extends Controller {
                             }
                         }
                     } else {
-                        String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR + idRecipe;
+                        String path = "public" + MediaService.FILE_SEPARARTOR + "files" + MediaService.FILE_SEPARARTOR
+                                + idRecipe;
                         File dir = new File(path);
 
                         // Create the dir if not exists
@@ -121,36 +124,38 @@ public class MediaController extends Controller {
                             File fileStored = file.getFile();
                             boolean exists = false;
                             int i = 0;
-                            while(!exists) {
-                                if(!fileExist.exists()) {
+                            while (!exists) {
+                                if (!fileExist.exists()) {
                                     fileStored.renameTo(fileExist);
                                     exists = true;
                                 } else {
                                     i++;
-                                    fileExist = new File(path, FilenameUtils.getName(file.getFilename()) + "_" + i + "." + FilenameUtils.getExtension(file.getFilename()));
+                                    fileExist = new File(path, FilenameUtils.getName(file.getFilename()) + "_" + i + "."
+                                            + FilenameUtils.getExtension(file.getFilename()));
                                 }
                             }
                             msg.add(util.Json.generateJsonInfoMessages("File '" + fileExist.getName() + "' uploaded"));
                             media = new Media(fileExist.getName(), recipe);
                         }
                     }
-                    if (media != null){
+                    if (media != null) {
                         MediaService.create(media);
                     }
                 }
-                
+
                 return util.Json.jsonResult(response(), ok(Json.toJson(msg)));
             }
         } else {
             FilePart file = body.getFile("file");
             if (file != null) {
-                String fileName = isMain ? "main." + FilenameUtils.getExtension(file.getFilename()) : file.getFilename();
+                String fileName = isMain ? "main." + FilenameUtils.getExtension(file.getFilename())
+                        : file.getFilename();
                 Media media = new Media(fileName, recipe);
                 if (Play.isProd()) {
                     try {
                         inputStream = new FileInputStream(file.getFile());
-                        client.uploadFile("/" + idRecipe + "/" + fileName, DbxWriteMode.force(), file.getFile().length(),
-                                inputStream);
+                        client.uploadFile("/" + idRecipe + "/" + fileName, DbxWriteMode.force(),
+                                file.getFile().length(), inputStream);
                     } catch (DbxException | IOException e) {
                         e.printStackTrace();
                         return util.Json.jsonResult(response(),
@@ -197,7 +202,8 @@ public class MediaController extends Controller {
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id) {
         Media media = MediaService.find(id);
-        if (media != null && MediaService.delete(id, Json.fromJson(Json.parse(request().username()), User.class).email)) {
+        if (media != null
+                && MediaService.delete(id, Json.fromJson(Json.parse(request().username()), User.class).email)) {
             try {
                 if (Play.isProd()) {
                     DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());

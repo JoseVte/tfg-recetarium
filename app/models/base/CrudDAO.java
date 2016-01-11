@@ -4,6 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import play.db.jpa.JPA;
 
 public class CrudDAO<T extends Model> {
@@ -27,7 +29,7 @@ public class CrudDAO<T extends Model> {
     public T create(Model model) {
         model.prePersistData();
         JPA.em().persist(model);
-        model.postPersistData();
+        model.postPersistData(true);
         // Flush and refresh for check
         JPA.em().flush();
         JPA.em().refresh(model);
@@ -45,6 +47,26 @@ public class CrudDAO<T extends Model> {
         return (T) JPA.em().find(typeOfModel, id);
     }
 
+
+    
+    /**
+     * Find by field
+     *
+     * @param field
+     * @param value
+     *
+     * @return Tag
+     */
+    @SuppressWarnings("unchecked")
+    public T findBy(String field, String value) {
+        try {
+            return (T) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + field + " = '" + value + "'").getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+        
+    }
+    
     /**
      * Update a model
      *
@@ -57,7 +79,7 @@ public class CrudDAO<T extends Model> {
         model.handleRelations(aux);
         model.prePersistData();
         JPA.em().merge(model);
-        model.postPersistData();
+        model.postPersistData(false);
         return (T) model;
     }
 

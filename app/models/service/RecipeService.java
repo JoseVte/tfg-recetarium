@@ -3,8 +3,10 @@ package models.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import controllers.RecipeController.IngredientRequest;
 import controllers.RecipeController.RecipeRequest;
 import models.Category;
+import models.Ingredient;
 import models.Recipe;
 import models.Tag;
 import models.User;
@@ -79,7 +81,7 @@ public class RecipeService {
     public static Recipe findBySlug(String slug) {
         return recipeDAO.findBySlug(slug);
     }
-    
+
     /**
      * Find a recipe by slug and id
      *
@@ -187,7 +189,7 @@ public class RecipeService {
         Recipe recipe = recipeDAO.find(recipeId);
         if (recipe != null) {
             List<Tag> tags = new ArrayList<Tag>();
-            for(Integer tagId : tagIds) {
+            for (Integer tagId : tagIds) {
                 Tag tag = new Tag();
                 tag.id = tagId;
                 RecipeTags tagged = new RecipeTags(tag, recipe);
@@ -215,6 +217,21 @@ public class RecipeService {
                 RecipeDAO.deleteTag(tag, recipe);
                 return true;
             }
+        }
+        return false;
+    }
+    
+    /**
+     * Delete all tags of a recipe
+     *
+     * @param recipe
+     * @return boolean
+     */
+    public static boolean deleteTags(Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (recipe != null) {
+            RecipeDAO.deleteTags(recipe);
+            return true;
         }
         return false;
     }
@@ -377,6 +394,25 @@ public class RecipeService {
     }
 
     /**
+     * Add an ingredient to a recipe
+     *
+     * @param Integer recipeId
+     * @param IngredientRequest ingredientRequest
+     *
+     * @return Ingredient
+     */
+    public static Ingredient addIngredient(Integer recipeId, IngredientRequest ingredientRequest) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        Ingredient ingredient = new Ingredient(ingredientRequest);
+        if (recipe != null && ingredient != null) {
+            ingredient.recipe = recipe;
+            IngredientService.create(ingredient);
+            return ingredient;
+        }
+        return null;
+    }
+
+    /**
      * Update the ingredients for a recipe
      *
      * @param recipe
@@ -384,5 +420,25 @@ public class RecipeService {
     public static void updateIngredients(Recipe recipe) {
         recipeDAO.deleteIngredients(recipe);
         recipeDAO.addIngredients(recipe);
+    }
+
+    /**
+     * Add an ingredient to a recipe
+     *
+     * @param Integer recipeId
+     * @param Integer ingredientId
+     *
+     * @return boolean
+     */
+    public static boolean deleteIngredient(Integer recipeId, Integer ingredientId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        Ingredient ingredient = IngredientService.find(ingredientId);
+        if (recipe != null && ingredient != null) {
+            if (recipe.ingredients.contains(ingredient)) {
+                IngredientService.delete(ingredientId);
+                return true;
+            }
+        }
+        return false;
     }
 }
