@@ -188,12 +188,11 @@ public class UserService {
      * Create a token for the user
      *
      * @param user
-     * @param setExpiration
      *
      * @return String
      */
-    public static String createJWT(User user, boolean setExpiration) {
-        return userDAO.createJWT(user, setExpiration);
+    public static String createJWT(User user) {
+        return userDAO.createJWT(user);
     }
 
     /**

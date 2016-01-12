@@ -3,7 +3,6 @@ package middleware;
 import controllers.AuthController;
 import models.User;
 import models.service.UserService;
-import play.libs.Json;
 import play.mvc.Http.Context;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -18,7 +17,10 @@ public class Authenticated extends Security.Authenticator {
                 && (authTokenHeaderValues[0] != null)) {
             user = UserService.checkJWT(authTokenHeaderValues[0]);
             if (user != null) {
-                return Json.stringify(Json.toJson(user));
+                ctx.args.put("user", user);
+                ctx.response().discardCookie(AuthController.AUTH_TOKEN);
+                ctx.response().setCookie(AuthController.AUTH_TOKEN, authTokenHeaderValues[0]);
+                return user.email;
             }
         }
 

@@ -12,8 +12,8 @@ import java.util.List;
 
 import org.junit.Test;
 
+import models.TypeUser;
 import models.User;
-import models.enums.TypeUser;
 import models.service.UserService;
 import play.db.jpa.JPA;
 import util.AbstractTest;

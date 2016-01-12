@@ -126,7 +126,7 @@ public class MediaServiceTest extends AbstractTest {
             });
         });
     }
-
+    
     @Test
     public void testMediaServiceDeleteMediaAdmin() {
         running(fakeApplication(inMemoryDatabase()), () -> {

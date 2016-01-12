@@ -8,8 +8,7 @@ public class Anonymous extends Security.Authenticator {
 
     @Override
     public String getUsername(Context ctx) {
-        if (ctx.request().headers().get("X-AUTH-TOKEN") == null
-                || ctx.request().headers().get("X-AUTH-TOKEN")[0] == null) {
+        if (ctx.request().headers().isEmpty()) {
             return "anonymous";
         }
 

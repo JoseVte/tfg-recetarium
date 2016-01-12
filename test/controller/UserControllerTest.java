@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import controllers.AuthController;
-import models.enums.TypeUser;
+import models.TypeUser;
 import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;

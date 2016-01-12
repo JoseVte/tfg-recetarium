@@ -3,9 +3,8 @@ package models.service;
 import java.util.ArrayList;
 import java.util.List;
 
+import models.TypeUser;
 import models.User;
-import models.enums.TypeUser;
-import play.Play;
 import play.libs.mailer.Email;
 import play.libs.mailer.MailerClient;
 import views.html.emails.*;
@@ -13,7 +12,6 @@ import views.html.emails.*;
 public class EmailService {
     private MailerClient mailerClient;
     private final String emailInfo = "Recetarium <info@recetarium.com>";
-    private final String url       = Play.application().configuration().getString("frontend.url");
 
     public EmailService(play.libs.mailer.MailerClient mailer) {
         mailerClient = mailer;
@@ -31,7 +29,7 @@ public class EmailService {
         email.setSubject("Reset password");
         email.setFrom(emailInfo);
         email.addTo(user.firstName + " " + user.lastName + " <" + user.email + ">");
-        email.setBodyHtml(resetPassword.render(user, url).body());
+        email.setBodyHtml(resetPassword.render(user).body());
         email.setBodyText("For reset your password click here: " + user.lostPassToken);
         return mailerClient.send(email);
     }
@@ -49,7 +47,7 @@ public class EmailService {
         email.setSubject("Welcome to Recetarium");
         email.setFrom(emailInfo);
         email.addTo(user.firstName + " " + user.lastName + " <" + user.email + ">");
-        email.setBodyHtml(registration.render(user, url).body());
+        email.setBodyHtml(registration.render(user).body());
         emails.add(mailerClient.send(email));
 
         email = new Email();

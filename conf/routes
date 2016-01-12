@@ -22,27 +22,14 @@ PATCH   /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
 
 ## Recipes
-GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3)
+GET     /recipes                  controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3)
 # This URI is not necessary, the recipes are identified by a slug
-#GET     /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
-GET     /recipes/*slug                          controllers.RecipeController.get(slug: String)
-POST    /recipes                                controllers.RecipeController.create()
-PUT     /recipes/$id<[0-9]+>                    controllers.RecipeController.update(id: Integer)
-PATCH   /recipes/$id<[0-9]+>                    controllers.RecipeController.update(id: Integer)
-DELETE  /recipes/$id<[0-9]+>                    controllers.RecipeController.delete(id: Integer)
-HEAD    /recipes/*slug/check                    controllers.RecipeController.checkSlug(slug: String, id: Integer = null)
-HEAD    /recipes/*slug/check/$id<[0-9]+>        controllers.RecipeController.checkSlug(slug: String, id: Integer)
-HEAD    /recipes/*slug/mine                     controllers.RecipeController.isMine(slug: String)
-
-## Ingredients
-POST    /recipes/$id<[0-9]+>/ingredient                               controllers.RecipeController.addIngredient(id: Integer)
-DELETE  /recipes/$id<[0-9]+>/ingredient/$ingredientId<[0-9]+>         controllers.RecipeController.deleteIngredient(id: Integer, ingredientId: Integer)
-
-## Categories
-GET      /categories             controllers.CategoryController.list()
-
-## Tags
-GET     /tags                    controllers.TagController.list(search: String ?= "")
+#GET     /recipes/$id<[0-9]+>      controllers.RecipeController.get(id: Integer)
+GET     /recipes/*slug            controllers.RecipeController.get(slug: String)
+POST    /recipes                  controllers.RecipeController.create()
+PUT     /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)
+PATCH   /recipes/$id<[0-9]+>      controllers.RecipeController.update(id: Integer)
+DELETE  /recipes/$id<[0-9]+>      controllers.RecipeController.delete(id: Integer)
 
 ## Media
 GET     /media/$idRecipe<[0-9]+>/*file      controllers.MediaController.get(idRecipe: Integer, file: String)

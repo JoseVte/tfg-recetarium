@@ -11,10 +11,10 @@ import java.util.List;
 import org.junit.Test;
 
 import models.Recipe;
+import models.TypeUser;
 import models.User;
 import models.dao.RecipeDAO;
 import models.dao.UserDAO;
-import models.enums.TypeUser;
 import play.db.jpa.JPA;
 import util.AbstractTest;
 

@@ -19,19 +19,15 @@ data:
 - &recipe !!models.Recipe
       title:       Test
       slug:        test
-      steps:       Description test
-      difficulty:  EASY
-      duration:    2015-11-11 00:10:00 -5
+      description: Description test
       user:        *user
-      category:    *category
+      category:     *category
 - &recipe2 !!models.Recipe
       title:       Test 2
       slug:        test-2
-      steps:       Description test
-      difficulty:  EASY
-      duration:    2015-11-11 00:10:00 -5
+      description: Description test
       user:        *user
-      category:    *categorynew
+      category:     *categorynew
 - &comment !!models.Comment
       text:   test
       recipe: *recipe

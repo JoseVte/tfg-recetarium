@@ -8,7 +8,7 @@ import models.dao.MediaDAO;
 
 public class MediaService {
     private static MediaDAO dao;
-    public static char      FILE_SEPARARTOR = File.separatorChar;
+    public static char FILE_SEPARARTOR = File.separatorChar;
 
     static {
         dao = new MediaDAO();
@@ -46,11 +46,12 @@ public class MediaService {
     public static Media find(Integer id) {
         return dao.find(id);
     }
-
+    
     /**
      * Find a media by id
-     * 
+     *
      * @param Integer id
+     *
      * @return Media
      */
     public static Media find(Integer idRecipe, String filename) {
@@ -76,7 +77,7 @@ public class MediaService {
 
     /**
      * Get all media
-     * 
+     *
      * @return List<Media>
      */
     public static List<Media> all() {

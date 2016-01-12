@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.6.27, for debian-linux-gnu (x86_64)
+-- MySQL dump 10.13  Distrib 5.6.13, for Win32 (x86)
 --
--- Host: localhost    Database: play
+-- Host: api.recetarium.com    Database: play
 -- ------------------------------------------------------
--- Server version	5.6.27-0ubuntu0.15.04.1
+-- Server version	5.5.44-0ubuntu0.12.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -54,7 +54,7 @@ CREATE TABLE `comments` (
   CONSTRAINT `FK_1x3vdhb5vv8eu5708riqe07wc` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FK_elncsq19dph7cjg049rig7yq9` FOREIGN KEY (`recipe_id`) REFERENCES `recipes` (`id`),
   CONSTRAINT `FK_injup6fhwk3srngbmvy8fn0vq` FOREIGN KEY (`parent_comment_id`) REFERENCES `comments` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,7 +73,7 @@ CREATE TABLE `favorites` (
   KEY `FK_90kgfx6u9djmr58o5sxi0w2hm` (`recipe_id`),
   CONSTRAINT `FK_8pr7wrtwt7dh3ehoh67f6ao18` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FK_90kgfx6u9djmr58o5sxi0w2hm` FOREIGN KEY (`recipe_id`) REFERENCES `recipes` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -92,27 +92,7 @@ CREATE TABLE `friends` (
   KEY `FK_idv0wqw940sm3ccr3y3mm4o92` (`friend_id`),
   CONSTRAINT `FK_e69mr7x1xgad9dmcehrtdco87` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FK_idv0wqw940sm3ccr3y3mm4o92` FOREIGN KEY (`friend_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `ingredients`
---
-
-DROP TABLE IF EXISTS `ingredients`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `ingredients` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
-  `count` varchar(255) DEFAULT NULL,
-  `name` varchar(255) NOT NULL,
-  `recipe_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `FK_ltto0wjyf4iteupdhdblodqje` (`recipe_id`),
-  CONSTRAINT `FK_ltto0wjyf4iteupdhdblodqje` FOREIGN KEY (`recipe_id`) REFERENCES `recipes` (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -152,7 +132,7 @@ CREATE TABLE `ratings` (
   KEY `FK_57qvrimxhumxcahiplo7uwdmy` (`recipe_id`),
   CONSTRAINT `FK_57qvrimxhumxcahiplo7uwdmy` FOREIGN KEY (`recipe_id`) REFERENCES `recipes` (`id`),
   CONSTRAINT `FK_8x1o0gihwfyuuxygpovuln16a` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -171,7 +151,7 @@ CREATE TABLE `recipe_tags` (
   KEY `FK_ebxlxdcrue0sbxr4ephjxu19u` (`recipe_id`),
   CONSTRAINT `FK_ebxlxdcrue0sbxr4ephjxu19u` FOREIGN KEY (`recipe_id`) REFERENCES `recipes` (`id`),
   CONSTRAINT `FK_p66dk631v1djkqxgh2qbetsbm` FOREIGN KEY (`tag_id`) REFERENCES `tags` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -183,23 +163,20 @@ DROP TABLE IF EXISTS `recipes`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `recipes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `created_at` datetime DEFAULT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `description` varchar(255) DEFAULT NULL,
   `slug` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `category_id` int(11) DEFAULT NULL,
   `user_id` int(11) NOT NULL,
-  `difficulty` varchar(255) NOT NULL,
-  `duration` time NOT NULL,
-  `num_persons` int(5) NOT NULL DEFAULT '0',
-  `steps` text,
-  `created_at` datetime DEFAULT NULL,
-  `updated_at` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_2yg91gejn5gopghwqbh5k25fp` (`slug`),
   KEY `FK_s065q7o56dngba1r6yl32g0i7` (`category_id`),
   KEY `FK_4wy0ba3q1sha2itbqv3fdyom6` (`user_id`),
   CONSTRAINT `FK_4wy0ba3q1sha2itbqv3fdyom6` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `FK_s065q7o56dngba1r6yl32g0i7` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -216,7 +193,7 @@ CREATE TABLE `tags` (
   `text` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_j7dpk7fcxelkfvydpmxjcx51b` (`text`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -241,7 +218,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `UK_6dotkott2kjsp8vw4d0m25fb7` (`email`),
   UNIQUE KEY `UK_r43af9ap4edm43mmtq01oddj6` (`username`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
