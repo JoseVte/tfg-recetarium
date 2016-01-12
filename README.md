@@ -65,6 +65,7 @@ API Recetarium
 - Añadidas las URL en los mails
 - Cambios en la estructura del modelo de la receta
 - Fix en el JWT y añadido token sin expiración
+- Subida de múltiples archivos
 
 ###### [![0.3.4](/doc/release.png) 0.3.4](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.4)
 

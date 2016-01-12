@@ -78,18 +78,20 @@ public class Recipe extends Model implements Serializable {
     @JoinColumn(name = "category_id", nullable = true)
     public Category           category;
 
+    @Fetch(value = FetchMode.SUBSELECT)
     @JsonSerialize(using = RecipeCommentsSerializer.class)
     @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Comment>      comments         = new ArrayList<Comment>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Favorite>     favorites        = new ArrayList<Favorite>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Rating>       ratings          = new ArrayList<Rating>();
 
+    @Fetch(value = FetchMode.SUBSELECT)
     @JsonSerialize(using = RecipeTagsSerializer.class)
     @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<RecipeTags>   tags             = new ArrayList<RecipeTags>();
