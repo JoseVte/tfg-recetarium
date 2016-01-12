@@ -1,9 +1,12 @@
 package models.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import controllers.RecipeController.IngredientRequest;
 import controllers.RecipeController.RecipeRequest;
 import models.Category;
+import models.Ingredient;
 import models.Recipe;
 import models.Tag;
 import models.User;
@@ -23,7 +26,6 @@ public class RecipeService {
      * Create a recipe
      *
      * @param Recipe data
-     *
      * @return Recipe
      */
     public static Recipe create(Recipe data) {
@@ -34,7 +36,6 @@ public class RecipeService {
      * Create a recipe
      *
      * @param RecipeRequest data
-     *
      * @return Recipe
      */
     public static Recipe create(RecipeRequest data) {
@@ -45,7 +46,6 @@ public class RecipeService {
      * Update a recipe
      *
      * @param Recipe data
-     *
      * @return Recipe
      */
     public static Recipe update(Recipe data) {
@@ -56,7 +56,6 @@ public class RecipeService {
      * Update a recipe
      *
      * @param RecipeRequest data
-     *
      * @return Recipe
      */
     public static Recipe update(RecipeRequest data) {
@@ -67,7 +66,6 @@ public class RecipeService {
      * Find a recipe by id
      *
      * @param Integer id
-     *
      * @return Recipe
      */
     public static Recipe find(Integer id) {
@@ -78,19 +76,27 @@ public class RecipeService {
      * Find a recipe by slug
      *
      * @param String slug
-     *
      * @return Recipe
      */
     public static Recipe findBySlug(String slug) {
         return recipeDAO.findBySlug(slug);
     }
-    
+
+    /**
+     * Find a recipe by slug and id
+     *
+     * @param String slug
+     * @return Recipe
+     */
+    public static Recipe findBySlugAndId(String slug, Integer id) {
+        return recipeDAO.findBySlugAndId(slug, id);
+    }
+
     /**
      * Find a recipe by slug
      *
      * @param String email
      * @param Integer idRecipe
-     *
      * @return Recipe
      */
     public static Recipe findByOwner(String email, Integer idRecipe) {
@@ -127,7 +133,6 @@ public class RecipeService {
      *
      * @param Integer page
      * @param Integer size
-     *
      * @return List<Recipe>
      */
     public static List<Recipe> paginate(Integer page, Integer size) {
@@ -148,7 +153,6 @@ public class RecipeService {
      *
      * @param String email
      * @param Integer idRecipe
-     *
      * @return boolean
      */
     public static boolean checkOwner(String email, Integer idRecipe) {
@@ -160,7 +164,6 @@ public class RecipeService {
      *
      * @param tag
      * @param recipe
-     *
      * @return boolean
      */
     public static boolean addTag(Integer tagId, Integer recipeId) {
@@ -177,11 +180,32 @@ public class RecipeService {
     }
 
     /**
+     * Add all tags into a recipe
+     *
+     * @param tagIds
+     * @param recipeId
+     */
+    public static void addTags(List<Integer> tagIds, Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (recipe != null) {
+            List<Tag> tags = new ArrayList<Tag>();
+            for (Integer tagId : tagIds) {
+                Tag tag = new Tag();
+                tag.id = tagId;
+                RecipeTags tagged = new RecipeTags(tag, recipe);
+                if (!recipe.tags.contains(tagged)) {
+                    tags.add(tag);
+                }
+            }
+            RecipeDAO.addTags(tags, recipe);
+        }
+    }
+
+    /**
      * Delete a tag of a recipe
      *
      * @param tag
      * @param recipe
-     *
      * @return boolean
      */
     public static boolean deleteTag(Integer tagId, Integer recipeId) {
@@ -196,13 +220,27 @@ public class RecipeService {
         }
         return false;
     }
+    
+    /**
+     * Delete all tags of a recipe
+     *
+     * @param recipe
+     * @return boolean
+     */
+    public static boolean deleteTags(Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (recipe != null) {
+            RecipeDAO.deleteTags(recipe);
+            return true;
+        }
+        return false;
+    }
 
     /**
      * Add a recipe as a favorite
      *
      * @param user
      * @param recipe
-     *
      * @return boolean
      */
     public static boolean addFavorite(Integer userId, Integer recipeId) {
@@ -223,7 +261,6 @@ public class RecipeService {
      *
      * @param user
      * @param recipe
-     *
      * @return boolean
      */
     public static boolean deleteFavorite(Integer userId, Integer recipeId) {
@@ -245,7 +282,6 @@ public class RecipeService {
      * @param user
      * @param recipe
      * @param value
-     *
      * @return boolean
      */
     public static boolean addRating(Integer userId, Integer recipeId, double value) {
@@ -267,7 +303,6 @@ public class RecipeService {
      * @param user
      * @param recipe
      * @param value
-     *
      * @return boolean
      */
     public static boolean updateRating(Integer userId, Integer recipeId, double value) {
@@ -288,7 +323,6 @@ public class RecipeService {
      *
      * @param user
      * @param recipe
-     *
      * @return boolean
      */
     public static boolean deleteRating(Integer userId, Integer recipeId) {
@@ -309,7 +343,6 @@ public class RecipeService {
      *
      * @param category
      * @param recipe
-     *
      * @return boolean
      */
     public static boolean addCategory(Integer categoryId, Integer recipeId) {
@@ -329,7 +362,6 @@ public class RecipeService {
      *
      * @param category
      * @param recipe
-     *
      * @return boolean
      */
     public static boolean updateCategory(Integer categoryId, Integer recipeId) {
@@ -347,7 +379,6 @@ public class RecipeService {
      *
      * @param category
      * @param recipe
-     *
      * @return boolean
      */
     public static boolean deleteCategory(Integer categoryId, Integer recipeId) {
@@ -356,6 +387,55 @@ public class RecipeService {
         if (category != null && recipe != null) {
             if (category.recipes.contains(recipe)) {
                 RecipeDAO.deleteCategory(recipe);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add an ingredient to a recipe
+     *
+     * @param Integer recipeId
+     * @param IngredientRequest ingredientRequest
+     *
+     * @return Ingredient
+     */
+    public static Ingredient addIngredient(Integer recipeId, IngredientRequest ingredientRequest) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        Ingredient ingredient = new Ingredient(ingredientRequest);
+        if (recipe != null && ingredient != null) {
+            ingredient.recipe = recipe;
+            IngredientService.create(ingredient);
+            return ingredient;
+        }
+        return null;
+    }
+
+    /**
+     * Update the ingredients for a recipe
+     *
+     * @param recipe
+     */
+    public static void updateIngredients(Recipe recipe) {
+        recipeDAO.deleteIngredients(recipe);
+        recipeDAO.addIngredients(recipe);
+    }
+
+    /**
+     * Add an ingredient to a recipe
+     *
+     * @param Integer recipeId
+     * @param Integer ingredientId
+     *
+     * @return boolean
+     */
+    public static boolean deleteIngredient(Integer recipeId, Integer ingredientId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        Ingredient ingredient = IngredientService.find(ingredientId);
+        if (recipe != null && ingredient != null) {
+            if (recipe.ingredients.contains(ingredient)) {
+                IngredientService.delete(ingredientId);
                 return true;
             }
         }

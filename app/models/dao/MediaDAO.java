@@ -28,7 +28,7 @@ public class MediaDAO extends CrudDAO<Media> {
         return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND (filename = '" + filename
                 + "' AND recipe_id = '" + recipe_id + "') ORDER BY id", Media.class).getResultList();
     }
-    
+
     /**
      * Find a recipe if the email is from the user creator or an admin
      *
@@ -44,8 +44,8 @@ public class MediaDAO extends CrudDAO<Media> {
                 if (logged.isAdmin()) {
                     return find(idMedia);
                 }
-                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.recipe r JOIN r.user u WHERE m.id = '" + idMedia
-                        + "' AND u.id = '" + logged.id + "'", Media.class).getSingleResult();
+                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.recipe r JOIN r.user u WHERE m.id = '"
+                        + idMedia + "' AND u.id = '" + logged.id + "'", Media.class).getSingleResult();
             }
             return null;
         } catch (NoResultException e) {

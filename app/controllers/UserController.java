@@ -9,9 +9,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import middleware.Admin;
 import middleware.Authenticated;
-import models.TypeUser;
 import models.User;
 import models.dao.UserDAO;
+import models.enums.TypeUser;
 import models.service.UserService;
 import play.Logger;
 import play.data.Form;
@@ -115,10 +115,8 @@ public class UserController extends AbstractController {
         @Constraints.Required
         public String   password;
 
-        @JsonProperty(value = "first_name")
-        public String   firstName;
-        @JsonProperty(value = "last_name")
-        public String   lastName;
+        public String   first_name;
+        public String   last_name;
 
         @Constraints.Required
         public TypeUser type;
@@ -150,7 +148,7 @@ public class UserController extends AbstractController {
         @Override
         public String toString() {
             return "User [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
-                    + ", firstName=" + firstName + ", lastName=" + lastName + ", type=" + type.toString() + "]";
+                    + ", firstName=" + first_name + ", lastName=" + last_name + ", type=" + type.toString() + "]";
         }
     }
 }

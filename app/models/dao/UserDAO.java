@@ -12,9 +12,9 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import controllers.AuthController.Register;
 import models.Recipe;
-import models.TypeUser;
 import models.User;
 import models.base.CrudDAO;
+import models.enums.TypeUser;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
@@ -33,14 +33,13 @@ public class UserDAO extends CrudDAO<User> {
      * Register an user
      *
      * @param Register register
-     *
      * @return User
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
      */
     public User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        User user = new User(register.username, register.email, register.password, register.firstName,
-                register.lastName, TypeUser.COMUN);
+        User user = new User(register.username, register.email, register.password, register.first_name,
+                register.last_name, TypeUser.COMUN);
         return this.create(user);
     }
 
@@ -51,7 +50,6 @@ public class UserDAO extends CrudDAO<User> {
      * @param Object value
      * @param Integer id
      * @param String comparison
-     *
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id, String comparison) {
@@ -65,7 +63,6 @@ public class UserDAO extends CrudDAO<User> {
      * @param String field
      * @param Object value
      * @param Integer id
-     *
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id) {
@@ -77,7 +74,6 @@ public class UserDAO extends CrudDAO<User> {
      *
      * @param String field
      * @param Object value
-     *
      * @return List<User>
      */
     public List<User> where(String field, Object value) {
@@ -124,17 +120,18 @@ public class UserDAO extends CrudDAO<User> {
      * Create a token for the user
      *
      * @param user
-     *
+     * @param setExpiration
      * @return String
      */
     @SuppressWarnings("deprecation")
-    public String createJWT(User user) {
+    public String createJWT(User user, boolean setExpiration) {
         try {
             ObjectMapper json = new ObjectMapper();
             ObjectNode object = json.createObjectNode();
             object.put("user", Json.toJson(user));
+            object.put("setExpiration", setExpiration);
 
-            return util.Json.createJwt(object.toString());
+            return util.Json.createJwt(object.toString(), setExpiration);
         } catch (JoseException e) {
             Logger.error(e.getMessage());
             return new String();
@@ -145,7 +142,6 @@ public class UserDAO extends CrudDAO<User> {
      * Check the auth token
      *
      * @param jwt
-     *
      * @return User
      */
     public User checkJWT(String jwt) {
@@ -156,11 +152,8 @@ public class UserDAO extends CrudDAO<User> {
             if (!json.has("user")) throw new Exception("Token malformed");
             User user = Json.fromJson(json.get("user"), User.class);
 
-            jwt = this.createJWT(user);
-
             return user;
         } catch (Exception e) {
-            Logger.error(e.getMessage());
             return null;
         }
     }
@@ -169,7 +162,6 @@ public class UserDAO extends CrudDAO<User> {
      * Get the token valid of an user
      *
      * @param user
-     *
      * @return VerificationToken
      */
     public VerificationToken getLostPasswordToken(User user) {
@@ -183,7 +175,6 @@ public class UserDAO extends CrudDAO<User> {
      * Find an user by email
      *
      * @param email
-     *
      * @return User
      */
     public User findByEmailAddress(String email) {
@@ -201,7 +192,6 @@ public class UserDAO extends CrudDAO<User> {
      *
      * @param email
      * @param password
-     *
      * @return User
      */
     public User findByEmailAddressAndPassword(String email, String password) {

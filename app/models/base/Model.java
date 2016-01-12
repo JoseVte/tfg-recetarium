@@ -26,7 +26,15 @@ public abstract class Model extends Timestamp {
     /**
      * Fix the data before store
      */
-    public abstract void prePersistData();
+    public void prePersistData() {
+    }
+
+    /**
+     * Fix the data after store
+     * @param create TODO
+     */
+    public void postPersistData(boolean create) {
+    }
 
     /**
      * Fix the relations between models
@@ -37,7 +45,7 @@ public abstract class Model extends Timestamp {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -47,7 +55,7 @@ public abstract class Model extends Timestamp {
 
     /*
      * (non-Javadoc)
-     *
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override

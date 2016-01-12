@@ -1,6 +1,9 @@
 package models.dao;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.NoResultException;
 
 import models.Recipe;
 import models.Tag;
@@ -11,6 +14,29 @@ import play.db.jpa.JPA;
 public class TagDAO extends CrudDAO<Tag> {
     public TagDAO() {
         super(Tag.class);
+    }
+
+    /**
+     * Create all tags
+     *
+     * @param tags
+     *
+     * @return List<Integer>
+     */
+    public List<Integer> create(List<Tag> tags) {
+        List<Integer> ids = new ArrayList<Integer>();
+        Tag aux = null;
+        for (Tag tag : tags) {
+            aux = findBy("text", tag.text);
+            if (aux == null) {
+                create(tag);
+            } else {
+                tag = aux;
+            }
+            
+            ids.add(tag.id);
+        }
+        return ids;
     }
 
     /**
@@ -39,6 +65,18 @@ public class TagDAO extends CrudDAO<Tag> {
      */
     public List<Tag> check(String field, Object value, Integer id) {
         return check(field, value, id, "=");
+    }
+
+    /**
+     * Search all tags
+     *
+     * @param search
+     *
+     * @return List<Tag>
+     */
+    public List<Tag> search(String search) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE text like '%" + search + "%'", Tag.class)
+                .getResultList();
     }
 
     /**
