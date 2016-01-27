@@ -1,16 +1,13 @@
 package models.base;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.List;
-
-import javax.persistence.NoResultException;
-
 import play.db.jpa.JPA;
 
+import javax.persistence.NoResultException;
+import java.util.List;
+
 public class CrudDAO<T extends Model> {
+    protected String TABLE;
     private Class<? extends Model> typeOfModel;
-    protected String               TABLE;
 
     public CrudDAO(Class<? extends Model> model) {
         typeOfModel = model;
@@ -20,10 +17,9 @@ public class CrudDAO<T extends Model> {
     /**
      * Create a model
      *
-     * @param Model model
+     * @param model Model
+     *
      * @return Model
-     * @throws InvalidKeySpecException
-     * @throws NoSuchAlgorithmException
      */
     @SuppressWarnings("unchecked")
     public T create(Model model) {
@@ -39,7 +35,8 @@ public class CrudDAO<T extends Model> {
     /**
      * Find a model by id
      *
-     * @param Integer id
+     * @param id Integer
+     *
      * @return Model
      */
     @SuppressWarnings("unchecked")
@@ -48,12 +45,11 @@ public class CrudDAO<T extends Model> {
     }
 
 
-    
     /**
      * Find by field
      *
-     * @param field
-     * @param value
+     * @param field String
+     * @param value String
      *
      * @return Tag
      */
@@ -64,13 +60,14 @@ public class CrudDAO<T extends Model> {
         } catch (NoResultException e) {
             return null;
         }
-        
+
     }
-    
+
     /**
      * Update a model
      *
-     * @param Model model
+     * @param model Model
+     *
      * @return Model
      */
     @SuppressWarnings("unchecked")
@@ -86,7 +83,7 @@ public class CrudDAO<T extends Model> {
     /**
      * Delete a model by id
      *
-     * @param Model model
+     * @param model Model
      */
     public void delete(Model model) {
         JPA.em().remove(model);
@@ -105,8 +102,9 @@ public class CrudDAO<T extends Model> {
     /**
      * Get the page of models
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page Integer
+     * @param size Integer
+     *
      * @return List<Model>
      */
     @SuppressWarnings("unchecked")

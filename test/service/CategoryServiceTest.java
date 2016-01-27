@@ -1,21 +1,15 @@
 package service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
+import models.Category;
+import models.service.CategoryService;
+import org.junit.Test;
+import play.db.jpa.JPA;
+import util.AbstractTest;
 
 import java.util.List;
 
-import org.junit.Test;
-
-import models.Category;
-import models.service.CategoryService;
-import play.db.jpa.JPA;
-import util.AbstractTest;
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
 
 public class CategoryServiceTest extends AbstractTest {
 
@@ -51,11 +45,11 @@ public class CategoryServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Category> categorys = CategoryService.all();
+                List<Category> categories = CategoryService.all();
                 long count = CategoryService.count();
                 assertEquals(count, 2);
 
-                assertEquals(categorys.get(0).text, "test");
+                assertEquals(categories.get(0).text, "test");
 
                 successTest();
             });

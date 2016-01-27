@@ -1,21 +1,16 @@
 package models.base;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-
 import models.User;
 
+import javax.persistence.*;
+
 @MappedSuperclass
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public abstract class Model extends Timestamp {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer                     id;
+    public Integer id;
 
     @Transient
     protected CrudDAO<? extends Model> dao;
@@ -31,6 +26,7 @@ public abstract class Model extends Timestamp {
 
     /**
      * Fix the data after store
+     *
      * @param create TODO
      */
     public void postPersistData(boolean create) {
@@ -39,7 +35,7 @@ public abstract class Model extends Timestamp {
     /**
      * Fix the relations between models
      *
-     * @param old
+     * @param old Model
      */
     public abstract void handleRelations(Model old);
 

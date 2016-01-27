@@ -1,42 +1,28 @@
 package controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static play.mvc.Http.Status.BAD_REQUEST;
-import static play.mvc.Http.Status.CREATED;
-import static play.mvc.Http.Status.NOT_FOUND;
-import static play.mvc.Http.Status.OK;
-import static play.mvc.Http.Status.UNAUTHORIZED;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-import static play.test.Helpers.testServer;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import controllers.AuthController;
+import org.junit.Test;
 import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import util.AbstractTest;
 
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
+
 public class RecipeControllerTest extends AbstractTest {
-    int        timeout = 4000;
-    ObjectNode dataOk;
-    ObjectNode dataError1;
-    ObjectNode dataError2;
-    ObjectNode dataError3;
-    ObjectNode dataError4;
-    ObjectNode dataError5;
-    ObjectNode dataError6;
-    ObjectNode dataError7;
-    ObjectNode dataError8;
-    ObjectNode loginJson;
+    private ObjectNode dataOk;
+    private ObjectNode dataError1;
+    private ObjectNode dataError2;
+    private ObjectNode dataError3;
+    private ObjectNode dataError4;
+    private ObjectNode dataError5;
+    private ObjectNode dataError6;
+    private ObjectNode dataError7;
+    private ObjectNode dataError8;
+    private ObjectNode loginJson;
 
     public RecipeControllerTest() throws Exception {
         dataOk = Json.newObject();
@@ -176,6 +162,31 @@ public class RecipeControllerTest extends AbstractTest {
             assertEquals(responseJson.get("total").intValue(), 2);
             assertNotNull(responseJson.get("link-self"));
             assertNotNull(responseJson.get("link-next"));
+            assertNull(responseJson.get("link-prev"));
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerSearchRecipesOkRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes?page=1&size=1&search=test2")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertTrue(responseJson.get("data").isArray());
+            assertEquals(responseJson.get("data").size(), 1);
+            assertEquals(responseJson.get("total").intValue(), 1);
+            assertNotNull(responseJson.get("link-self"));
+            assertNull(responseJson.get("link-next"));
             assertNull(responseJson.get("link-prev"));
 
             successTest();

@@ -14,7 +14,7 @@ PATCH   /auth/reset/password        controllers.AuthController.resetPassword()
 
 # Routes API Rest
 ## Users
-GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3)
+GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "")
 GET     /users/$id<[0-9]+>      controllers.UserController.get(id: Integer)
 POST    /users                  controllers.UserController.create()
 PUT     /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
@@ -22,7 +22,7 @@ PATCH   /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
 
 ## Recipes
-GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3)
+GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "")
 # This URI is not necessary, the recipes are identified by a slug
 #GET     /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
 GET     /recipes/*slug                          controllers.RecipeController.get(slug: String)

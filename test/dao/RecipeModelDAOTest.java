@@ -1,24 +1,19 @@
 package dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
+import models.*;
+import models.dao.RecipeDAO;
+import models.enums.RecipeDifficulty;
+import org.junit.Test;
+import play.db.jpa.JPA;
+import util.AbstractTest;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import org.junit.Test;
-
-import models.Category;
-import models.Recipe;
-import models.Tag;
-import models.User;
-import models.dao.RecipeDAO;
-import models.enums.RecipeDifficulty;
-import play.db.jpa.JPA;
-import util.AbstractTest;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static play.test.Helpers.*;
 
 public class RecipeModelDAOTest extends AbstractTest {
 
@@ -31,8 +26,10 @@ public class RecipeModelDAOTest extends AbstractTest {
                 assertEquals(recipe.title, "Test");
                 assertEquals(recipe.slug, "test");
                 assertEquals(recipe.steps, "Description test");
+                assertEquals(recipe.duration.getTime(), 18600000);
+                assertEquals(recipe.difficulty, RecipeDifficulty.EASY);
                 assertEquals(recipe.user.id.intValue(), 1);
-                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.category.text, "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
@@ -66,11 +63,35 @@ public class RecipeModelDAOTest extends AbstractTest {
                 assertEquals(recipe.title, "Test");
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
-                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.category.text, "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeDAOFindBySlugAndIdRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = recipeDAO.findBySlugAndId("test", 2);
+                assertEquals(recipe.id.intValue(), 1);
+                assertEquals(recipe.title, "Test");
+                assertEquals(recipe.steps, "Description test");
+                assertEquals(recipe.user.id.intValue(), 1);
+                assertEquals(recipe.category.text, "test");
+                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.tags.size(), 1);
+                assertEquals(recipe.favorites.size(), 1);
+                assertEquals(recipe.ratings.size(), 1);
+
+                recipe = recipeDAO.findBySlugAndId("test-2", 2);
+                assertNull(recipe);
 
                 successTest();
             });
@@ -100,7 +121,7 @@ public class RecipeModelDAOTest extends AbstractTest {
                 assertEquals(recipe.title, "Test");
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
-                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.category.text, "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
@@ -121,7 +142,7 @@ public class RecipeModelDAOTest extends AbstractTest {
                 assertEquals(recipe.title, "Test");
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
-                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.category.text, "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
@@ -178,6 +199,22 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 recipes = recipeDAO.paginate(1, 1);
                 assertEquals(recipes.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeDAOSearchRecipes() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                List<Recipe> recipes = recipeDAO.paginate(0, 1, "Test 2");
+                long count = recipeDAO.count("Test 2");
+                assertEquals(recipes.get(0).title, "Test 2");
+                assertEquals(recipes.size(), 1);
+                assertEquals(count, 1);
 
                 successTest();
             });
@@ -251,6 +288,29 @@ public class RecipeModelDAOTest extends AbstractTest {
     }
 
     @Test
+    public void testRecipeDAOAddTags() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
+                        userDAO.find(1), null);
+                recipe = recipeDAO.create(recipe);
+                Tag tag = tagDAO.find(1);
+
+                assertEquals(tag.recipes.size(), 1);
+                assertEquals(recipe.tags.size(), 0);
+
+                RecipeDAO.addTags(Collections.singletonList(tag), recipe);
+
+                assertEquals(tag.recipes.size(), 2);
+                assertEquals(recipe.tags.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
     public void testRecipeDAOAddTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
@@ -267,6 +327,23 @@ public class RecipeModelDAOTest extends AbstractTest {
 
                 assertEquals(tag.recipes.size(), 2);
                 assertEquals(recipe.tags.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeDAODeleteTags() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = recipeDAO.find(1);
+                assertEquals(recipe.tags.size(), 1);
+
+                RecipeDAO.deleteTags(recipe);
+
+                assertEquals(recipe.tags.size(), 0);
 
                 successTest();
             });
@@ -400,7 +477,7 @@ public class RecipeModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeDAOAddSection() {
+    public void testRecipeDAOAddCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -423,24 +500,24 @@ public class RecipeModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeDAOUpdateSection() {
+    public void testRecipeDAOUpdateCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Category category = categoryDAO.find(1);
-                Category newSection = categoryDAO.find(2);
+                Category newCategory = categoryDAO.find(2);
                 Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
                         userDAO.find(1), category);
                 recipe = recipeDAO.create(recipe);
 
                 assertEquals(category.recipes.size(), 2);
-                assertEquals(newSection.recipes.size(), 1);
+                assertEquals(newCategory.recipes.size(), 1);
                 assertEquals(recipe.category.text, "test");
 
-                RecipeDAO.addOrUpdateCategory(newSection, recipe);
+                RecipeDAO.addOrUpdateCategory(newCategory, recipe);
 
                 assertEquals(category.recipes.size(), 1);
-                assertEquals(newSection.recipes.size(), 2);
+                assertEquals(newCategory.recipes.size(), 2);
                 assertEquals(recipe.category.text, "test-new");
 
                 successTest();
@@ -449,7 +526,7 @@ public class RecipeModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeDAODeleteSection() {
+    public void testRecipeDAODeleteCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -468,4 +545,21 @@ public class RecipeModelDAOTest extends AbstractTest {
             });
         });
     }
+
+    @Test
+    public void testRecipeDAOAddIngredient() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = recipeDAO.find(1);
+                assertEquals(recipe.ingredients.size(), 0);
+                recipe.ingredients.add(new Ingredient("Test", null));
+                recipeDAO.addIngredients(recipe);
+                assertEquals(recipe.ingredients.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
 }

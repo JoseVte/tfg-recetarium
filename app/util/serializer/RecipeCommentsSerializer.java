@@ -1,14 +1,13 @@
 package util.serializer;
 
-import java.io.IOException;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-
 import models.Comment;
+
+import java.io.IOException;
+import java.util.List;
 
 public class RecipeCommentsSerializer extends JsonSerializer<List<Comment>> {
 
@@ -17,8 +16,9 @@ public class RecipeCommentsSerializer extends JsonSerializer<List<Comment>> {
             throws IOException, JsonProcessingException {
         jgen.writeStartArray();
         for (Comment comment : value) {
-            if (comment.parent == null) jgen.writeObject(comment);
-            jgen.writeObject(comment);
+            if (comment.parent == null) {
+                jgen.writeObject(comment);
+            }
         }
         jgen.writeEndArray();
     }

@@ -1,15 +1,7 @@
 package controllers;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import middleware.Authenticated;
 import models.Ingredient;
 import models.Recipe;
@@ -28,21 +20,29 @@ import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+
 public class RecipeController extends AbstractController {
-    static Form<RecipeRequest>     recipeForm     = Form.form(RecipeRequest.class);
-    static Form<IngredientRequest> ingredientForm = Form.form(IngredientRequest.class);
+    private static Form<RecipeRequest> recipeForm = Form.form(RecipeRequest.class);
+    private static Form<IngredientRequest> ingredientForm = Form.form(IngredientRequest.class);
 
     @Override
     @Transactional(readOnly = true)
-    public Result list(Integer page, Integer size) {
-        List<Recipe> models = RecipeService.paginate(page - 1, size);
-        Long count = RecipeService.count();
+    public Result list(Integer page, Integer size, String search) {
+        List<Recipe> models = RecipeService.paginate(page - 1, size, search);
+        Long count = RecipeService.count(search);
         String[] routesString = new String[3];
-        routesString[0] = routes.RecipeController.list(page - 1, size).toString();
-        routesString[1] = routes.RecipeController.list(page + 1, size).toString();
-        routesString[2] = routes.RecipeController.list(page, size).toString();
+        routesString[0] = routes.RecipeController.list(page - 1, size, search).toString();
+        routesString[1] = routes.RecipeController.list(page + 1, size, search).toString();
+        routesString[2] = routes.RecipeController.list(page, size, search).toString();
 
-        ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString);
+        ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString, !Objects.equals(search, ""));
 
         return util.Json.jsonResult(response(), ok(result));
     }
@@ -60,7 +60,7 @@ public class RecipeController extends AbstractController {
     /**
      * Get one recipe by slug
      *
-     * @param String slug
+     * @param slug String
      *
      * @return Result
      */
@@ -76,7 +76,7 @@ public class RecipeController extends AbstractController {
     /**
      * Check if the slug exist
      *
-     * @param String slug
+     * @param slug String
      *
      * @return Result
      */
@@ -93,7 +93,7 @@ public class RecipeController extends AbstractController {
     /**
      * Check if the recipe is mine
      *
-     * @param String slug
+     * @param slug String
      *
      * @return Result
      */
@@ -131,7 +131,7 @@ public class RecipeController extends AbstractController {
     /**
      * Add an ingredient to a recipe
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Result
      */
@@ -155,7 +155,7 @@ public class RecipeController extends AbstractController {
     /**
      * Remove an ingredient to a recipe
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Result
      */
@@ -182,7 +182,7 @@ public class RecipeController extends AbstractController {
         if (recipe.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
-        if (recipe.get().id != id) {
+        if (!Objects.equals(recipe.get().id, id)) {
             return util.Json.jsonResult(response(),
                     badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
         } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
@@ -211,42 +211,42 @@ public class RecipeController extends AbstractController {
         public Integer id = null;
 
         @Constraints.Required
-        public String  name;
-        public String  count;
+        public String name;
+        public String count;
 
         public IngredientRequest() {
         }
     }
 
     public static class RecipeRequest {
-        public Integer                 id          = null;
+        public Integer id = null;
 
         @Constraints.Required
-        public String                  slug;
+        public String slug;
 
         @Constraints.Required
-        public String                  title;
-        public String                  steps;
+        public String title;
+        public String steps;
 
         @Constraints.Required
-        public RecipeDifficulty        difficulty;
+        public RecipeDifficulty difficulty;
 
         @Constraints.Required
-        public String                  duration;
-        public Integer                 num_persons = 0;
-        public Integer                 category_id = null;
+        public String duration;
+        public Integer num_persons = 0;
+        public Integer category_id = null;
         public List<IngredientRequest> ingredients = new ArrayList<IngredientRequest>();
-        public List<Integer>           tags        = new ArrayList<Integer>();
-        public List<String>            newTags     = new ArrayList<String>();
+        public List<Integer> tags = new ArrayList<Integer>();
+        public List<String> newTags = new ArrayList<String>();
 
         @JsonIgnore
-        public String                  email;
+        public String email;
         @JsonIgnore
-        public Date                    durationParsed;
+        public Date durationParsed;
         @JsonIgnore
-        private RecipeDAO              dao;
+        private RecipeDAO dao;
         @JsonIgnore
-        private DateFormat             format;
+        private DateFormat format;
 
         public RecipeRequest() {
             dao = new RecipeDAO();

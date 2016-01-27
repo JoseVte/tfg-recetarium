@@ -53,12 +53,20 @@ API Recetarium
 - [Recetas](/doc/recetas-doc.md)
 - [Usuarios](/doc/user-doc.md)
 - [Archivos](/doc/archivos-doc.md)
+- [Categorias](/doc/categorias-deoc.md)
+- [Tags](/doc/tags-doc.md)
 
 -----
 
 ### CHANGELOG
 
-#### [![0.4.0](/doc/rocket-blue.png) 0.4.0](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.0)
+#### [![0.4.1](/doc/rocket-blue.png) 0.4.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.1)
+
+- Busqueda de recetas
+- Actualizada la documentación
+- Añadidos nuevos test
+
+###### [![0.4.0](/doc/release.png) 0.4.0](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.0)
 
 - Gestion de ficheros con dropbox
 - Cambio del servidor CI a Travis

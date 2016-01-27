@@ -1,23 +1,16 @@
 package controller;
 
-import static org.junit.Assert.assertEquals;
-import static play.mvc.Http.Status.UNAUTHORIZED;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-import static play.test.Helpers.testServer;
-
-import java.io.File;
-
 import org.junit.Test;
-
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import util.AbstractTest;
 
-public class MediaControllerTest extends AbstractTest {
-    int timeout = 4000;
+import java.io.File;
 
+import static org.junit.Assert.assertEquals;
+import static play.test.Helpers.*;
+
+public class MediaControllerTest extends AbstractTest {
     public MediaControllerTest() {
     }
 

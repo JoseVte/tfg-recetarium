@@ -1,33 +1,20 @@
 package controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static play.mvc.Http.Status.BAD_REQUEST;
-import static play.mvc.Http.Status.CREATED;
-import static play.mvc.Http.Status.NOT_FOUND;
-import static play.mvc.Http.Status.OK;
-import static play.mvc.Http.Status.UNAUTHORIZED;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-import static play.test.Helpers.testServer;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import controllers.AuthController;
 import models.enums.TypeUser;
+import org.junit.Test;
 import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import util.AbstractTest;
 
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
+
 public class UserControllerTest extends AbstractTest {
-    int        timeout = 4000;
+    int timeout = 4000;
     ObjectNode dataOk;
     ObjectNode dataError1;
     ObjectNode dataError2;

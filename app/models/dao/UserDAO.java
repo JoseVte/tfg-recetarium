@@ -1,15 +1,8 @@
 package models.dao;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.List;
-
-import org.jose4j.lang.JoseException;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import controllers.AuthController.Register;
 import models.Recipe;
 import models.User;
@@ -18,11 +11,16 @@ import models.enums.TypeUser;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
+import org.jose4j.lang.JoseException;
 import play.Logger;
 import play.db.jpa.JPA;
 import play.libs.Json;
 import util.Encryptation;
 import util.VerificationToken;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 public class UserDAO extends CrudDAO<User> {
     public UserDAO() {
@@ -30,61 +28,11 @@ public class UserDAO extends CrudDAO<User> {
     }
 
     /**
-     * Register an user
-     *
-     * @param Register register
-     * @return User
-     * @throws InvalidKeySpecException
-     * @throws NoSuchAlgorithmException
-     */
-    public User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        User user = new User(register.username, register.email, register.password, register.first_name,
-                register.last_name, TypeUser.COMUN);
-        return this.create(user);
-    }
-
-    /**
-     * Where clause
-     *
-     * @param String field
-     * @param Object value
-     * @param Integer id
-     * @param String comparison
-     * @return List<User>
-     */
-    public List<User> where(String field, Object value, Integer id, String comparison) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
-                + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
-    }
-
-    /**
-     * Where clause
-     *
-     * @param String field
-     * @param Object value
-     * @param Integer id
-     * @return List<User>
-     */
-    public List<User> where(String field, Object value, Integer id) {
-        return where(field, value, id, "=");
-    }
-
-    /**
-     * Where clause
-     *
-     * @param String field
-     * @param Object value
-     * @return List<User>
-     */
-    public List<User> where(String field, Object value) {
-        return where(field, value, 0, "=");
-    }
-
-    /**
      * Validates a password using a hash.
      *
-     * @param password the password to check
+     * @param password    the password to check
      * @param correctHash the hash of the valid password
+     *
      * @return true if the password is correct, false if not
      */
     public static boolean validatePassword(String password, String correctHash)
@@ -95,8 +43,9 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Validates a password using a hash.
      *
-     * @param password the password to check
+     * @param password    the password to check
      * @param correctHash the hash of the valid password
+     *
      * @return true if the password is correct, false if not
      */
     public static boolean validatePassword(char[] password, String correctHash)
@@ -117,100 +66,10 @@ public class UserDAO extends CrudDAO<User> {
     }
 
     /**
-     * Create a token for the user
-     *
-     * @param user
-     * @param setExpiration
-     * @return String
-     */
-    @SuppressWarnings("deprecation")
-    public String createJWT(User user, boolean setExpiration) {
-        try {
-            ObjectMapper json = new ObjectMapper();
-            ObjectNode object = json.createObjectNode();
-            object.put("user", Json.toJson(user));
-            object.put("setExpiration", setExpiration);
-
-            return util.Json.createJwt(object.toString(), setExpiration);
-        } catch (JoseException e) {
-            Logger.error(e.getMessage());
-            return new String();
-        }
-    }
-
-    /**
-     * Check the auth token
-     *
-     * @param jwt
-     * @return User
-     */
-    public User checkJWT(String jwt) {
-        if (jwt == null) return null;
-
-        try {
-            JsonNode json = Json.parse(util.Json.checkJwt(jwt));
-            if (!json.has("user")) throw new Exception("Token malformed");
-            User user = Json.fromJson(json.get("user"), User.class);
-
-            return user;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Get the token valid of an user
-     *
-     * @param user
-     * @return VerificationToken
-     */
-    public VerificationToken getLostPasswordToken(User user) {
-        if (user != null && user.lostPassToken != null && !user.lostPassToken.isEmpty()) {
-            return new VerificationToken(user.lostPassToken, user.lostPassExpire);
-        }
-        return null;
-    }
-
-    /**
-     * Find an user by email
-     *
-     * @param email
-     * @return User
-     */
-    public User findByEmailAddress(String email) {
-        if (email == null) return null;
-        try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class)
-                    .getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
-     * Find an user by email and password
-     *
-     * @param email
-     * @param password
-     * @return User
-     */
-    public User findByEmailAddressAndPassword(String email, String password) {
-        if (email == null || password == null) return null;
-
-        try {
-            User user = findByEmailAddress(email);
-            if (validatePassword(password, user.password)) return user;
-            return null;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    /**
      * Add new friend to an user
      *
-     * @param user
-     * @param friend
+     * @param user   User
+     * @param friend User
      */
     public static void addFriend(User user, User friend) {
         Friend friendship = new Friend(user, friend);
@@ -224,8 +83,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Delete a friendship relation
      *
-     * @param user
-     * @param friend
+     * @param user   User
+     * @param friend User
      */
     public static void deleteFriend(User user, User friend) {
         Friend friendship = JPA.em().createQuery("SELECT m FROM " + Friend.class.getName() + " m WHERE user_id = "
@@ -240,8 +99,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Add a recipe as a favorite
      *
-     * @param user
-     * @param recipe
+     * @param user   User
+     * @param recipe User
      */
     public static void addFavorite(User user, Recipe recipe) {
         Favorite fav = new Favorite(user, recipe);
@@ -255,8 +114,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Delete a recipe favorite
      *
-     * @param user
-     * @param recipe
+     * @param user   User
+     * @param recipe Recipe
      */
     public static void deleteFavorite(User user, Recipe recipe) {
         Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName() + " m WHERE user_id = "
@@ -271,8 +130,9 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Add a rating of a recipe
      *
-     * @param user
-     * @param recipe
+     * @param user   User
+     * @param recipe Recipe
+     * @param value  double
      */
     public static void addRating(User user, Recipe recipe, double value) {
         Rating rating = new Rating(user, recipe, value);
@@ -286,8 +146,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Update a rating of a recipe
      *
-     * @param user
-     * @param recipe
+     * @param user   User
+     * @param recipe Recipe
      */
     public static void updateRating(User user, Recipe recipe, double value) {
         Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
@@ -303,8 +163,8 @@ public class UserDAO extends CrudDAO<User> {
     /**
      * Delete a rating of a recipe
      *
-     * @param user
-     * @param recipe
+     * @param user   User
+     * @param recipe Recipe
      */
     public static void deleteRating(User user, Recipe recipe) {
         Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
@@ -314,5 +174,155 @@ public class UserDAO extends CrudDAO<User> {
         JPA.em().flush();
         JPA.em().refresh(user);
         JPA.em().refresh(recipe);
+    }
+
+    /**
+     * Register an user
+     *
+     * @param register Register
+     *
+     * @return User
+     *
+     * @throws InvalidKeySpecException
+     * @throws NoSuchAlgorithmException
+     */
+    public User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        User user = new User(register.username, register.email, register.password, register.first_name,
+                register.last_name, TypeUser.COMUN);
+        return this.create(user);
+    }
+
+    /**
+     * Where clause
+     *
+     * @param field      String
+     * @param value      Object
+     * @param id         Integer
+     * @param comparison String
+     *
+     * @return List<User>
+     */
+    public List<User> where(String field, Object value, Integer id, String comparison) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
+                + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
+    }
+
+    /**
+     * Where clause
+     *
+     * @param field String
+     * @param value Object
+     * @param id    Integer
+     *
+     * @return List<User>
+     */
+    public List<User> where(String field, Object value, Integer id) {
+        return where(field, value, id, "=");
+    }
+
+    /**
+     * Where clause
+     *
+     * @param field String
+     * @param value Object
+     *
+     * @return List<User>
+     */
+    public List<User> where(String field, Object value) {
+        return where(field, value, 0, "=");
+    }
+
+    /**
+     * Create a token for the user
+     *
+     * @param user          User
+     * @param setExpiration boolean
+     *
+     * @return String
+     */
+    @SuppressWarnings("deprecation")
+    public String createJWT(User user, boolean setExpiration) {
+        try {
+            ObjectMapper json = new ObjectMapper();
+            ObjectNode object = json.createObjectNode();
+            object.put("user", Json.toJson(user));
+            object.put("setExpiration", setExpiration);
+
+            return util.Json.createJwt(object.toString(), setExpiration);
+        } catch (JoseException e) {
+            Logger.error(e.getMessage());
+            return "";
+        }
+    }
+
+    /**
+     * Check the auth token
+     *
+     * @param jwt String
+     *
+     * @return User
+     */
+    public User checkJWT(String jwt) {
+        if (jwt == null) return null;
+
+        try {
+            JsonNode json = Json.parse(util.Json.checkJwt(jwt));
+            if (!json.has("user")) throw new Exception("Token malformed");
+
+            return Json.fromJson(json.get("user"), User.class);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Get the token valid of an user
+     *
+     * @param user User
+     *
+     * @return VerificationToken
+     */
+    public VerificationToken getLostPasswordToken(User user) {
+        if (user != null && user.lostPassToken != null && !user.lostPassToken.isEmpty()) {
+            return new VerificationToken(user.lostPassToken, user.lostPassExpire);
+        }
+        return null;
+    }
+
+    /**
+     * Find an user by email
+     *
+     * @param email String
+     *
+     * @return User
+     */
+    public User findByEmailAddress(String email) {
+        if (email == null) return null;
+        try {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class)
+                    .getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /**
+     * Find an user by email and password
+     *
+     * @param email    String
+     * @param password String
+     *
+     * @return User
+     */
+    public User findByEmailAddressAndPassword(String email, String password) {
+        if (email == null || password == null) return null;
+
+        try {
+            User user = findByEmailAddress(email);
+            if (validatePassword(password, user.password)) return user;
+            return null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

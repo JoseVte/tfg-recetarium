@@ -1,20 +1,18 @@
 package dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-
-import java.util.List;
-
-import org.junit.Test;
-
 import models.Recipe;
 import models.Tag;
 import models.dao.TagDAO;
+import org.junit.Test;
 import play.db.jpa.JPA;
 import util.AbstractTest;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static play.test.Helpers.*;
 
 public class TagModelDAOTest extends AbstractTest {
 
@@ -26,6 +24,22 @@ public class TagModelDAOTest extends AbstractTest {
                 Tag tag = tagDAO.find(1);
                 assertEquals(tag.text, "test");
                 assertEquals(tag.recipes.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testTagDAOSearchTag() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                List<Tag> tags = tagDAO.search("test");
+                assertEquals(tags.size(), 1);
+
+                tags = tagDAO.search("no exist");
+                assertEquals(tags.size(), 0);
 
                 successTest();
             });
@@ -86,6 +100,21 @@ public class TagModelDAOTest extends AbstractTest {
                 Tag create = new Tag("test2");
                 Tag tag = tagDAO.create(create);
                 assertEquals(tag, create);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testTagDAOCreateTags() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Tag create = new Tag("new-tag");
+                Tag create2 = new Tag("new-tag 2");
+                List<Integer> ids = tagDAO.create(Arrays.asList(create, create2));
+                assertEquals(ids.size(), 2);
 
                 successTest();
             });

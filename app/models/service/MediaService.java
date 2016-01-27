@@ -1,14 +1,14 @@
 package models.service;
 
-import java.io.File;
-import java.util.List;
-
 import models.Media;
 import models.dao.MediaDAO;
 
+import java.io.File;
+import java.util.List;
+
 public class MediaService {
+    public static char FILE_SEPARARTOR = File.separatorChar;
     private static MediaDAO dao;
-    public static char      FILE_SEPARARTOR = File.separatorChar;
 
     static {
         dao = new MediaDAO();
@@ -17,7 +17,7 @@ public class MediaService {
     /**
      * Create a media
      *
-     * @param Media data
+     * @param data Media
      *
      * @return Media
      */
@@ -28,7 +28,7 @@ public class MediaService {
     /**
      * Update a media
      *
-     * @param Media data
+     * @param data Media
      *
      * @return Media
      */
@@ -39,7 +39,7 @@ public class MediaService {
     /**
      * Find a media by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Media
      */
@@ -49,8 +49,9 @@ public class MediaService {
 
     /**
      * Find a media by id
-     * 
-     * @param Integer id
+     *
+     * @param idRecipe Integer
+     *
      * @return Media
      */
     public static Media find(Integer idRecipe, String filename) {
@@ -61,8 +62,8 @@ public class MediaService {
     /**
      * Delete a media by id
      *
-     * @param Integer id
-     * @param String email
+     * @param id    Integer
+     * @param email String
      */
     public static Boolean delete(Integer id, String email) {
         Media media = dao.findByOwner(email, id);
@@ -76,7 +77,7 @@ public class MediaService {
 
     /**
      * Get all media
-     * 
+     *
      * @return List<Media>
      */
     public static List<Media> all() {
@@ -86,8 +87,8 @@ public class MediaService {
     /**
      * Get the page of media
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page Integer
+     * @param size Integer
      *
      * @return List<Media>
      */

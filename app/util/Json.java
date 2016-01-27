@@ -1,8 +1,8 @@
 package util;
 
-import java.security.Key;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.base.Model;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -13,20 +13,18 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import models.base.Model;
 import play.Play;
 import play.mvc.Http.Response;
 import play.mvc.Result;
 
-public class Json {
-    private static final ObjectMapper    defaultObjectMapper = new ObjectMapper();
-    private static volatile ObjectMapper objectMapper        = null;
+import java.security.Key;
+import java.util.List;
 
-    public static ObjectMapper mapper() {
+public class Json {
+    private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = null;
+
+    private static ObjectMapper mapper() {
         if (objectMapper == null) {
             return defaultObjectMapper;
         }
@@ -43,12 +41,13 @@ public class Json {
 
     @SuppressWarnings("deprecation")
     public static ObjectNode generateJsonPaginateObject(List<? extends Model> models, Long count, Integer page,
-            Integer size, String[] routes) {
+                                                        Integer size, String[] routes, boolean search) {
         ObjectNode object = mapper().createObjectNode();
         object.put("data", play.libs.Json.toJson(models));
         object.put("total", count);
         if (page > 1) object.put("link-prev", routes[0]);
-        if (page * size < count) object.put("link-next", routes[1]);
+        if (page * size < models.size() && search) object.put("link-next", routes[1]);
+        else if (page * size < count && !search) object.put("link-next", routes[1]);
         object.put("link-self", routes[2]);
         return object;
     }
@@ -56,8 +55,9 @@ public class Json {
     /**
      * Add the content-type json to response
      *
-     * @param response
-     * @param Result httpResponse
+     * @param response     Response
+     * @param httpResponse Result
+     *
      * @return Result
      */
     public static Result jsonResult(Response response, Result httpResponse) {
@@ -68,8 +68,9 @@ public class Json {
     /**
      * Create a token for the user
      *
-     * @param subject String
-     * @param setExpiration
+     * @param subject       String
+     * @param setExpiration boolean
+     *
      * @return String
      */
     public static String createJwt(String subject, boolean setExpiration) throws JoseException {
@@ -88,15 +89,15 @@ public class Json {
         jws.setPayload(claims.toJson());
         jws.setKey(key);
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA256);
-        String jwt = jws.getCompactSerialization();
 
-        return jwt;
+        return jws.getCompactSerialization();
     }
 
     /**
      * Check the auth token
      *
      * @param jwt String
+     *
      * @return String
      */
     public static String checkJwt(String jwt) {

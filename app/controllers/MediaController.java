@@ -1,5 +1,25 @@
 package controllers;
 
+import com.dropbox.core.*;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import middleware.Authenticated;
+import models.Media;
+import models.Recipe;
+import models.User;
+import models.service.MediaService;
+import models.service.RecipeService;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+import play.Play;
+import play.db.jpa.Transactional;
+import play.libs.Json;
+import play.mvc.Controller;
+import play.mvc.Http.MultipartFormData;
+import play.mvc.Http.MultipartFormData.FilePart;
+import play.mvc.Result;
+import play.mvc.Security;
+
+import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -11,36 +31,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.activation.MimetypesFileTypeMap;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-
-import com.dropbox.core.DbxClient;
-import com.dropbox.core.DbxEntry;
-import com.dropbox.core.DbxException;
-import com.dropbox.core.DbxRequestConfig;
-import com.dropbox.core.DbxWriteMode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import middleware.Authenticated;
-import models.Media;
-import models.Recipe;
-import models.User;
-import models.service.MediaService;
-import models.service.RecipeService;
-import play.Play;
-import play.db.jpa.Transactional;
-import play.libs.Json;
-import play.mvc.Controller;
-import play.mvc.Http.MultipartFormData;
-import play.mvc.Http.MultipartFormData.FilePart;
-import play.mvc.Result;
-import play.mvc.Security;
-
 public class MediaController extends Controller {
-    static final String ACCESS_TOKEN = Play.application().configuration().getString("dropbox.access.token");
-    static final String APP_NAME     = Play.application().configuration().getString("dropbox.app.name");
+    private static final String ACCESS_TOKEN = Play.application().configuration().getString("dropbox.access.token");
+    private static final String APP_NAME = Play.application().configuration().getString("dropbox.app.name");
 
     @Transactional(readOnly = true)
     public Result get(Integer idRecipe, String file) {
@@ -75,7 +68,7 @@ public class MediaController extends Controller {
         DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());
         DbxClient client = new DbxClient(config, ACCESS_TOKEN);
         MultipartFormData body = request().body().asMultipartFormData();
-        String[] defaultValue = { "false" };
+        String[] defaultValue = {"false"};
         boolean isMain = Boolean.parseBoolean(body.asFormUrlEncoded().getOrDefault("is_main", defaultValue)[0]);
         boolean isMultiple = Boolean.parseBoolean(body.asFormUrlEncoded().getOrDefault("is_multiple", defaultValue)[0]);
 
@@ -94,7 +87,7 @@ public class MediaController extends Controller {
                         badRequest(util.Json.generateJsonErrorMessages("No files have been included in the request.")));
             } else {
                 List<ObjectNode> msg = new ArrayList<ObjectNode>();
-                DbxEntry.File fileDropbox = null;
+                DbxEntry.File fileDropbox;
                 Media media = null;
                 for (FilePart file : files) {
                     if (Play.isProd()) {
@@ -110,6 +103,7 @@ public class MediaController extends Controller {
                             try {
                                 if (inputStream != null) inputStream.close();
                             } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         }
                     } else {
@@ -156,7 +150,7 @@ public class MediaController extends Controller {
                     try {
                         inputStream = new FileInputStream(file.getFile());
                         DbxWriteMode mode = isMain ? DbxWriteMode.force() : DbxWriteMode.add();
-                        client.uploadFile("/" + idRecipe + "/" + fileName, mode ,
+                        client.uploadFile("/" + idRecipe + "/" + fileName, mode,
                                 file.getFile().length(), inputStream);
                     } catch (DbxException | IOException e) {
                         e.printStackTrace();
@@ -166,6 +160,7 @@ public class MediaController extends Controller {
                         try {
                             if (inputStream != null) inputStream.close();
                         } catch (IOException e) {
+                            e.printStackTrace();
                         }
                     }
                 } else {

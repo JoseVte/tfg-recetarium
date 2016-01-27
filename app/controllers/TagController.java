@@ -1,13 +1,13 @@
 package controllers;
 
-import java.util.List;
-
 import models.Tag;
 import models.service.TagService;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+
+import java.util.List;
 
 public class TagController extends Controller {
     /**
