@@ -25,6 +25,7 @@ public class RecipeControllerTest extends AbstractTest {
     private ObjectNode dataError7;
     private ObjectNode dataError8;
     private ObjectNode loginJson;
+    private ObjectNode loginAdmin;
     private ObjectNode ingredientsCreate;
     private ObjectNode ingredientsCreate2;
     private ObjectNode ingredientsUpdate;
@@ -110,6 +111,10 @@ public class RecipeControllerTest extends AbstractTest {
         loginJson = Json.newObject();
         loginJson.put("email", "test@testing.dev");
         loginJson.put("password", "josevte1");
+
+        loginAdmin = Json.newObject();
+        loginAdmin.put("email", "admin@admin.dev");
+        loginAdmin.put("password", "josevte1");
     }
 
     @Test
@@ -211,6 +216,111 @@ public class RecipeControllerTest extends AbstractTest {
             assertNotNull(responseJson.get("link-self"));
             assertNull(responseJson.get("link-next"));
             assertNull(responseJson.get("link-prev"));
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCheckSlugOkRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/new-slug/check")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).head().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCheckSlugBadRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/test/check")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).head().get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCheckSlugWithIdOkRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/test/check/1")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).head().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCheckSlugWithIdBadRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/test/check/2")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).head().get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerIsMineOkRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/test/mine")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).head().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerIsMineOkRequestAdmin() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginAdmin).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/test/mine")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).head().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerIsMineNotFoundRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/new-slug/mine")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).head().get(timeout);
+
+            assertEquals(NOT_FOUND, response.getStatus());
 
             successTest();
         });
@@ -527,10 +637,7 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerUpdateRecipeOkRequestAdmin() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            loginJson = Json.newObject();
-            loginJson.put("email", "admin@admin.dev");
-            loginJson.put("password", "josevte1");
-            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginAdmin).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
             WSResponse response = WS.url("http://localhost:3333/recipes/1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 1)).get(timeout);
@@ -771,10 +878,7 @@ public class RecipeControllerTest extends AbstractTest {
     public void testRecipeControllerDeleteRecipeOkRequestAdmin() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
-            loginJson = Json.newObject();
-            loginJson.put("email", "admin@admin.dev");
-            loginJson.put("password", "josevte1");
-            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginAdmin).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
             WSResponse response = WS.url("http://localhost:3333/recipes/1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
