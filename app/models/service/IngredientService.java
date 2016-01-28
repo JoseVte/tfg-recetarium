@@ -7,6 +7,7 @@ import models.dao.IngredientDAO;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.UnaryOperator;
 
 public class IngredientService {
     private static final IngredientDAO dao;
@@ -61,7 +62,15 @@ public class IngredientService {
             tmp.recipe = recipe;
             ingredients.add(tmp);
         }
-        return dao.update(ingredients);
+        ingredients = dao.update(ingredients);
+        final List<Ingredient> finalIngredients = ingredients;
+        recipe.ingredients.replaceAll(ingredient -> {
+            if (finalIngredients.contains(ingredient)) {
+                return finalIngredients.get(finalIngredients.indexOf(ingredient));
+            }
+            return ingredient;
+        });
+        return ingredients;
     }
 
     /**

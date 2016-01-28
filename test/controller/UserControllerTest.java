@@ -14,7 +14,6 @@ import static org.junit.Assert.*;
 import static play.test.Helpers.*;
 
 public class UserControllerTest extends AbstractTest {
-    int timeout = 4000;
     ObjectNode dataOk;
     ObjectNode dataError1;
     ObjectNode dataError2;

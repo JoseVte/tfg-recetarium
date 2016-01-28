@@ -41,8 +41,10 @@ public class Ingredient extends Model implements Serializable {
 
     @Override
     public void handleRelations(Model old) {
-        Ingredient ingredient = (Ingredient) old;
-        this.setCreatedAt(ingredient.getCreatedAt());
+        if (old != null) {
+            Ingredient ingredient = (Ingredient) old;
+            this.setCreatedAt(ingredient.getCreatedAt());
+        }
     }
 
     @Override

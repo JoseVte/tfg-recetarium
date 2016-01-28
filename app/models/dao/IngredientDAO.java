@@ -23,6 +23,7 @@ public class IngredientDAO extends CrudDAO<Ingredient> {
         for (Ingredient ingredient : ingredientsRequest) {
             create(ingredient);
             ingredients.add(ingredient);
+            ingredient.recipe.ingredients.add(ingredient);
         }
         return ingredients;
     }

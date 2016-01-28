@@ -17,6 +17,7 @@ public abstract class AbstractTest extends WithApplication {
     private static final String ANSI_GREEN = "\u001B[32m";
     private static final String ANSI_YELLOW = "\u001B[33m";
     private static final String ANSI_PURPLE = "\u001B[35m";
+    protected IngredientDAO ingredientDAO;
     protected UserDAO userDAO;
     protected RecipeDAO recipeDAO;
     protected CategoryDAO categoryDAO;
@@ -35,6 +36,7 @@ public abstract class AbstractTest extends WithApplication {
         commentDAO = new CommentDAO();
         mediaDAO = new MediaDAO();
         tagDAO = new TagDAO();
+        ingredientDAO = new IngredientDAO();
         OS = System.getProperty("os.name");
         isJenkins = (System.getenv("JOB_NAME") != null);
     }
