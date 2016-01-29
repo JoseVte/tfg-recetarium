@@ -7,17 +7,18 @@ public abstract class AbstractController extends Controller {
     /**
      * Get the model with pagination
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page   Integer
+     * @param size   Integer
+     * @param search Search
      *
      * @return Result
      */
-    public abstract Result list(Integer page, Integer size);
+    public abstract Result list(Integer page, Integer size, String search);
 
     /**
      * Get one model by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Result
      */
@@ -33,7 +34,7 @@ public abstract class AbstractController extends Controller {
     /**
      * Update a model with the data of request
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Result
      */
@@ -42,7 +43,7 @@ public abstract class AbstractController extends Controller {
     /**
      * Delete a model by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Result
      */

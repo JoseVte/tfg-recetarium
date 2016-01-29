@@ -1,12 +1,12 @@
 package models.service;
 
-import java.util.List;
-
 import models.Comment;
 import models.dao.CommentDAO;
 
+import java.util.List;
+
 public class CommentService {
-    private static CommentDAO dao;
+    private static final CommentDAO dao;
 
     static {
         dao = new CommentDAO();
@@ -15,7 +15,7 @@ public class CommentService {
     /**
      * Create a comment
      *
-     * @param Comment data
+     * @param data Comment
      *
      * @return Comment
      */
@@ -26,7 +26,7 @@ public class CommentService {
     /**
      * Update a comment
      *
-     * @param Comment data
+     * @param data Comment
      *
      * @return Comment
      */
@@ -37,7 +37,7 @@ public class CommentService {
     /**
      * Find a comment by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Comment
      */
@@ -48,7 +48,7 @@ public class CommentService {
     /**
      * Delete a comment by id
      *
-     * @param Integer id
+     * @param id Integer
      */
     public static Boolean delete(Integer id) {
         Comment comment = dao.find(id);
@@ -72,8 +72,8 @@ public class CommentService {
     /**
      * Get the page of comments
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page Integer
+     * @param size Integer
      *
      * @return List<Comment>
      */

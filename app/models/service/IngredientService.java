@@ -1,15 +1,15 @@
 package models.service;
 
+import controllers.RecipeController.IngredientRequest;
+import models.Ingredient;
+import models.Recipe;
+import models.dao.IngredientDAO;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import controllers.RecipeController.IngredientRequest;
-import models.Recipe;
-import models.Ingredient;
-import models.dao.IngredientDAO;
-
 public class IngredientService {
-    private static IngredientDAO dao;
+    private static final IngredientDAO dao;
 
     static {
         dao = new IngredientDAO();
@@ -18,7 +18,7 @@ public class IngredientService {
     /**
      * Create an ingredient
      *
-     * @param Ingredient data
+     * @param data Ingredient
      *
      * @return Ingredient
      */
@@ -29,14 +29,14 @@ public class IngredientService {
     /**
      * Create all ingredients
      *
-     * @param request
-     * @param recipe
+     * @param request List<IngredientRequest>
+     * @param recipe  Recipe
      *
      * @return List<Ingredient>
      */
     public static List<Ingredient> create(List<IngredientRequest> request, Recipe recipe) {
         List<Ingredient> ingredients = new ArrayList<Ingredient>();
-        Ingredient tmp = null;
+        Ingredient tmp;
         for (IngredientRequest aux : request) {
             tmp = new Ingredient(aux);
             tmp.recipe = recipe;
@@ -44,30 +44,38 @@ public class IngredientService {
         }
         return dao.create(ingredients);
     }
-    
+
     /**
      * Update all ingredients
      *
-     * @param request
-     * @param recipe
+     * @param request List<IngredientRequest>
+     * @param recipe  Recipe
      *
      * @return List<Ingredient>
      */
     public static List<Ingredient> update(List<IngredientRequest> request, Recipe recipe) {
         List<Ingredient> ingredients = new ArrayList<Ingredient>();
-        Ingredient tmp = null;
+        Ingredient tmp;
         for (IngredientRequest aux : request) {
             tmp = new Ingredient(aux);
             tmp.recipe = recipe;
             ingredients.add(tmp);
         }
-        return dao.update(ingredients);
+        ingredients = dao.update(ingredients);
+        final List<Ingredient> finalIngredients = ingredients;
+        recipe.ingredients.replaceAll(ingredient -> {
+            if (finalIngredients.contains(ingredient)) {
+                return finalIngredients.get(finalIngredients.indexOf(ingredient));
+            }
+            return ingredient;
+        });
+        return ingredients;
     }
 
     /**
      * Update an ingredient
      *
-     * @param Ingredient data
+     * @param data Ingredient
      *
      * @return Ingredient
      */
@@ -78,7 +86,7 @@ public class IngredientService {
     /**
      * Find an ingredient by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Ingredient
      */
@@ -89,7 +97,7 @@ public class IngredientService {
     /**
      * Delete an ingredient by id
      *
-     * @param Integer id
+     * @param id Integer
      */
     public static Boolean delete(Integer id) {
         Ingredient ingredient = dao.find(id);
@@ -113,8 +121,8 @@ public class IngredientService {
     /**
      * Get the page of ingredients
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page Integer
+     * @param size Integer
      *
      * @return List<Ingredient>
      */

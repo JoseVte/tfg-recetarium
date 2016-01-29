@@ -1,7 +1,7 @@
 package models.enums;
 
 /**
- * Created by Josrom on 24/10/2015.
+ * Enumeration of type of user.
  */
 public enum TypeUser {
     ADMIN, COMUN

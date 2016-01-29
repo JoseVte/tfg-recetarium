@@ -1,40 +1,29 @@
 package controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static play.mvc.Http.Status.BAD_REQUEST;
-import static play.mvc.Http.Status.OK;
-import static play.mvc.Http.Status.UNAUTHORIZED;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-import static play.test.Helpers.testServer;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import controllers.AuthController;
+import org.junit.Test;
 import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import util.AbstractTest;
 
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
+
 public class AuthControllerTest extends AbstractTest {
-    int        timeout = 4000;
-    ObjectNode loginJson;
-    ObjectNode badJson;
-    ObjectNode registerJson;
-    ObjectNode badRegisterJson1;
-    ObjectNode badRegisterJson2;
-    ObjectNode badRegisterJson3;
-    ObjectNode badRegisterJson4;
-    ObjectNode badRegisterJson5;
-    ObjectNode badRegisterJson6;
-    ObjectNode badRegisterJson7;
-    ObjectNode badRegisterJson8;
+    private ObjectNode loginJson;
+    private ObjectNode badJson;
+    private ObjectNode registerJson;
+    private ObjectNode badRegisterJson1;
+    private ObjectNode badRegisterJson2;
+    private ObjectNode badRegisterJson3;
+    private ObjectNode badRegisterJson4;
+    private ObjectNode badRegisterJson5;
+    private ObjectNode badRegisterJson6;
+    private ObjectNode badRegisterJson7;
+    private ObjectNode badRegisterJson8;
 
     public AuthControllerTest() {
         loginJson = Json.newObject();

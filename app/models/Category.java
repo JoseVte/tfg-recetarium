@@ -1,36 +1,30 @@
 package models;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import models.base.Model;
 import models.dao.CategoryDAO;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "categories")
-@JsonPropertyOrder({ "id", "text", "created_at", "updated_at" })
+@JsonPropertyOrder({"id", "text", "created_at", "updated_at"})
 public class Category extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Constraints.Required
     @Column(unique = true, nullable = false)
-    public String             text;
+    public String text;
 
     @JsonIgnore
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Recipe>       recipes          = new ArrayList<Recipe>();
+    public List<Recipe> recipes = new ArrayList<Recipe>();
 
     public Category() {
         dao = new CategoryDAO();

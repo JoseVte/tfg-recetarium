@@ -1,5 +1,4 @@
-import java.io.File
-import PlayKeys._
+
 
 name := """recetarium"""
 

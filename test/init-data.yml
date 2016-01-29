@@ -27,7 +27,7 @@ data:
 - &recipe2 !!models.Recipe
       title:       Test 2
       slug:        test-2
-      steps:       Description test
+      steps:       Description test2
       difficulty:  EASY
       duration:    2015-11-11 00:10:00 -5
       user:        *user
@@ -55,5 +55,9 @@ data:
      tag:    *tag
      recipe: *recipe
 - &fav !!models.manytomany.Favorite
-      recipe: *recipe
-      user:   *user
+     recipe: *recipe
+     user:   *user
+- &ingredient !!models.Ingredient
+     name:      test
+     count:     1
+     recipe:    *recipe2

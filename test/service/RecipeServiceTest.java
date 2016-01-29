@@ -1,24 +1,21 @@
 package service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-
-import java.util.Date;
-import java.util.List;
-
-import org.junit.Test;
-
+import controllers.RecipeController.IngredientRequest;
+import models.Ingredient;
 import models.Recipe;
 import models.enums.RecipeDifficulty;
 import models.service.RecipeService;
 import models.service.UserService;
+import org.junit.Test;
 import play.db.jpa.JPA;
 import util.AbstractTest;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
 
 public class RecipeServiceTest extends AbstractTest {
 
@@ -32,7 +29,7 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipe.slug, "test");
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
-                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.category.text, "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
@@ -66,11 +63,35 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipe.title, "Test");
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
-                assertEquals(recipe.category.text.toString(), "test");
+                assertEquals(recipe.category.text, "test");
                 assertEquals(recipe.media.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceFindBySlugAndIdRecipe() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = RecipeService.findBySlugAndId("test", 2);
+                assertEquals(recipe.id.intValue(), 1);
+                assertEquals(recipe.title, "Test");
+                assertEquals(recipe.steps, "Description test");
+                assertEquals(recipe.user.id.intValue(), 1);
+                assertEquals(recipe.category.text, "test");
+                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.tags.size(), 1);
+                assertEquals(recipe.favorites.size(), 1);
+                assertEquals(recipe.ratings.size(), 1);
+
+                recipe = RecipeService.findBySlugAndId("test-2", 2);
+                assertNull(recipe);
 
                 successTest();
             });
@@ -96,7 +117,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 List<Recipe> recipes = RecipeService.all();
-                long count = RecipeService.count();
+                long count = RecipeService.count("");
                 assertEquals(count, 2);
 
                 assertEquals(recipes.get(0).title, "Test");
@@ -111,12 +132,31 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Recipe> recipes = RecipeService.paginate(0, 1);
+                List<Recipe> recipes = RecipeService.paginate(0, 1, "");
                 assertEquals(recipes.get(0).title, "Test");
                 assertEquals(recipes.size(), 1);
 
-                recipes = RecipeService.paginate(1, 1);
+                recipes = RecipeService.paginate(1, 1, "");
                 assertEquals(recipes.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceSearchRecipes() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                List<Recipe> recipes = RecipeService.paginate(0, 10, "");
+                assertEquals(recipes.get(0).title, "Test");
+                assertEquals(recipes.size(), 2);
+
+                recipes = RecipeService.paginate(0, 10, "Test 2");
+                assertEquals(recipes.size(), 1);
+                long count = RecipeService.count("Test 2");
+                assertEquals(count, 1);
 
                 successTest();
             });
@@ -158,12 +198,12 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                long count = RecipeService.count();
+                long count = RecipeService.count("");
                 assertEquals(count, 2);
 
                 assertTrue(RecipeService.delete(1, "test@testing.dev"));
 
-                count = RecipeService.count();
+                count = RecipeService.count("");
                 assertEquals(count, 1);
 
                 successTest();
@@ -176,12 +216,12 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                long count = RecipeService.count();
+                long count = RecipeService.count("");
                 assertEquals(count, 2);
 
                 assertTrue(RecipeService.delete(1, "admin@admin.dev"));
 
-                count = RecipeService.count();
+                count = RecipeService.count("");
                 assertEquals(count, 1);
 
                 successTest();
@@ -240,6 +280,27 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
+    public void testRecipeServiceAddTags() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
+                        UserService.find(1), null);
+                recipe = RecipeService.create(recipe);
+
+                assertEquals(recipe.tags.size(), 0);
+
+                List<Integer> tags = Collections.singletonList(1);
+                RecipeService.addTags(tags, recipe.id);
+
+                assertEquals(recipe.tags.size(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
     public void testRecipeServiceAddTag() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
@@ -276,6 +337,21 @@ public class RecipeServiceTest extends AbstractTest {
                 initializeDataModel();
 
                 assertFalse(RecipeService.addTag(1, 1));
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceDeleteTags() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                Recipe recipe = RecipeService.find(1);
+                assertEquals(recipe.tags.size(), 1);
+                assertTrue(RecipeService.deleteTags(recipe.id));
+                assertEquals(recipe.tags.size(), 0);
 
                 successTest();
             });
@@ -356,7 +432,7 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceAddFavoriteAlredyFav() {
+    public void testRecipeServiceAddFavoriteAlreadyFav() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -439,7 +515,7 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceAddRatingAlredyRating() {
+    public void testRecipeServiceAddRatingAlreadyRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -534,7 +610,7 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceAddSection() {
+    public void testRecipeServiceAddCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -550,7 +626,7 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceAddSectionNotFound() {
+    public void testRecipeServiceAddCategoryNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -564,7 +640,7 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceAddSectionAlredySection() {
+    public void testRecipeServiceAddCategoryAlreadyCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -577,7 +653,7 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceUpdateSection() {
+    public void testRecipeServiceUpdateCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -591,7 +667,7 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceUpdateSectionNotFound() {
+    public void testRecipeServiceUpdateCategoryNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -605,7 +681,7 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceDeleteSection() {
+    public void testRecipeServiceDeleteCategory() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -618,13 +694,64 @@ public class RecipeServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testRecipeServiceDeleteSectionNotFound() {
+    public void testRecipeServiceDeleteCategoryNotFound() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
 
                 assertFalse(RecipeService.deleteCategory(1, 0));
                 assertFalse(RecipeService.deleteCategory(0, 1));
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceAddIngredient() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+
+                IngredientRequest ingredient = new IngredientRequest();
+                ingredient.name = "test";
+                Ingredient model = RecipeService.addIngredient(1, ingredient);
+                assertNotNull(model);
+                assertEquals(model.name, ingredient.name);
+                assertEquals(model.recipe.id.intValue(), 1);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceUpdateIngredients() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+
+                Recipe recipe = RecipeService.find(2);
+                assertEquals(recipe.ingredients.size(), 1);
+                recipe.ingredients.clear();
+                RecipeService.updateIngredients(recipe);
+                assertEquals(recipe.ingredients.size(), 0);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testRecipeServiceDeleteIngredient() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+
+                Recipe recipe = RecipeService.find(2);
+                assertEquals(recipe.ingredients.size(), 1);
+                assertTrue(RecipeService.deleteIngredient(recipe.id, recipe.ingredients.get(0).id));
+                assertFalse(RecipeService.deleteIngredient(recipe.id, 1));
 
                 successTest();
             });

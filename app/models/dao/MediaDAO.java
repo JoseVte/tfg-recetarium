@@ -1,14 +1,13 @@
 package models.dao;
 
-import java.util.List;
-
-import javax.persistence.NoResultException;
-
 import models.Media;
 import models.User;
 import models.base.CrudDAO;
 import models.service.UserService;
 import play.db.jpa.JPA;
+
+import javax.persistence.NoResultException;
+import java.util.List;
 
 public class MediaDAO extends CrudDAO<Media> {
     public MediaDAO() {
@@ -18,9 +17,9 @@ public class MediaDAO extends CrudDAO<Media> {
     /**
      * Where clause
      *
-     * @param Integer recipe_id
-     * @param String filename
-     * @param Integer id
+     * @param recipe_id Integer
+     * @param filename  String
+     * @param id        Integer
      *
      * @return List<Media>
      */
@@ -30,10 +29,26 @@ public class MediaDAO extends CrudDAO<Media> {
     }
 
     /**
+     * Where clause
+     *
+     * @param recipe_id Integer
+     * @param id        Integer
+     *
+     * @return List<Media>
+     */
+    public Media check(Integer recipe_id, Integer id) {
+        try {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id = " + id + " AND recipe_id = '" + recipe_id + "' ORDER BY id", Media.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
      * Find a recipe if the email is from the user creator or an admin
      *
-     * @param String email
-     * @param Integer idRecipe
+     * @param email   String
+     * @param idMedia IntegerRecipe
      *
      * @return Recipe
      */

@@ -1,37 +1,29 @@
 package models;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import models.base.Model;
 import models.dao.MediaDAO;
 import play.data.validation.ValidationError;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
-@JsonPropertyOrder({ "id", "filename", "created_at", "updated_at" })
-@Table(name = "media", uniqueConstraints = { @UniqueConstraint(columnNames = { "filename", "recipe_id" }) })
+@JsonPropertyOrder({"id", "filename", "created_at", "updated_at"})
+@Table(name = "media", uniqueConstraints = {@UniqueConstraint(columnNames = {"filename", "recipe_id"})})
 public class Media extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(nullable = false)
-    public String             filename;
+    public String filename;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "recipe_id")
-    public Recipe             recipe;
+    public Recipe recipe;
 
     public Media() {
         dao = new MediaDAO();

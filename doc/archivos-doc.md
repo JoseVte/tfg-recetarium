@@ -1,8 +1,8 @@
-## Recetas
+## Archivos
 
-#### Estructura JSON
+#### Obtener por nombre del archivo
 
-El formato de salida tiene la siguiente estructura:
+A partir de un `ID` o `nombre de archivo`(debe tener extensión) y un `ID` de una receta se obtiene un archivo con esta estructura):
 
 ```json
 {
@@ -11,14 +11,12 @@ El formato de salida tiene la siguiente estructura:
 }
 ```
 
-#### Obtener por nombre del archivo
-
-A partir de un `nombre`(debe tener extensión) y un `ID` de una receta se obtiene un archivo con esta [estructura](#estructura-json):
-
 ```
-GET /media/{idReceta}/{nombre}
+GET /recipes/{idReceta}/media/{id}
+GET /recipes/{idReceta}/media/{nombre}
 
-GET /recipes/1/foto-1.jpg
+GET /recipes/1/media/1
+GET /recipes/1/media/foto-1.jpg
 ```
 
 Devuelve un error `404` si no se encuentra el archivo:
@@ -34,7 +32,7 @@ Devuelve un error `404` si no se encuentra el archivo:
 Para subir un archivo se necesita enviar el `JWT` en la cabecera **X-Auth-Token** y el archivo en el body de la request:
 
 ```
-POST /media/{idReceta}
+POST /recipes/{idReceta}/media
 ```
 Si el `JWT` es incorrecto se devuelve el código `401`.
 
@@ -56,12 +54,14 @@ Si no se sube ningun fichero o el `ID` de la receta no existe se devuelve un `40
 
 #### Borrar archivo
 
-Se borra un archivo a partir del `ID`. Para ello tambien se debe enviar el `JWT` en la cabecera **X-Auth-Token**:
+Se borra un archivo a partir del `ID` o el `nombre del fichero` (con extension). Para ello tambien se debe enviar el `JWT` en la cabecera **X-Auth-Token**:
 
 ```
-DELETE /media/{id}
+DELETE /recipes/{idReceta}/media/{id}
+DELETE /recipes/{idReceta}/media/{nombre}
 
-DELETE /media/1
+DELETE /recipes/1/media/1
+DELETE /recipes/1/media/foto-1.jpg
 ```
 
 Si se borra correctamente devuelve un mensaje advirtiendo de que se ha completado la acción:

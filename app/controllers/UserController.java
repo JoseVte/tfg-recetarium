@@ -1,12 +1,7 @@
 package controllers;
 
-import java.util.List;
-import java.util.ArrayList;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import middleware.Admin;
 import middleware.Authenticated;
 import models.User;
@@ -21,10 +16,14 @@ import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
-import views.html.*;
+import views.html.index;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class UserController extends AbstractController {
-    Form<UserRequest> formModel = Form.form(UserRequest.class);
+    private Form<UserRequest> formModel = Form.form(UserRequest.class);
 
     /**
      * Get the index page
@@ -38,15 +37,15 @@ public class UserController extends AbstractController {
     @Transactional(readOnly = true)
     @Security.Authenticated(Authenticated.class)
     @SuppressWarnings("deprecation")
-    public Result list(Integer page, Integer size) {
+    public Result list(Integer page, Integer size, String search) {
         List<User> models = UserService.paginate(page - 1, size);
         Long count = UserService.count();
         String[] routesString = new String[3];
-        routesString[0] = routes.UserController.list(page - 1, size).toString();
-        routesString[1] = routes.UserController.list(page + 1, size).toString();
-        routesString[2] = routes.UserController.list(page, size).toString();
+        routesString[0] = routes.UserController.list(page - 1, size, search).toString();
+        routesString[1] = routes.UserController.list(page + 1, size, search).toString();
+        routesString[2] = routes.UserController.list(page, size, search).toString();
 
-        ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString);
+        ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString, !Objects.equals(search, ""));
 
         return util.Json.jsonResult(response(), ok(result));
     }
@@ -85,7 +84,7 @@ public class UserController extends AbstractController {
         if (user.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
         }
-        if (user.get().id != id) {
+        if (!Objects.equals(user.get().id, id)) {
             return util.Json.jsonResult(response(),
                     badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
         }
@@ -103,20 +102,20 @@ public class UserController extends AbstractController {
     }
 
     public static class UserRequest {
-        public Integer  id = null;
+        public Integer id = null;
 
         @Constraints.Required
-        public String   username;
+        public String username;
 
         @Constraints.Required
         @Constraints.Email
-        public String   email;
+        public String email;
 
         @Constraints.Required
-        public String   password;
+        public String password;
 
-        public String   first_name;
-        public String   last_name;
+        public String first_name;
+        public String last_name;
 
         @Constraints.Required
         public TypeUser type;

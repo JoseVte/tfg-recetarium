@@ -1,22 +1,19 @@
 package dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-
-import java.util.List;
-
-import org.junit.Test;
-
 import models.Recipe;
 import models.User;
 import models.dao.RecipeDAO;
 import models.dao.UserDAO;
 import models.enums.TypeUser;
+import org.junit.Test;
 import play.db.jpa.JPA;
 import util.AbstractTest;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static play.test.Helpers.*;
 
 public class UserModelDAOTest extends AbstractTest {
 

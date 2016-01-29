@@ -1,17 +1,16 @@
 package util;
 
+import org.joda.time.DateTime;
+import play.Play;
+
 import java.util.Date;
 import java.util.UUID;
-
-import org.joda.time.DateTime;
-
-import play.Play;
 
 public class VerificationToken {
     private static final int DEFAULT_EXPIRY_TIME_IN_MINS = Play.application().configuration()
             .getInt("lostPassword.expiry.minutes");
-    private final String     token;
-    private Date             expiryDate;
+    private final String token;
+    private Date expiryDate;
 
     public VerificationToken() {
         this.token = UUID.randomUUID().toString();

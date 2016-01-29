@@ -14,7 +14,7 @@ PATCH   /auth/reset/password        controllers.AuthController.resetPassword()
 
 # Routes API Rest
 ## Users
-GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3)
+GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "")
 GET     /users/$id<[0-9]+>      controllers.UserController.get(id: Integer)
 POST    /users                  controllers.UserController.create()
 PUT     /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
@@ -22,17 +22,17 @@ PATCH   /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
 
 ## Recipes
-GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3)
+GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "")
 # This URI is not necessary, the recipes are identified by a slug
-#GET     /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
-GET     /recipes/*slug                          controllers.RecipeController.get(slug: String)
+#GET    /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
+GET     /recipes/:slug                          controllers.RecipeController.get(slug: String)
 POST    /recipes                                controllers.RecipeController.create()
 PUT     /recipes/$id<[0-9]+>                    controllers.RecipeController.update(id: Integer)
 PATCH   /recipes/$id<[0-9]+>                    controllers.RecipeController.update(id: Integer)
 DELETE  /recipes/$id<[0-9]+>                    controllers.RecipeController.delete(id: Integer)
-HEAD    /recipes/*slug/check                    controllers.RecipeController.checkSlug(slug: String, id: Integer = null)
-HEAD    /recipes/*slug/check/$id<[0-9]+>        controllers.RecipeController.checkSlug(slug: String, id: Integer)
-HEAD    /recipes/*slug/mine                     controllers.RecipeController.isMine(slug: String)
+HEAD    /recipes/:slug/check                    controllers.RecipeController.checkSlug(slug: String, id: Integer = null)
+HEAD    /recipes/:slug/check/$id<[0-9]+>        controllers.RecipeController.checkSlug(slug: String, id: Integer)
+HEAD    /recipes/:slug/mine                     controllers.RecipeController.isMine(slug: String)
 
 ## Ingredients
 POST    /recipes/$id<[0-9]+>/ingredient                               controllers.RecipeController.addIngredient(id: Integer)
@@ -45,9 +45,11 @@ GET      /categories             controllers.CategoryController.list()
 GET     /tags                    controllers.TagController.list(search: String ?= "")
 
 ## Media
-GET     /media/$idRecipe<[0-9]+>/*file      controllers.MediaController.get(idRecipe: Integer, file: String)
-POST    /media/$idRecipe<[0-9]+>            controllers.MediaController.upload(idRecipe: Integer)
-DELETE  /media/$id<[0-9]+>                  controllers.MediaController.delete(id: Integer)
+GET     /recipes/$idRecipe<[0-9]+>/media/$id<[0-9]+>      controllers.MediaController.getById(idRecipe: Integer, id: Integer)
+GET     /recipes/$idRecipe<[0-9]+>/media/*file            controllers.MediaController.getByFile(idRecipe: Integer, file: String)
+POST    /recipes/$idRecipe<[0-9]+>/media                  controllers.MediaController.upload(idRecipe: Integer)
+DELETE  /recipes/$idRecipe<[0-9]+>/media/$id<[0-9]+>      controllers.MediaController.deleteById(idRecipe: Integer, id: Integer)
+DELETE  /recipes/$idRecipe<[0-9]+>/media/*file            controllers.MediaController.deleteByFile(idRecipe: Integer, file: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

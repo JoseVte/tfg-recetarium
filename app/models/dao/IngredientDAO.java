@@ -1,10 +1,10 @@
 package models.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import models.Ingredient;
 import models.base.CrudDAO;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class IngredientDAO extends CrudDAO<Ingredient> {
     public IngredientDAO() {
@@ -14,7 +14,7 @@ public class IngredientDAO extends CrudDAO<Ingredient> {
     /**
      * Create all ingredients
      *
-     * @param ingredientsRequest
+     * @param ingredientsRequest List<Ingredient>
      *
      * @return List<Ingredient>
      */
@@ -23,14 +23,15 @@ public class IngredientDAO extends CrudDAO<Ingredient> {
         for (Ingredient ingredient : ingredientsRequest) {
             create(ingredient);
             ingredients.add(ingredient);
+            ingredient.recipe.ingredients.add(ingredient);
         }
         return ingredients;
     }
-    
+
     /**
      * Update all ingredients
      *
-     * @param ingredientsRequest
+     * @param ingredientsRequest List<Ingredient>
      *
      * @return List<Ingredient>
      */

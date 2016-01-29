@@ -1,19 +1,21 @@
 package models.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import models.User;
 import models.enums.TypeUser;
 import play.Play;
 import play.libs.mailer.Email;
 import play.libs.mailer.MailerClient;
-import views.html.emails.*;
+import views.html.emails.newUser;
+import views.html.emails.registration;
+import views.html.emails.resetPassword;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class EmailService {
-    private MailerClient mailerClient;
     private final String emailInfo = "Recetarium <info@recetarium.com>";
-    private final String url       = Play.application().configuration().getString("frontend.url");
+    private final String url = Play.application().configuration().getString("frontend.url");
+    private MailerClient mailerClient;
 
     public EmailService(play.libs.mailer.MailerClient mailer) {
         mailerClient = mailer;
@@ -22,7 +24,7 @@ public class EmailService {
     /**
      * Send the email for reset the password
      *
-     * @param user
+     * @param user User
      *
      * @return String
      */
@@ -39,7 +41,7 @@ public class EmailService {
     /**
      * Send the email to the new user and the admins
      *
-     * @param user
+     * @param user User
      *
      * @return String
      */

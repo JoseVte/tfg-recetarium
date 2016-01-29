@@ -1,14 +1,6 @@
 package controllers;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import middleware.Anonymous;
 import middleware.Authenticated;
 import models.User;
@@ -25,11 +17,17 @@ import play.mvc.Result;
 import play.mvc.Security;
 import util.VerificationToken;
 
+import javax.inject.Inject;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
+
 @Security.Authenticated(Anonymous.class)
 public class AuthController extends Controller {
     public final static String AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
-    public static final String AUTH_TOKEN        = "auth_token";
-    public static final String REDIRECT_PATH     = "/";
+    public static final String AUTH_TOKEN = "auth_token";
+    public static final String REDIRECT_PATH = "/";
 
     private final EmailService mailer;
 
@@ -113,7 +111,7 @@ public class AuthController extends Controller {
         if (recover.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(recover.errorsAsJson()));
         }
-        VerificationToken token = null;
+        VerificationToken token;
         String email = recover.get().email;
         User user = UserService.findByEmailAddress(email);
         if (user == null) {
@@ -122,7 +120,7 @@ public class AuthController extends Controller {
         }
         token = UserService.getActiveLostPasswordToken(user);
         if (token == null) {
-            token = UserService.addVerification(user);
+            UserService.addVerification(user);
         }
         if (mailer.sendVerificationToken(user) == null) {
             return util.Json.jsonResult(response(),
@@ -164,6 +162,7 @@ public class AuthController extends Controller {
     /***********************/
     /* Request validators */
     /* @author Josrom */
+
     /***********************/
     public static class RecoverPassword {
         @Constraints.Required
@@ -173,7 +172,7 @@ public class AuthController extends Controller {
 
     public static class Login extends RecoverPassword {
         @Constraints.Required
-        public String  password;
+        public String password;
 
         public boolean setExpiration = true;
     }

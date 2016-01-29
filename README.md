@@ -10,15 +10,45 @@ API Recetarium
 
 #### Recetas
 
+<center>
+
 | Acción | URI | Login |
 | ------ | --- | :----: |
-| [Listado por páginas](/doc/recetas-doc.md#paginación) | **GET**    /recipes(?page=*&size=*) | --- |
-| [Obtener por slug](/doc/recetas-doc.md#obtener-una-receta-por-slug) | **GET**    /recipes/{slug} | --- |
-| [Crear](/doc/recetas-doc.md#crear-una-receta-nueva) | **POST**   /recipes | OWNER / ADMIN |
+| [Listado y busqueda por páginas](/doc/recetas-doc.md#paginación) | **GET** /recipes(?page=*&size=*&search=*) | --- |
+| [Obtener por slug](/doc/recetas-doc.md#obtener-una-receta-por-slug) | **GET** /recipes/{slug} | --- |
+| [Crear](/doc/recetas-doc.md#crear-una-receta-nueva) | **POST** /recipes | OWNER / ADMIN |
 | [Actualizar](/doc/recetas-doc.md#actualizar-una-receta-ya-existente) |  **PUT**    /recipes/{id} <br> **PATCH**  /recipes/{id} | OWNER / ADMIN |
 | [Borrar](/doc/recetas-doc.md#borrar-una-receta) |  **DELETE** /recipes/{id} | OWNER / ADMIN |
+| [Comprobar slug](/doc/recetas-doc.md#comprobar-slug-de-una-receta) |  **HEAD** /recipes/{slug}/check <br> **HEAD** /recipes/{slug}/check/{id} | COMUN |
+| [Comprobar propietario](/doc/recetas-doc.md#comprobar-si-una-receta-es-del-usuario-logueado) |  **HEAD** /recipes/{slug}/mine | COMUN |
+| [Añadir un ingrediente](/doc/recetas-doc.md#añadir-un-nuevo-ingrediente-a-una-receta) | **POST** /recipes/{id-receta}/ingredient | OWNER / ADMIN |
+| [Borrar un ingrediente](/doc/recetas-doc.md#borrar-un-ingrediente-de-una-receta) | **DELETE** /recipes/{id-receta}/ingredient/{id} | OWNER / ADMIN |
+
+</center>
+
+#### Categorias
+
+<center>
+
+| Acción | URI | Login |
+| ------ | --- | :----: |
+| [Todas las categorias](/doc/categorias-doc.md#todas-las-categorias) | **GET**  /categories | --- |
+
+</center>
+
+#### Tags
+
+<center>
+
+| Acción | URI | Login |
+| ------ | --- | :----: |
+| [Buscar tags](/doc/tag-doc.md#buscar-tags-por-cadena) | **GET**  /tags(?search=*) | --- |
+
+</center>
 
 #### Autentificación
+
+<center>
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
@@ -27,23 +57,33 @@ API Recetarium
 | [Enviar email para reiniciar la password](/doc/auth-doc.md#enviar-email-para-reiniciar-la-password) | **POST**    /auth/reset/password | --- |
 | [Cambia la password](/doc/auth-doc.md#cambiar-la-password) | **PUT**     /auth/reset/password <br> **PATCH**   /auth/reset/password | --- |
 
+</center>
+
 #### Usuarios
+
+<center>
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
-| [Listado por páginas](/doc/user-doc.md#paginación) | **GET**    /users(?page=*&size=*) | COMUN |
+| [Listado por páginas](/doc/user-doc.md#paginación) | **GET**    /users(?page=*&size=*&search=*) | COMUN |
 | [Obtener por id](/doc/user-doc.md#obtener-un-usuario-por-id) | **GET**    /users/{id} | COMUN |
 | [Crear](/doc/user-doc.md#crear-un-usuario-nuevo) | **POST**   /users | ADMIN |
 | [Actualizar](/doc/user-doc.md#actualizar-un-usuario-ya-existente) |  **PUT**    /users/{id} <br> **PATCH**  /users/{id} | ADMIN |
 | [Borrar](/doc/user-doc.md#borrar-un-usuario) |  **DELETE** /users/{id} | ADMIN |
 
+</center>
+
 #### Archivos
+
+<center>
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
-| [Obtener por nombre del archivo](/doc/archivos-doc.md#obtener-por-nombre-del-archivo) | **GET**    /media/{idReceta}/{nombreFichero} | --- |
-| [Subida del archivo](/doc/archivos-doc.md#subida-del-archivo) | **POST**   /media/{idReceta} | OWNER / ADMIN |
-| [Borrar archivo](/doc/archivos-doc.md#borrar-archivo) |  **DELETE** /media/{id} | OWNER / ADMIN |
+| [Obtener por nombre del archivo](/doc/archivos-doc.md#obtener-por-nombre-del-archivo) | **GET**    /recipes/{idReceta}/media/{id} <br> **GET**    /recipes/{idReceta}/media/{nombreFichero} | --- |
+| [Subida del archivo](/doc/archivos-doc.md#subida-del-archivo) | **POST**   /recipes/{idReceta}/media | OWNER / ADMIN |
+| [Borrar archivo](/doc/archivos-doc.md#borrar-archivo) |  **DELETE** /recipes/{idReceta}/media/{id} <br> **DELETE** /recipes/{idReceta}/media/{nombre} | OWNER / ADMIN |
+
+</center>
 
 -----
 
@@ -53,12 +93,20 @@ API Recetarium
 - [Recetas](/doc/recetas-doc.md)
 - [Usuarios](/doc/user-doc.md)
 - [Archivos](/doc/archivos-doc.md)
+- [Categorias](/doc/categorias-deoc.md)
+- [Tags](/doc/tags-doc.md)
 
 -----
 
 ### CHANGELOG
 
-#### [![0.4.0](/doc/rocket-blue.png) 0.4.0](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.0)
+#### [![0.4.1](/doc/rocket-blue.png) 0.4.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.1)
+
+- Busqueda de recetas
+- Actualizada la documentación
+- Añadidos nuevos test
+
+###### [![0.4.0](/doc/release.png) 0.4.0](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.0)
 
 - Gestion de ficheros con dropbox
 - Cambio del servidor CI a Travis

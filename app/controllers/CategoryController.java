@@ -1,13 +1,13 @@
 package controllers;
 
-import java.util.List;
-
 import models.Category;
 import models.service.CategoryService;
 import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+
+import java.util.List;
 
 public class CategoryController extends Controller {
     /**
