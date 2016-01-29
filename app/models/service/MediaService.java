@@ -51,12 +51,25 @@ public class MediaService {
      * Find a media by id
      *
      * @param idRecipe Integer
+     * @param filename String
      *
      * @return Media
      */
     public static Media find(Integer idRecipe, String filename) {
         List<Media> list = dao.check(idRecipe, filename, null);
         return (list.isEmpty() ? null : list.get(0));
+    }
+
+    /**
+     * Find a media by id
+     *
+     * @param idRecipe Integer
+     * @param id       Integer
+     *
+     * @return Media
+     */
+    public static Media find(Integer idRecipe, Integer id) {
+        return dao.check(idRecipe, id);
     }
 
     /**

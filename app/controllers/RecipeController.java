@@ -102,8 +102,7 @@ public class RecipeController extends AbstractController {
     public Result isMine(String slug) {
         Recipe recipe = RecipeService.findBySlug(slug);
         if (recipe != null) {
-            if (RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email,
-                    recipe.id)) {
+            if (RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, recipe.id)) {
                 return ok();
             }
             return util.Json.jsonResult(response(), unauthorized());
@@ -146,8 +145,7 @@ public class RecipeController extends AbstractController {
         }
         Ingredient ingredientModel = RecipeService.addIngredient(id, ingredient.get());
         if (ingredientModel == null) {
-            return util.Json.jsonResult(response(),
-                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
         return util.Json.jsonResult(response(), ok(Json.toJson(ingredientModel)));
     }
@@ -168,8 +166,7 @@ public class RecipeController extends AbstractController {
             return unauthorized();
         }
         if (!RecipeService.deleteIngredient(id, ingredientId)) {
-            return util.Json.jsonResult(response(),
-                    notFound(util.Json.generateJsonErrorMessages("Not found " + ingredientId)));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + ingredientId)));
         }
         return util.Json.jsonResult(response(), ok());
     }
@@ -183,8 +180,7 @@ public class RecipeController extends AbstractController {
             return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
         if (!Objects.equals(recipe.get().id, id)) {
-            return util.Json.jsonResult(response(),
-                    badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
         } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
             return unauthorized();
         }

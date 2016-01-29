@@ -7,7 +7,6 @@ import models.dao.IngredientDAO;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.UnaryOperator;
 
 public class IngredientService {
     private static final IngredientDAO dao;

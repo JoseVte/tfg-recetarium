@@ -44,6 +44,15 @@ GET /users?page=2
 GET /users?size=3
 GET /users?page=2&size=3
 ```
+
+También acepta una cadena para buscar:
+
+```
+GET /users(?search=*)
+
+GET /users?search=user
+```
+
 Si el `JWT` es incorrecto se devuelve el código `401`.
 
 Devuelve una lista de usuarios con los links de paginacion:

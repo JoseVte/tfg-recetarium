@@ -29,6 +29,22 @@ public class MediaDAO extends CrudDAO<Media> {
     }
 
     /**
+     * Where clause
+     *
+     * @param recipe_id Integer
+     * @param id        Integer
+     *
+     * @return List<Media>
+     */
+    public Media check(Integer recipe_id, Integer id) {
+        try {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id = " + id + " AND recipe_id = '" + recipe_id + "' ORDER BY id", Media.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
      * Find a recipe if the email is from the user creator or an admin
      *
      * @param email   String
