@@ -8,6 +8,7 @@ import models.Recipe;
 import models.User;
 import models.dao.RecipeDAO;
 import models.enums.RecipeDifficulty;
+import models.enums.RecipeVisibility;
 import models.service.CategoryService;
 import models.service.IngredientService;
 import models.service.RecipeService;
@@ -70,7 +71,10 @@ public class RecipeController extends AbstractController {
         if (recipe == null) {
             return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + slug)));
         }
-        return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
+        if (recipe.isVisible(request().username())) {
+            return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
+        }
+        return util.Json.jsonResult(response(), forbidden());
     }
 
     /**
@@ -228,6 +232,9 @@ public class RecipeController extends AbstractController {
         public RecipeDifficulty difficulty;
 
         @Constraints.Required
+        public RecipeVisibility visibility;
+
+        @Constraints.Required
         public String duration;
         public Integer num_persons = 0;
         public Integer category_id = null;
@@ -259,6 +266,10 @@ public class RecipeController extends AbstractController {
             }
             if (category_id != null && CategoryService.find(category_id) == null) {
                 errors.add(new ValidationError("category", "The category doesn't exist"));
+            }
+            List<Integer> list = TagService.containAll(tags);
+            if (!list.isEmpty()) {
+                errors.add(new ValidationError("tag", "The tag don't exist: " + list.toString()));
             }
             // TODO Checkear tags e ingredientes
             try {

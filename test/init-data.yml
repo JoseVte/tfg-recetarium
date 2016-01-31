@@ -21,6 +21,7 @@ data:
       slug:        test
       steps:       Description test
       difficulty:  EASY
+      visibility:  PUBLIC
       duration:    2015-11-11 00:10:00 -5
       user:        *user
       category:    *category
@@ -29,6 +30,7 @@ data:
       slug:        test-2
       steps:       Description test2
       difficulty:  EASY
+      visibility:  PUBLIC
       duration:    2015-11-11 00:10:00 -5
       user:        *user
       category:    *categorynew

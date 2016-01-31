@@ -58,8 +58,7 @@ public class AuthController extends Controller {
                 return util.Json.jsonResult(response(), unauthorized());
             } else {
                 if (mailer.sendRegistrationEmails(user) == null) {
-                    return util.Json.jsonResult(response(),
-                            internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
                 }
                 String authToken = UserService.createJWT(user, register.setExpiration);
                 ObjectNode authTokenJson = Json.newObject();
@@ -67,8 +66,7 @@ public class AuthController extends Controller {
                 return util.Json.jsonResult(response(), ok(authTokenJson));
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            return util.Json.jsonResult(response(),
-                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
 
     }
@@ -115,16 +113,14 @@ public class AuthController extends Controller {
         String email = recover.get().email;
         User user = UserService.findByEmailAddress(email);
         if (user == null) {
-            return util.Json.jsonResult(response(),
-                    notFound(util.Json.generateJsonErrorMessages("Not found email " + email)));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found email " + email)));
         }
         token = UserService.getActiveLostPasswordToken(user);
         if (token == null) {
             UserService.addVerification(user);
         }
         if (mailer.sendVerificationToken(user) == null) {
-            return util.Json.jsonResult(response(),
-                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Reset password email sent")));
     }
@@ -144,8 +140,7 @@ public class AuthController extends Controller {
 
         UserService.changePassword(reset.get().email, reset.get().password);
 
-        return util.Json.jsonResult(response(),
-                ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
     }
 
     /**

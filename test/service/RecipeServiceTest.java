@@ -4,6 +4,7 @@ import controllers.RecipeController.IngredientRequest;
 import models.Ingredient;
 import models.Recipe;
 import models.enums.RecipeDifficulty;
+import models.enums.RecipeVisibility;
 import models.service.RecipeService;
 import models.service.UserService;
 import org.junit.Test;
@@ -169,7 +170,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Recipe create = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null);
+                        UserService.find(1), null, RecipeVisibility.PUBLIC);
                 Recipe recipe = RecipeService.create(create);
                 assertEquals(recipe, create);
 
@@ -285,7 +286,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null);
+                        UserService.find(1), null, RecipeVisibility.PUBLIC);
                 recipe = RecipeService.create(recipe);
 
                 assertEquals(recipe.tags.size(), 0);
@@ -306,7 +307,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null);
+                        UserService.find(1), null, RecipeVisibility.PUBLIC);
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addTag(1, recipe.id));
@@ -391,7 +392,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null);
+                        UserService.find(1), null, RecipeVisibility.PUBLIC);
                 recipe = RecipeService.create(recipe);
 
                 assertFalse(RecipeService.deleteTag(1, recipe.id));
@@ -407,7 +408,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null);
+                        UserService.find(1), null, RecipeVisibility.PUBLIC);
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addFavorite(1, recipe.id));
@@ -490,7 +491,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null);
+                        UserService.find(1), null, RecipeVisibility.PUBLIC);
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addRating(1, recipe.id, 4.3));
@@ -615,7 +616,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null);
+                        UserService.find(1), null, RecipeVisibility.PUBLIC);
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addCategory(1, recipe.id));

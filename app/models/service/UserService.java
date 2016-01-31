@@ -239,7 +239,7 @@ public class UserService {
     public static boolean validateResetToken(String email, String token) {
         User user = userDAO.findByEmailAddress(email);
         VerificationToken tokenDB = userDAO.getLostPasswordToken(user);
-        return !(user == null || tokenDB == null || tokenDB.hasExpired());
+        return !(user == null || tokenDB == null || !Objects.equals(token, tokenDB.getToken()) || tokenDB.hasExpired());
     }
 
     /**

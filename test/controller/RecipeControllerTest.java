@@ -55,18 +55,21 @@ public class RecipeControllerTest extends AbstractTest {
         dataOk.put("category_id", 1);
         dataOk.put("difficulty", "EASY");
         dataOk.put("duration", "00:10:00");
+        dataOk.put("visibility", "PUBLIC");
 
         dataError1 = Json.newObject();
         dataError1.put("title", "");
         dataError1.put("slug", "new-recipe");
         dataError1.put("difficulty", "EASY");
         dataError1.put("duration", "00:10:00");
+        dataError1.put("visibility", "PUBLIC");
 
         dataError2 = Json.newObject();
         dataError2.put("title", "New recipe");
         dataError2.put("slug", "");
         dataError2.put("difficulty", "EASY");
         dataError2.put("duration", "00:10:00");
+        dataError2.put("visibility", "PUBLIC");
 
         dataError3 = Json.newObject();
         dataError3.put("title", "New recipe");
@@ -74,6 +77,7 @@ public class RecipeControllerTest extends AbstractTest {
         dataError3.put("category_id", 0);
         dataError3.put("difficulty", "EASY");
         dataError3.put("duration", "00:10:00");
+        dataError3.put("visibility", "PUBLIC");
 
         dataError4 = Json.newObject();
         dataError4.put("title", "New recipe");
@@ -81,18 +85,21 @@ public class RecipeControllerTest extends AbstractTest {
         dataError4.put("category_id", 1);
         dataError4.put("difficulty", "EASY");
         dataError4.put("duration", "00:10:00");
+        dataError4.put("visibility", "PUBLIC");
 
         dataError5 = Json.newObject();
         dataError5.put("title", "New recipe");
         dataError5.put("slug", "new-recipe");
         dataError5.put("category_id", 1);
         dataError5.put("duration", "00:10:00");
+        dataError5.put("visibility", "PUBLIC");
 
         dataError6 = Json.newObject();
         dataError6.put("title", "New recipe");
         dataError6.put("slug", "new-recipe");
         dataError6.put("category_id", 1);
         dataError6.put("difficulty", "EASY");
+        dataError6.put("visibility", "PUBLIC");
 
         dataError7 = Json.newObject();
         dataError7.put("title", "New recipe");
@@ -100,6 +107,7 @@ public class RecipeControllerTest extends AbstractTest {
         dataError7.put("category_id", 1);
         dataError7.put("difficulty", "EASY");
         dataError7.put("duration", "asdf");
+        dataError7.put("visibility", "PUBLIC");
 
         dataError8 = Json.newObject();
         dataError8.put("title", "New recipe");
@@ -107,6 +115,7 @@ public class RecipeControllerTest extends AbstractTest {
         dataError8.put("category_id", 1);
         dataError8.put("difficulty", "asdf");
         dataError8.put("duration", "00:10:00");
+        dataError8.put("visibility", "PUBLIC");
 
         loginJson = Json.newObject();
         loginJson.put("email", "test@testing.dev");
