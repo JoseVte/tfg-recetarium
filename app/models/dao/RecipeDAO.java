@@ -54,8 +54,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public static void deleteTag(Tag tag, Recipe recipe) {
-        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName() + " m WHERE tag_id = "
-                + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
+        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName() + " m WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
         JPA.em().remove(tagged);
         // Reload entities
         JPA.em().flush();
@@ -97,8 +96,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public static void deleteFavorite(User user, Recipe recipe) {
-        Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName() + " m WHERE user_id = "
-                + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
+        Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
         JPA.em().remove(fav);
         // Reload entities
         JPA.em().flush();
@@ -128,8 +126,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public static void updateRating(User user, Recipe recipe, double value) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
-                + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         rating.rating = value;
         JPA.em().merge(rating);
         // Reload entities
@@ -145,8 +142,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public static void deleteRating(User user, Recipe recipe) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
-                + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         JPA.em().remove(rating);
         // Reload entities
         JPA.em().flush();
@@ -192,23 +188,24 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param search String
      * @param page   Integer
      * @param size   Integer
+     * @param user   String
      *
      * @return List<Recipe>
      */
-    public List<Recipe> paginate(Integer page, Integer size, String search) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE title LIKE '%" + search + "%' OR steps LIKE '%" + search + "%' ORDER BY id", Recipe.class).setFirstResult(page * size)
-                .setMaxResults(size).getResultList();
+    public List<Recipe> paginate(Integer page, Integer size, String search, String user) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE title LIKE '%" + search + "%' OR steps LIKE '%" + search + "%' AND " + Recipe.IsVisible(user) + " ORDER BY id", Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
      * Count the all events with search parameter
      *
      * @param search String
+     * @param user   String
      *
      * @return Long
      */
-    public Long count(String search) {
-        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE title LIKE '%" + search + "%' OR steps LIKE '%" + search + "%'", Long.class).getSingleResult();
+    public Long count(String search, String user) {
+        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE title LIKE '%" + search + "%' OR steps LIKE '%" + search + "%' AND " + Recipe.IsVisible(user), Long.class).getSingleResult();
     }
 
     /**
@@ -219,8 +216,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public Recipe findBySlug(String slug) {
-        List<Recipe> result = JPA.em()
-                .createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'", Recipe.class).getResultList();
+        List<Recipe> result = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'", Recipe.class).getResultList();
         if (!result.isEmpty()) return result.get(0);
         return null;
     }
@@ -234,8 +230,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe findBySlugAndId(String slug, Integer id) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND id != " + id,
-                    Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND id != " + id, Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -256,8 +251,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
                 if (logged.isAdmin()) {
                     return find(idRecipe);
                 }
-                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.user u WHERE m.id = '" + idRecipe
-                        + "' AND u.id = '" + logged.id + "'", Recipe.class).getSingleResult();
+                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.user u WHERE m.id = '" + idRecipe + "' AND u.id = '" + logged.id + "'", Recipe.class).getSingleResult();
             }
             return null;
         } catch (NoResultException e) {
@@ -276,8 +270,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public List<Recipe> check(String field, Object value, Integer id, String comparison) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
-                + comparison + " '" + value + "' ORDER BY id", Recipe.class).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", Recipe.class).getResultList();
     }
 
     /**
@@ -313,7 +306,6 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public void deleteIngredients(Recipe recipe) {
-        JPA.em().createQuery("DELETE FROM " + Ingredient.class.getName() + " WHERE recipe_id = " + recipe.id)
-                .executeUpdate();
+        JPA.em().createQuery("DELETE FROM " + Ingredient.class.getName() + " WHERE recipe_id = " + recipe.id).executeUpdate();
     }
 }

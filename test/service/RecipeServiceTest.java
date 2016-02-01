@@ -118,7 +118,7 @@ public class RecipeServiceTest extends AbstractTest {
             JPA.withTransaction(() -> {
                 initializeDataModel();
                 List<Recipe> recipes = RecipeService.all();
-                long count = RecipeService.count("");
+                long count = RecipeService.count("", null);
                 assertEquals(count, 2);
 
                 assertEquals(recipes.get(0).title, "Test");
@@ -133,11 +133,11 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Recipe> recipes = RecipeService.paginate(0, 1, "");
+                List<Recipe> recipes = RecipeService.paginate(0, 1, "", null);
                 assertEquals(recipes.get(0).title, "Test");
                 assertEquals(recipes.size(), 1);
 
-                recipes = RecipeService.paginate(1, 1, "");
+                recipes = RecipeService.paginate(1, 1, "", null);
                 assertEquals(recipes.size(), 1);
 
                 successTest();
@@ -150,13 +150,13 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Recipe> recipes = RecipeService.paginate(0, 10, "");
+                List<Recipe> recipes = RecipeService.paginate(0, 10, "", null);
                 assertEquals(recipes.get(0).title, "Test");
                 assertEquals(recipes.size(), 2);
 
-                recipes = RecipeService.paginate(0, 10, "Test 2");
+                recipes = RecipeService.paginate(0, 10, "Test 2", null);
                 assertEquals(recipes.size(), 1);
-                long count = RecipeService.count("Test 2");
+                long count = RecipeService.count("Test 2", null);
                 assertEquals(count, 1);
 
                 successTest();
@@ -169,8 +169,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe create = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null, RecipeVisibility.PUBLIC);
+                Recipe create = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0, UserService.find(1), null, RecipeVisibility.PUBLIC);
                 Recipe recipe = RecipeService.create(create);
                 assertEquals(recipe, create);
 
@@ -199,12 +198,12 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                long count = RecipeService.count("");
+                long count = RecipeService.count("", null);
                 assertEquals(count, 2);
 
                 assertTrue(RecipeService.delete(1, "test@testing.dev"));
 
-                count = RecipeService.count("");
+                count = RecipeService.count("", null);
                 assertEquals(count, 1);
 
                 successTest();
@@ -217,12 +216,12 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                long count = RecipeService.count("");
+                long count = RecipeService.count("", null);
                 assertEquals(count, 2);
 
                 assertTrue(RecipeService.delete(1, "admin@admin.dev"));
 
-                count = RecipeService.count("");
+                count = RecipeService.count("", null);
                 assertEquals(count, 1);
 
                 successTest();

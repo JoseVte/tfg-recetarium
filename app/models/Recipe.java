@@ -170,4 +170,19 @@ public class Recipe extends Model implements Serializable {
         }
         return visibility.equals(RecipeVisibility.PUBLIC);
     }
+
+    @JsonIgnore
+    public static String IsVisible(String user) {
+        String query = "(m.visibility = '" + RecipeVisibility.PUBLIC + "'";
+        if (user != null) {
+            User userParsed = Json.fromJson(Json.parse(user), User.class);
+            if (!userParsed.isAdmin()) {
+                String subquery = "(SELECT u.friend_id FROM friends u WHERE u.user_id = " + userParsed.id + ")";
+                query += " AND (m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.user_id = " + userParsed.id + ") AND (m.visibility = '" + RecipeVisibility.FRIENDS + "' AND m.user_id IN " + subquery + ")";
+            } else {
+                query += "AND m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.visibility = '" + RecipeVisibility.FRIENDS + "'";
+            }
+        }
+        return query + ")";
+    }
 }

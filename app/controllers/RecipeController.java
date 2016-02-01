@@ -36,8 +36,8 @@ public class RecipeController extends AbstractController {
     @Override
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size, String search) {
-        List<Recipe> models = RecipeService.paginate(page - 1, size, search);
-        Long count = RecipeService.count(search);
+        List<Recipe> models = RecipeService.paginate(page - 1, size, search, request().username());
+        Long count = RecipeService.count(search, request().username());
         String[] routesString = new String[3];
         routesString[0] = routes.RecipeController.list(page - 1, size, search).toString();
         routesString[1] = routes.RecipeController.list(page + 1, size, search).toString();
