@@ -106,8 +106,10 @@ public class TagDAO extends CrudDAO<Tag> {
     }
 
     public List<Integer> containAll(List<Integer> tagIds) {
-        List<Integer> aux = JPA.em().createQuery("SELECT m.id FROM " + TABLE + " m WHERE m.id IN :list", Integer.class).setParameter("list", tagIds).getResultList();
-        tagIds.removeAll(aux);
+        if (!tagIds.isEmpty()) {
+            List<Integer> aux = JPA.em().createQuery("SELECT m.id FROM " + TABLE + " m WHERE m.id IN :list", Integer.class).setParameter("list", tagIds).getResultList();
+            tagIds.removeAll(aux);
+        }
         return tagIds;
     }
 }

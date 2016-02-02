@@ -122,7 +122,7 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see models.base.Model#prePersistData()
      */
     @Override
@@ -132,7 +132,7 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see models.base.Model#handleRelations(util.Model old)
      */
     @Override
@@ -148,7 +148,7 @@ public class Recipe extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override
@@ -163,7 +163,7 @@ public class Recipe extends Model implements Serializable {
 
     @JsonIgnore
     public boolean isVisible(String user) {
-        if (user != null) {
+        if (user != null && !user.equals("anonymous")) {
             User userParsed = Json.fromJson(Json.parse(user), User.class);
             if (visibility.equals(RecipeVisibility.FRIENDS) && (this.user.friends.contains(userParsed) || userParsed.isAdmin())) return true;
             if (visibility.equals(RecipeVisibility.PRIVATE) && (Objects.equals(this.user.id, userParsed.id)) || userParsed.isAdmin()) return true;
@@ -174,7 +174,7 @@ public class Recipe extends Model implements Serializable {
     @JsonIgnore
     public static String IsVisible(String user) {
         String query = "(m.visibility = '" + RecipeVisibility.PUBLIC + "'";
-        if (user != null) {
+        if (user != null && !user.equals("anonymous")) {
             User userParsed = Json.fromJson(Json.parse(user), User.class);
             if (!userParsed.isAdmin()) {
                 String subquery = "(SELECT u.friend_id FROM friends u WHERE u.user_id = " + userParsed.id + ")";
