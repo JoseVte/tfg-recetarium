@@ -10,6 +10,7 @@ import models.base.Model;
 import models.enums.RecipeDifficulty;
 import models.enums.RecipeVisibility;
 import models.manytomany.Favorite;
+import models.manytomany.Friend;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 import models.service.CategoryService;
@@ -177,10 +178,10 @@ public class Recipe extends Model implements Serializable {
         if (user != null && !user.equals("anonymous")) {
             User userParsed = Json.fromJson(Json.parse(user), User.class);
             if (!userParsed.isAdmin()) {
-                String subquery = "(SELECT u.friend_id FROM friends u WHERE u.user_id = " + userParsed.id + ")";
-                query += " AND (m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.user = " + userParsed.id + ") AND (m.visibility = '" + RecipeVisibility.FRIENDS + "' AND m.user IN " + subquery + ")";
+                String subquery = "(SELECT u.friend FROM " + Friend.class.getName() + " u WHERE u.user = " + userParsed.id + ")";
+                query += " OR (m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.user = " + userParsed.id + ") OR (m.visibility = '" + RecipeVisibility.FRIENDS + "' AND m.user IN " + subquery + ")";
             } else {
-                query += "AND m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.visibility = '" + RecipeVisibility.FRIENDS + "'";
+                query += "OR m.visibility = '" + RecipeVisibility.PRIVATE + "' OR m.visibility = '" + RecipeVisibility.FRIENDS + "'";
             }
         }
         return query + ")";
