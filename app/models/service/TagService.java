@@ -119,6 +119,10 @@ public class TagService {
         return dao.count();
     }
 
+    public static List<Integer> containAll(List<Integer> tagIds) {
+        return dao.containAll(tagIds);
+    }
+
     /**
      * Add a recipe to a tag
      *

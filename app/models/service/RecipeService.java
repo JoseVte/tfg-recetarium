@@ -138,22 +138,24 @@ public class RecipeService {
      * @param search String
      * @param page   Integer
      * @param size   Integer
+     * @param user   String
      *
      * @return List<Recipe>
      */
-    public static List<Recipe> paginate(Integer page, Integer size, String search) {
-        return recipeDAO.paginate(page, size, search);
+    public static List<Recipe> paginate(Integer page, Integer size, String search, String user) {
+        return recipeDAO.paginate(page, size, search, user);
     }
 
     /**
-     * Get the number of total of recipes
+     * Get the number of total of searched recipes
      *
      * @param search String
+     * @param user   String
      *
      * @return Long
      */
-    public static Long count(String search) {
-        return recipeDAO.count(search);
+    public static Long count(String search, String user) {
+        return recipeDAO.count(search, user);
     }
 
     /**

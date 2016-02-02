@@ -10,8 +10,6 @@ API Recetarium
 
 #### Recetas
 
-<center>
-
 | Acción | URI | Login |
 | ------ | --- | :----: |
 | [Listado y busqueda por páginas](/doc/recetas-doc.md#paginación) | **GET** /recipes(?page=*&size=*&search=*) | --- |
@@ -24,31 +22,19 @@ API Recetarium
 | [Añadir un ingrediente](/doc/recetas-doc.md#añadir-un-nuevo-ingrediente-a-una-receta) | **POST** /recipes/{id-receta}/ingredient | OWNER / ADMIN |
 | [Borrar un ingrediente](/doc/recetas-doc.md#borrar-un-ingrediente-de-una-receta) | **DELETE** /recipes/{id-receta}/ingredient/{id} | OWNER / ADMIN |
 
-</center>
-
 #### Categorias
-
-<center>
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
 | [Todas las categorias](/doc/categorias-doc.md#todas-las-categorias) | **GET**  /categories | --- |
 
-</center>
-
 #### Tags
-
-<center>
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
 | [Buscar tags](/doc/tag-doc.md#buscar-tags-por-cadena) | **GET**  /tags(?search=*) | --- |
 
-</center>
-
 #### Autentificación
-
-<center>
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
@@ -57,11 +43,7 @@ API Recetarium
 | [Enviar email para reiniciar la password](/doc/auth-doc.md#enviar-email-para-reiniciar-la-password) | **POST**    /auth/reset/password | --- |
 | [Cambia la password](/doc/auth-doc.md#cambiar-la-password) | **PUT**     /auth/reset/password <br> **PATCH**   /auth/reset/password | --- |
 
-</center>
-
 #### Usuarios
-
-<center>
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
@@ -71,19 +53,13 @@ API Recetarium
 | [Actualizar](/doc/user-doc.md#actualizar-un-usuario-ya-existente) |  **PUT**    /users/{id} <br> **PATCH**  /users/{id} | ADMIN |
 | [Borrar](/doc/user-doc.md#borrar-un-usuario) |  **DELETE** /users/{id} | ADMIN |
 
-</center>
-
 #### Archivos
-
-<center>
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
 | [Obtener por nombre del archivo](/doc/archivos-doc.md#obtener-por-nombre-del-archivo) | **GET**    /recipes/{idReceta}/media/{id} <br> **GET**    /recipes/{idReceta}/media/{nombreFichero} | --- |
 | [Subida del archivo](/doc/archivos-doc.md#subida-del-archivo) | **POST**   /recipes/{idReceta}/media | OWNER / ADMIN |
 | [Borrar archivo](/doc/archivos-doc.md#borrar-archivo) |  **DELETE** /recipes/{idReceta}/media/{id} <br> **DELETE** /recipes/{idReceta}/media/{nombre} | OWNER / ADMIN |
-
-</center>
 
 -----
 
@@ -100,7 +76,11 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.4.1](/doc/rocket-blue.png) 0.4.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.1)
+#### [![0.4.2](/doc/rocket-blue.png) 0.4.2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.2)
+
+- Añadida visibilidad a las recetas
+
+###### [![0.4.1](/doc/release.png) 0.4.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.1)
 
 - Busqueda de recetas
 - Actualizada la documentación
