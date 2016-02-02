@@ -178,7 +178,7 @@ public class Recipe extends Model implements Serializable {
             User userParsed = Json.fromJson(Json.parse(user), User.class);
             if (!userParsed.isAdmin()) {
                 String subquery = "(SELECT u.friend_id FROM friends u WHERE u.user_id = " + userParsed.id + ")";
-                query += " AND (m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.user_id = " + userParsed.id + ") AND (m.visibility = '" + RecipeVisibility.FRIENDS + "' AND m.user_id IN " + subquery + ")";
+                query += " AND (m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.user = " + userParsed.id + ") AND (m.visibility = '" + RecipeVisibility.FRIENDS + "' AND m.user IN " + subquery + ")";
             } else {
                 query += "AND m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.visibility = '" + RecipeVisibility.FRIENDS + "'";
             }
