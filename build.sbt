@@ -1,5 +1,4 @@
 
-
 name := """recetarium"""
 
 version := "alpha"
@@ -21,6 +20,7 @@ libraryDependencies ++= Seq(
   "org.bitbucket.b_c" % "jose4j" % "0.4.4",
   "com.typesafe.play" %% "play-mailer" % "3.0.1",
   "commons-io" % "commons-io" % "2.4",
+  "org.mindrot" % "jbcrypt" % "0.3m",
   "com.dropbox.core" % "dropbox-core-sdk" % "[1.7,1.8)"
 )
 

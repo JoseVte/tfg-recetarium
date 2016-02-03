@@ -113,13 +113,7 @@ public class User extends Model implements Serializable {
     public void prePersistData() {
         if (firstName != null && firstName.isEmpty()) firstName = null;
         if (lastName != null && lastName.isEmpty()) lastName = null;
-        if (password != null && !password.isEmpty() && updatePassword) {
-            try {
-                password = Encryptation.createHash(password);
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                e.printStackTrace();
-            }
-        }
+        if (password != null && !password.isEmpty() && updatePassword) password = Encryptation.createHash(password);
     }
 
     /*
