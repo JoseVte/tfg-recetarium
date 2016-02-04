@@ -8,6 +8,7 @@ import models.dao.UserDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
+import util.Encryptation;
 import util.VerificationToken;
 
 import java.security.NoSuchAlgorithmException;
@@ -58,6 +59,7 @@ public class UserService {
      * @return User
      */
     public static User update(User data) {
+        data.password = Encryptation.createHash(data.password);
         return userDAO.update(data);
     }
 
@@ -250,7 +252,7 @@ public class UserService {
      */
     public static void changePassword(String email, String password) {
         User user = userDAO.findByEmailAddress(email);
-        user.password = password;
+        user.password = Encryptation.createHash(password);
         user.lostPassExpire = null;
         user.lostPassToken = null;
         userDAO.update(user);

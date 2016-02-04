@@ -35,34 +35,8 @@ public class UserDAO extends CrudDAO<User> {
      *
      * @return true if the password is correct, false if not
      */
-    public static boolean validatePassword(String password, String correctHash)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return validatePassword(password.toCharArray(), correctHash);
-    }
-
-    /**
-     * Validates a password using a hash.
-     *
-     * @param password    the password to check
-     * @param correctHash the hash of the valid password
-     *
-     * @return true if the password is correct, false if not
-     */
-    public static boolean validatePassword(char[] password, String correctHash)
-            throws NoSuchAlgorithmException, InvalidKeySpecException {
-        // Decode the hash into its parameters
-        String[] params = correctHash.split(":");
-        int iterations = Integer.parseInt(params[Encryptation.ITERATION_INDEX]);
-        byte[] salt = Encryptation.fromHex(params[Encryptation.SALT_INDEX]);
-        byte[] hash = Encryptation.fromHex(params[Encryptation.PBKDF2_INDEX]);
-
-        // Compute the hash of the provided password, using the same salt,
-        // iteration count, and hash length
-        byte[] testHash = Encryptation.pbkdf2(password, salt, iterations, hash.length);
-
-        // Compare the hashes in constant time. The password is correct if
-        // both hashes match.
-        return Encryptation.slowEquals(hash, testHash);
+    public static boolean validatePassword(String password, String correctHash) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        return Encryptation.check(password, correctHash);
     }
 
     /**

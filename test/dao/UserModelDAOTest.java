@@ -60,7 +60,7 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "josevte1");
+                User user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "password");
                 assertEquals(user.username, "test");
                 assertEquals(user.email, "test@testing.dev");
                 assertEquals(user.type, TypeUser.COMUN);
@@ -85,7 +85,7 @@ public class UserModelDAOTest extends AbstractTest {
                 user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "");
                 assertNull(user);
 
-                user = userDAO.findByEmailAddressAndPassword("", "josevte1");
+                user = userDAO.findByEmailAddressAndPassword("", "password");
                 assertNull(user);
 
                 user = userDAO.findByEmailAddressAndPassword("", "");
