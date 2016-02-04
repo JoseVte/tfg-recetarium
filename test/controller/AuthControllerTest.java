@@ -28,11 +28,11 @@ public class AuthControllerTest extends AbstractTest {
     public AuthControllerTest() {
         loginJson = Json.newObject();
         loginJson.put("email", "test@testing.dev");
-        loginJson.put("password", "josevte1");
+        loginJson.put("password", "password");
 
         badJson = Json.newObject();
         badJson.put("email", "test@testing.dev");
-        badJson.put("password", "josevte");
+        badJson.put("password", "passwor1");
 
         registerJson = Json.newObject();
         registerJson.put("username", "Yasuo");

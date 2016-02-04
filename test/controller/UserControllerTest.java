@@ -75,7 +75,7 @@ public class UserControllerTest extends AbstractTest {
 
         loginJson = Json.newObject();
         loginJson.put("email", "admin@admin.dev");
-        loginJson.put("password", "josevte1");
+        loginJson.put("password", "password");
     }
 
     @Test
@@ -103,7 +103,7 @@ public class UserControllerTest extends AbstractTest {
             initializeDataController();
             ObjectNode comunUser = Json.newObject();
             comunUser.put("email", "test@testing.dev");
-            comunUser.put("password", "josevte1");
+            comunUser.put("password", "password");
 
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(comunUser).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();

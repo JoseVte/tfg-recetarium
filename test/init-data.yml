@@ -2,12 +2,12 @@
 data:
 - &user !!models.User
       username:   test
-      password:   1000:a8c3cf54e924ddf9a23b69969b5cb574967cd13cd20480c4:b6f2ce12599d82f3db085682131719ffce8e1c9a4344bcdd    # password: josevte1
+      password:   $2a$12$1x4hzP33qVuXPGaqLG9sjeWHn0NxNCBuHdm7hdMsTm6B/vFbMqe8e    # password: password
       email:      test@testing.dev
       type:       COMUN
 - &admin  !!models.User
       username:   admin
-      password:   1000:a8c3cf54e924ddf9a23b69969b5cb574967cd13cd20480c4:b6f2ce12599d82f3db085682131719ffce8e1c9a4344bcdd    # password: josevte1
+      password:   $2a$12$1x4hzP33qVuXPGaqLG9sjeWHn0NxNCBuHdm7hdMsTm6B/vFbMqe8e    # password: password
       email:      admin@admin.dev
       type:       ADMIN
 - &tag !!models.Tag

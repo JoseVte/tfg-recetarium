@@ -20,11 +20,11 @@ public class MediaControllerTest extends AbstractTest {
     public MediaControllerTest() {
         loginJson = Json.newObject();
         loginJson.put("email", "test@testing.dev");
-        loginJson.put("password", "josevte1");
+        loginJson.put("password", "password");
 
         loginAdmin = Json.newObject();
         loginAdmin.put("email", "admin@admin.dev");
-        loginAdmin.put("password", "josevte1");
+        loginAdmin.put("password", "password");
     }
 
     @Test

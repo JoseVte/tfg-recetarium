@@ -79,9 +79,6 @@ public class User extends Model implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Rating> ratings = new ArrayList<Rating>();
 
-    @Transient
-    private boolean updatePassword = true;
-
     public User() {
     }
 
@@ -98,7 +95,7 @@ public class User extends Model implements Serializable {
         this.id = user.id;
         this.username = user.username;
         this.email = user.email;
-        this.password = user.password;
+        this.password = Encryptation.createHash(user.password);
         this.firstName = user.first_name;
         this.lastName = user.last_name;
         this.type = user.type;
@@ -113,7 +110,6 @@ public class User extends Model implements Serializable {
     public void prePersistData() {
         if (firstName != null && firstName.isEmpty()) firstName = null;
         if (lastName != null && lastName.isEmpty()) lastName = null;
-        if (password != null && !password.isEmpty() && updatePassword) password = Encryptation.createHash(password);
     }
 
     /*
@@ -125,7 +121,6 @@ public class User extends Model implements Serializable {
     public void handleRelations(Model old) {
         User user = ((User) old);
         if (password == null || password.isEmpty()) {
-            this.updatePassword = user.password.equals(password);
             this.password = user.password;
         }
         this.setCreatedAt(user.getCreatedAt());

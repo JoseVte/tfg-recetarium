@@ -5,7 +5,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import java.math.BigInteger;
 
 public class Encryptation {
-    private static final int SALT_SIZE = 24;
+    private static final int SALT_SIZE = 12;
 
     /**
      * Returns a salted PBKDF2 hash of the string.
