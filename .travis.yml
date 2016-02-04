@@ -3,9 +3,9 @@ sudo: false
 jdk:
 - oraclejdk8
 scala:
-- 2.9.3
 - 2.10.4
 - 2.11.2
+sbt_args: -J-Xmx4g
 script:
 - sbt ++$TRAVIS_SCALA_VERSION test
 cache:
