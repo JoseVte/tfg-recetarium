@@ -22,7 +22,7 @@ build:
   steps:
     - script:
         name: cleanup
-        code: ./sbt clean
+        code: sbt clean
     - script:
         name: tests
-        code: ./sbt test
+        code: sbt test
