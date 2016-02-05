@@ -173,6 +173,11 @@ public class Recipe extends Model implements Serializable {
     }
 
     @JsonIgnore
+    public static String Search(String search) {
+        return "(title LIKE '%" + search + "%' OR steps LIKE '%" + search + "%')";
+    }
+
+    @JsonIgnore
     public static String IsVisible(String user) {
         String query = "(m.visibility = '" + RecipeVisibility.PUBLIC + "'";
         if (user != null && !user.equals("anonymous")) {

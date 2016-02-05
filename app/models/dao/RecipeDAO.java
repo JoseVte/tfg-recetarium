@@ -193,7 +193,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public List<Recipe> paginate(Integer page, Integer size, String search, String user) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE title LIKE '%" + search + "%' OR steps LIKE '%" + search + "%' AND " + Recipe.IsVisible(user) + " ORDER BY id", Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " ORDER BY id", Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
@@ -205,7 +205,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return Long
      */
     public Long count(String search, String user) {
-        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE title LIKE '%" + search + "%' OR steps LIKE '%" + search + "%' AND " + Recipe.IsVisible(user), Long.class).getSingleResult();
+        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user), Long.class).getSingleResult();
     }
 
     /**
@@ -216,9 +216,27 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public Recipe findBySlug(String slug) {
-        List<Recipe> result = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'", Recipe.class).getResultList();
-        if (!result.isEmpty()) return result.get(0);
-        return null;
+        try {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'" , Recipe.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Find a recipe by the slug
+     *
+     * @param slug String
+     * @param user String
+     *
+     * @return List<Recipe>
+     */
+    public Recipe findBySlug(String slug, String user) {
+        try {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND "  + Recipe.IsVisible(user), Recipe.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     /**

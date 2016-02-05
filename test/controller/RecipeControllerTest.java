@@ -336,7 +336,41 @@ public class RecipeControllerTest extends AbstractTest {
     }
 
     @Test
-    @SuppressWarnings("deprecation")
+    public void testRecipeControllerPrivateEvent() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            dataOk.put("ingredients", Json.toJson(Arrays.asList(ingredientsCreate, ingredientsCreate2)));
+            dataOk.put("visibility", "PRIVATE");
+            WSResponse response = WS.url("http://localhost:3333/recipes").setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
+            assertEquals(CREATED, response.getStatus());
+
+            response = WS.url("http://localhost:3333/recipes?page=1&size=5").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+            JsonNode responseJson = response.asJson();
+            assertEquals(responseJson.get("data").size(), 3);
+            assertEquals(responseJson.get("total").intValue(), 3);
+
+            response = WS.url("http://localhost:3333/recipes/new-recipe").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+            responseJson = response.asJson();
+            assertEquals(OK, response.getStatus());
+
+            response = WS.url("http://localhost:3333/recipes?page=1&size=5").get().get(timeout);
+            responseJson = response.asJson();
+            assertEquals(responseJson.get("data").size(), 2);
+            assertEquals(responseJson.get("total").intValue(), 2);
+
+            response = WS.url("http://localhost:3333/recipes/new-recipe").get().get(timeout);
+            responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("error").asText(), "Not found new-recipe");
+
+            successTest();
+        });
+    }
+
+    @Test
     public void testRecipeControllerCreateRecipeOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
@@ -612,9 +646,7 @@ public class RecipeControllerTest extends AbstractTest {
         });
     }
 
-
     @Test
-    @SuppressWarnings("deprecation")
     public void testRecipeControllerUpdateRecipeOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
