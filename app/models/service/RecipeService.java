@@ -85,6 +85,18 @@ public class RecipeService {
     }
 
     /**
+     * Find a recipe by slug
+     *
+     * @param slug String
+     * @param user String
+     *
+     * @return Recipe
+     */
+    public static Recipe findBySlug(String slug, String user) {
+        return recipeDAO.findBySlug(slug, user);
+    }
+
+    /**
      * Find a recipe by slug and id
      *
      * @param slug String

@@ -1,7 +1,7 @@
 [![Issue Stats](http://issuestats.com/github/JoseVte/tfg-recetarium/badge/pr?style=flat)](http://issuestats.com/github/JoseVte/tfg-recetarium)
 [![Issue Stats](http://issuestats.com/github/JoseVte/tfg-recetarium/badge/issue?style=flat)](http://issuestats.com/github/JoseVte/tfg-recetarium)
 
-[![Build Status](https://travis-ci.org/JoseVte/tfg-recetarium.png)](https://travis-ci.org/JoseVte/tfg-recetarium)
+[![wercker status](https://app.wercker.com/status/31e5e6a4da1640a571cf2a58897c1cd8/m "wercker status")](https://app.wercker.com/project/bykey/31e5e6a4da1640a571cf2a58897c1cd8)
 
 API Recetarium
 ================================

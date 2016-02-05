@@ -67,7 +67,7 @@ public class RecipeController extends AbstractController {
      */
     @Transactional(readOnly = true)
     public Result get(String slug) {
-        Recipe recipe = RecipeService.findBySlug(slug);
+        Recipe recipe = RecipeService.findBySlug(slug, request().username());
         if (recipe == null) {
             return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + slug)));
         }
