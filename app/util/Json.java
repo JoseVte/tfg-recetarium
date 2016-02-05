@@ -1,9 +1,8 @@
 package util;
 
-import java.security.Key;
-import java.util.Date;
-import java.util.List;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import models.base.Model;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
@@ -14,22 +13,18 @@ import org.jose4j.jwt.consumer.JwtConsumerBuilder;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.HmacKey;
 import org.jose4j.lang.JoseException;
-
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
-import models.User;
-import models.base.Model;
 import play.Play;
 import play.mvc.Http.Response;
 import play.mvc.Result;
 
-public class Json {
-    private static final ObjectMapper    defaultObjectMapper = new ObjectMapper();
-    private static volatile ObjectMapper objectMapper        = null;
+import java.security.Key;
+import java.util.List;
 
-    public static ObjectMapper mapper() {
+public class Json {
+    private static final ObjectMapper defaultObjectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = null;
+
+    private static ObjectMapper mapper() {
         if (objectMapper == null) {
             return defaultObjectMapper;
         }
@@ -46,12 +41,13 @@ public class Json {
 
     @SuppressWarnings("deprecation")
     public static ObjectNode generateJsonPaginateObject(List<? extends Model> models, Long count, Integer page,
-            Integer size, String[] routes) {
+                                                        Integer size, String[] routes, boolean search) {
         ObjectNode object = mapper().createObjectNode();
         object.put("data", play.libs.Json.toJson(models));
         object.put("total", count);
         if (page > 1) object.put("link-prev", routes[0]);
-        if (page * size < count) object.put("link-next", routes[1]);
+        if (page * size < models.size() && search) object.put("link-next", routes[1]);
+        else if (page * size < count && !search) object.put("link-next", routes[1]);
         object.put("link-self", routes[2]);
         return object;
     }
@@ -59,8 +55,8 @@ public class Json {
     /**
      * Add the content-type json to response
      *
-     * @param response
-     * @param Result httpResponse
+     * @param response     Response
+     * @param httpResponse Result
      *
      * @return Result
      */
@@ -72,32 +68,29 @@ public class Json {
     /**
      * Create a token for the user
      *
-     * @param subject String
+     * @param subject       String
+     * @param setExpiration boolean
      *
      * @return String
      */
-    public static String createJwt(String subject) throws JoseException {
+    public static String createJwt(String subject, boolean setExpiration) throws JoseException {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
+        int expiration = Play.application().configuration().getInt("jwt.expiry.minutes");
         Key key = new HmacKey(keySecret.getBytes());
 
         JwtClaims claims = new JwtClaims();
-        claims.setExpirationTimeMinutesInTheFuture(60); // time when the token
-                                                        // will expire (60
-                                                        // minutes from now)
+        if (setExpiration) claims.setExpirationTimeMinutesInTheFuture(expiration);
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast(2); // time before which the token
-                                                // is not yet valid (2 minutes
-                                                // ago)
+        claims.setNotBeforeMinutesInThePast(2);
         claims.setSubject(subject);
 
         JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
         jws.setKey(key);
         jws.setAlgorithmHeaderValue(AlgorithmIdentifiers.HMAC_SHA256);
-        String jwt = jws.getCompactSerialization();
 
-        return jwt;
+        return jws.getCompactSerialization();
     }
 
     /**
@@ -111,18 +104,8 @@ public class Json {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         Key key = new AesKey(keySecret.getBytes());
 
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setRequireExpirationTime() // the
-                                                                                      // JWT
-                                                                                      // must
-                                                                                      // have
-                                                                                      // an
-                                                                                      // expiration
-                                                                                      // time
-                .setAllowedClockSkewInSeconds(30) // allow some leeway in
-                                                  // validating time based
-                                                  // claims to account for clock
-                                                  // skew
-                .setRequireSubject().setVerificationKey(key).build();
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setAllowedClockSkewInSeconds(30).setRequireSubject()
+                .setVerificationKey(key).build();
 
         try {
             // Validate the JWT and process it to the Claims

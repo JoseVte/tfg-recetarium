@@ -1,33 +1,19 @@
 package controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static play.mvc.Http.Status.BAD_REQUEST;
-import static play.mvc.Http.Status.CREATED;
-import static play.mvc.Http.Status.NOT_FOUND;
-import static play.mvc.Http.Status.OK;
-import static play.mvc.Http.Status.UNAUTHORIZED;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-import static play.test.Helpers.testServer;
-
-import org.junit.Test;
-
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
 import controllers.AuthController;
-import models.TypeUser;
+import models.enums.TypeUser;
+import org.junit.Test;
 import play.libs.Json;
 import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import util.AbstractTest;
 
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
+
 public class UserControllerTest extends AbstractTest {
-    int        timeout = 4000;
     ObjectNode dataOk;
     ObjectNode dataError1;
     ObjectNode dataError2;
@@ -89,7 +75,7 @@ public class UserControllerTest extends AbstractTest {
 
         loginJson = Json.newObject();
         loginJson.put("email", "admin@admin.dev");
-        loginJson.put("password", "josevte1");
+        loginJson.put("password", "password");
     }
 
     @Test
@@ -117,7 +103,7 @@ public class UserControllerTest extends AbstractTest {
             initializeDataController();
             ObjectNode comunUser = Json.newObject();
             comunUser.put("email", "test@testing.dev");
-            comunUser.put("password", "josevte1");
+            comunUser.put("password", "password");
 
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(comunUser).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();

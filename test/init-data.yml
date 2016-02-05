@@ -2,12 +2,12 @@
 data:
 - &user !!models.User
       username:   test
-      password:   1000:a8c3cf54e924ddf9a23b69969b5cb574967cd13cd20480c4:b6f2ce12599d82f3db085682131719ffce8e1c9a4344bcdd    # password: josevte1
+      password:   $2a$12$1x4hzP33qVuXPGaqLG9sjeWHn0NxNCBuHdm7hdMsTm6B/vFbMqe8e    # password: password
       email:      test@testing.dev
       type:       COMUN
 - &admin  !!models.User
       username:   admin
-      password:   1000:a8c3cf54e924ddf9a23b69969b5cb574967cd13cd20480c4:b6f2ce12599d82f3db085682131719ffce8e1c9a4344bcdd    # password: josevte1
+      password:   $2a$12$1x4hzP33qVuXPGaqLG9sjeWHn0NxNCBuHdm7hdMsTm6B/vFbMqe8e    # password: password
       email:      admin@admin.dev
       type:       ADMIN
 - &tag !!models.Tag
@@ -19,15 +19,21 @@ data:
 - &recipe !!models.Recipe
       title:       Test
       slug:        test
-      description: Description test
+      steps:       Description test
+      difficulty:  EASY
+      visibility:  PUBLIC
+      duration:    2015-11-11 00:10:00 -5
       user:        *user
-      category:     *category
+      category:    *category
 - &recipe2 !!models.Recipe
       title:       Test 2
       slug:        test-2
-      description: Description test
+      steps:       Description test2
+      difficulty:  EASY
+      visibility:  PUBLIC
+      duration:    2015-11-11 00:10:00 -5
       user:        *user
-      category:     *categorynew
+      category:    *categorynew
 - &comment !!models.Comment
       text:   test
       recipe: *recipe
@@ -51,5 +57,9 @@ data:
      tag:    *tag
      recipe: *recipe
 - &fav !!models.manytomany.Favorite
-      recipe: *recipe
-      user:   *user
+     recipe: *recipe
+     user:   *user
+- &ingredient !!models.Ingredient
+     name:      test
+     count:     1
+     recipe:    *recipe2

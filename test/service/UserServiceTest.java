@@ -1,22 +1,16 @@
 package service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
+import models.User;
+import models.enums.TypeUser;
+import models.service.UserService;
+import org.junit.Test;
+import play.db.jpa.JPA;
+import util.AbstractTest;
 
 import java.util.List;
 
-import org.junit.Test;
-
-import models.TypeUser;
-import models.User;
-import models.service.UserService;
-import play.db.jpa.JPA;
-import util.AbstractTest;
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
 
 public class UserServiceTest extends AbstractTest {
 
@@ -276,7 +270,7 @@ public class UserServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testUserServiceAddFavoriteAlredyFav() {
+    public void testUserServiceAddFavoriteAlreadyFav() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
@@ -358,7 +352,7 @@ public class UserServiceTest extends AbstractTest {
     }
 
     @Test
-    public void testUserServiceAddRatingAlredyRating() {
+    public void testUserServiceAddRatingAlreadyRating() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();

@@ -1,14 +1,7 @@
 package controllers;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
+import middleware.Anonymous;
 import middleware.Authenticated;
 import models.User;
 import models.service.EmailService;
@@ -20,25 +13,27 @@ import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.libs.mailer.MailerClient;
 import play.mvc.Controller;
-import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Security;
 import util.VerificationToken;
 
+import javax.inject.Inject;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.ArrayList;
+import java.util.List;
+
+@Security.Authenticated(Anonymous.class)
 public class AuthController extends Controller {
     public final static String AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
-    public static final String AUTH_TOKEN        = "auth_token";
-    public static final String REDIRECT_PATH     = "/";
+    public static final String AUTH_TOKEN = "auth_token";
+    public static final String REDIRECT_PATH = "/";
 
     private final EmailService mailer;
 
     @Inject
     public AuthController(MailerClient mailer) {
         this.mailer = new EmailService(mailer);
-    }
-
-    public static User getUser() {
-        return (User) Http.Context.current().args.get("user");
     }
 
     /**
@@ -63,18 +58,15 @@ public class AuthController extends Controller {
                 return util.Json.jsonResult(response(), unauthorized());
             } else {
                 if (mailer.sendRegistrationEmails(user) == null) {
-                    return util.Json.jsonResult(response(),
-                            internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
                 }
-                String authToken = UserService.createJWT(user);
+                String authToken = UserService.createJWT(user, register.setExpiration);
                 ObjectNode authTokenJson = Json.newObject();
                 authTokenJson.put(AUTH_TOKEN, authToken);
-                response().setCookie(AUTH_TOKEN, authToken);
                 return util.Json.jsonResult(response(), ok(authTokenJson));
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            return util.Json.jsonResult(response(),
-                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
 
     }
@@ -99,10 +91,9 @@ public class AuthController extends Controller {
         if (user == null) {
             return util.Json.jsonResult(response(), unauthorized());
         } else {
-            String authToken = UserService.createJWT(user);
+            String authToken = UserService.createJWT(user, login.setExpiration);
             ObjectNode authTokenJson = Json.newObject();
             authTokenJson.put(AUTH_TOKEN, authToken);
-            response().setCookie(AUTH_TOKEN, authToken);
             return util.Json.jsonResult(response(), ok(authTokenJson));
         }
     }
@@ -118,20 +109,18 @@ public class AuthController extends Controller {
         if (recover.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(recover.errorsAsJson()));
         }
-        VerificationToken token = null;
+        VerificationToken token;
         String email = recover.get().email;
         User user = UserService.findByEmailAddress(email);
         if (user == null) {
-            return util.Json.jsonResult(response(),
-                    notFound(util.Json.generateJsonErrorMessages("Not found email " + email)));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found email " + email)));
         }
         token = UserService.getActiveLostPasswordToken(user);
         if (token == null) {
-            token = UserService.addVerification(user);
+            UserService.addVerification(user);
         }
         if (mailer.sendVerificationToken(user) == null) {
-            return util.Json.jsonResult(response(),
-                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Reset password email sent")));
     }
@@ -151,8 +140,7 @@ public class AuthController extends Controller {
 
         UserService.changePassword(reset.get().email, reset.get().password);
 
-        return util.Json.jsonResult(response(),
-                ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
     }
 
     /**
@@ -163,13 +151,13 @@ public class AuthController extends Controller {
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result logout() {
-        response().discardCookie(AUTH_TOKEN);
         return ok();
     }
 
     /***********************/
     /* Request validators */
     /* @author Josrom */
+
     /***********************/
     public static class RecoverPassword {
         @Constraints.Required
@@ -181,6 +169,7 @@ public class AuthController extends Controller {
         @Constraints.Required
         public String password;
 
+        public boolean setExpiration = true;
     }
 
     public static class Register extends Login {
@@ -188,10 +177,10 @@ public class AuthController extends Controller {
         public String username;
 
         @Constraints.Required
-        public String passwordRepeat;
+        public String password_repeat;
 
-        public String firstName;
-        public String lastName;
+        public String first_name;
+        public String last_name;
 
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -201,9 +190,9 @@ public class AuthController extends Controller {
             if (!UserService.where("username", username).isEmpty()) {
                 errors.add(new ValidationError("username", "This username is already registered"));
             }
-            if (password != null && passwordRepeat != null && !password.equals(passwordRepeat)) {
+            if (password != null && password_repeat != null && !password.equals(password_repeat)) {
                 errors.add(new ValidationError("password", "The passwords must be equals"));
-                errors.add(new ValidationError("passwordRepeat", "The passwords must be equals"));
+                errors.add(new ValidationError("password_repeat", "The passwords must be equals"));
             }
             return errors.isEmpty() ? null : errors;
         }
@@ -211,7 +200,7 @@ public class AuthController extends Controller {
         @Override
         public String toString() {
             return "User [username=" + username + ", email=" + email + ", password=" + password + ", firstName="
-                    + firstName + ", lastName=" + lastName + "]";
+                    + first_name + ", lastName=" + last_name + "]";
         }
     }
 

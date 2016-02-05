@@ -1,9 +1,5 @@
 package models.service;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.List;
-
 import controllers.AuthController.Register;
 import controllers.UserController.UserRequest;
 import models.Recipe;
@@ -12,7 +8,13 @@ import models.dao.UserDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
+import util.Encryptation;
 import util.VerificationToken;
+
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
+import java.util.List;
+import java.util.Objects;
 
 public class UserService {
     private static UserDAO userDAO;
@@ -24,9 +26,10 @@ public class UserService {
     /**
      * Create an user
      *
-     * @param User data
+     * @param data User
      *
      * @return User
+     *
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
      */
@@ -37,9 +40,10 @@ public class UserService {
     /**
      * Create an user
      *
-     * @param UserRequest data
+     * @param data UserRequest
      *
      * @return User
+     *
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
      */
@@ -50,18 +54,19 @@ public class UserService {
     /**
      * Update an user
      *
-     * @param User data
+     * @param data User
      *
      * @return User
      */
     public static User update(User data) {
+        data.password = Encryptation.createHash(data.password);
         return userDAO.update(data);
     }
 
     /**
      * Update an user
      *
-     * @param UserRequest data
+     * @param data UserRequest
      *
      * @return User
      */
@@ -72,7 +77,7 @@ public class UserService {
     /**
      * Find an user by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return User
      */
@@ -83,7 +88,7 @@ public class UserService {
     /**
      * Delete an user by id
      *
-     * @param Integer id
+     * @param id Integer
      */
     public static Boolean delete(Integer id) {
         User user = userDAO.find(id);
@@ -107,8 +112,8 @@ public class UserService {
     /**
      * Get the page of users
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page Integer
+     * @param size Integer
      *
      * @return List<User>
      */
@@ -128,8 +133,8 @@ public class UserService {
     /**
      * Check the value of field is used
      *
-     * @param field
-     * @param value
+     * @param field String
+     * @param value String
      *
      * @return List<User>
      */
@@ -140,9 +145,10 @@ public class UserService {
     /**
      * Register an user
      *
-     * @param Register register
+     * @param register Register
      *
      * @return User
+     *
      * @throws InvalidKeySpecException
      * @throws NoSuchAlgorithmException
      */
@@ -153,7 +159,7 @@ public class UserService {
     /**
      * Find an user by email
      *
-     * @param email
+     * @param email String
      *
      * @return User
      */
@@ -164,8 +170,8 @@ public class UserService {
     /**
      * Find an user by email and password
      *
-     * @param email
-     * @param password
+     * @param email    String
+     * @param password String
      *
      * @return User
      */
@@ -176,7 +182,7 @@ public class UserService {
     /**
      * Check the auth token
      *
-     * @param authToken
+     * @param authToken String
      *
      * @return User
      */
@@ -187,18 +193,19 @@ public class UserService {
     /**
      * Create a token for the user
      *
-     * @param user
+     * @param user          User
+     * @param setExpiration boolean
      *
      * @return String
      */
-    public static String createJWT(User user) {
-        return userDAO.createJWT(user);
+    public static String createJWT(User user, boolean setExpiration) {
+        return userDAO.createJWT(user, setExpiration);
     }
 
     /**
      * Get the token valid of an user
      *
-     * @param user
+     * @param user User
      *
      * @return VerificationToken
      */
@@ -211,7 +218,7 @@ public class UserService {
     /**
      * Add new token for the user
      *
-     * @param user
+     * @param user User
      *
      * @return VerificationToken
      */
@@ -226,27 +233,26 @@ public class UserService {
     /**
      * Add new token for the user
      *
-     * @param email
-     * @param token
+     * @param email String
+     * @param token String
      *
      * @return boolean
      */
     public static boolean validateResetToken(String email, String token) {
         User user = userDAO.findByEmailAddress(email);
         VerificationToken tokenDB = userDAO.getLostPasswordToken(user);
-        if (user == null || tokenDB == null || tokenDB.hasExpired()) return false;
-        return true;
+        return !(user == null || tokenDB == null || !Objects.equals(token, tokenDB.getToken()) || tokenDB.hasExpired());
     }
 
     /**
      * Change the password of the user
      *
-     * @param email
-     * @param password
+     * @param email    String
+     * @param password String
      */
     public static void changePassword(String email, String password) {
         User user = userDAO.findByEmailAddress(email);
-        user.password = password;
+        user.password = Encryptation.createHash(password);
         user.lostPassExpire = null;
         user.lostPassToken = null;
         userDAO.update(user);
@@ -255,13 +261,13 @@ public class UserService {
     /**
      * Add new friend to an user
      *
-     * @param user
-     * @param friend
+     * @param userId   Integer
+     * @param friendId Integer
      *
      * @return boolean
      */
     public static boolean addFriend(Integer userId, Integer friendId) {
-        if (userId != friendId) {
+        if (!Objects.equals(userId, friendId)) {
             User user = userDAO.find(userId);
             User friend = userDAO.find(friendId);
             if (user != null && friend != null) {
@@ -278,13 +284,13 @@ public class UserService {
     /**
      * Delete a friendship relation
      *
-     * @param user
-     * @param friend
+     * @param userId   Integer
+     * @param friendId Integer
      *
      * @return boolean
      */
     public static boolean deleteFriend(Integer userId, Integer friendId) {
-        if (userId != friendId) {
+        if (!Objects.equals(userId, friendId)) {
             User user = userDAO.find(userId);
             User friend = userDAO.find(friendId);
             if (user != null && friend != null) {
@@ -301,8 +307,8 @@ public class UserService {
     /**
      * Add a recipe as a favorite
      *
-     * @param user
-     * @param recipe
+     * @param userId   Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */
@@ -322,8 +328,8 @@ public class UserService {
     /**
      * Delete a recipe favorite
      *
-     * @param user
-     * @param recipe
+     * @param userId   Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */
@@ -343,9 +349,9 @@ public class UserService {
     /**
      * Add a rating of a recipe
      *
-     * @param user
-     * @param recipe
-     * @param value
+     * @param userId   Integer
+     * @param recipeId Integer
+     * @param value    double
      *
      * @return boolean
      */
@@ -365,9 +371,9 @@ public class UserService {
     /**
      * Update a rating of a recipe
      *
-     * @param user
-     * @param recipe
-     * @param value
+     * @param userId   Integer
+     * @param recipeId Integer
+     * @param value    double
      *
      * @return boolean
      */
@@ -387,8 +393,8 @@ public class UserService {
     /**
      * Delete a rating of a recipe
      *
-     * @param user
-     * @param recipe
+     * @param userId   Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */

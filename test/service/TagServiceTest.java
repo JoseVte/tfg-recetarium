@@ -1,21 +1,16 @@
 package service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-
-import java.util.List;
-
-import org.junit.Test;
-
 import models.Tag;
 import models.service.TagService;
+import org.junit.Test;
 import play.db.jpa.JPA;
 import util.AbstractTest;
+
+import java.util.Arrays;
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
 
 public class TagServiceTest extends AbstractTest {
 
@@ -63,6 +58,22 @@ public class TagServiceTest extends AbstractTest {
     }
 
     @Test
+    public void testTagServiceSearchTags() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+                List<Tag> tags = TagService.search("test");
+                assertEquals(tags.size(), 1);
+                assertEquals(tags.get(0).text, "test");
+
+                tags = TagService.search("no exist");
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
     public void testTagServicePageTags() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
@@ -87,6 +98,21 @@ public class TagServiceTest extends AbstractTest {
                 Tag create = new Tag("test2");
                 Tag tag = TagService.create(create);
                 assertEquals(tag, create);
+
+                successTest();
+            });
+        });
+    }
+
+    @Test
+    public void testTagServiceCreateTags() {
+        running(fakeApplication(inMemoryDatabase()), () -> {
+            JPA.withTransaction(() -> {
+                initializeDataModel();
+
+                List<String> tagsNames = Arrays.asList("Test", "Test 2");
+                List<Integer> ids = TagService.create(tagsNames);
+                assertEquals(ids.size(), 2);
 
                 successTest();
             });

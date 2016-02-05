@@ -1,40 +1,31 @@
 package models.manytomany;
 
-import java.io.Serializable;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import models.User;
 
+import javax.persistence.*;
+import java.io.Serializable;
+
 @Entity
-@Table(name = "friends", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "friend_id" }) })
+@Table(name = "friends", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "friend_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Friend implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer            id;
+    public Integer id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    public User               user;
+    public User user;
 
     @ManyToOne
     @JoinColumn(name = "friend_id")
-    public User               friend;
+    public User friend;
 
     public Friend() {
     }

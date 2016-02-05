@@ -1,37 +1,31 @@
 package models;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
 import models.base.Model;
 import models.dao.TagDAO;
 import models.manytomany.RecipeTags;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "tags")
-@JsonPropertyOrder({ "id", "text", "created_at", "updated_at" })
+@JsonPropertyOrder({"id", "text", "created_at", "updated_at"})
 public class Tag extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Constraints.Required
     @Column(unique = true, nullable = false)
-    public String             text;
+    public String text;
 
     @JsonIgnore
     @OneToMany(mappedBy = "tag", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<RecipeTags>   recipes          = new ArrayList<RecipeTags>();
+    public List<RecipeTags> recipes = new ArrayList<RecipeTags>();
 
     public Tag() {
         dao = new TagDAO();

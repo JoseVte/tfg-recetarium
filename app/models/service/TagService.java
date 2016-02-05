@@ -1,11 +1,12 @@
 package models.service;
 
-import java.util.List;
-
 import models.Recipe;
 import models.Tag;
 import models.dao.TagDAO;
 import models.manytomany.RecipeTags;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class TagService {
     private static TagDAO dao;
@@ -17,7 +18,7 @@ public class TagService {
     /**
      * Create a tag
      *
-     * @param Tag data
+     * @param data Tag
      *
      * @return Tag
      */
@@ -26,9 +27,24 @@ public class TagService {
     }
 
     /**
+     * Create all tags from names
+     *
+     * @param names List<String>
+     *
+     * @return List<Integer>
+     */
+    public static List<Integer> create(List<String> names) {
+        List<Tag> tags = new ArrayList<Tag>();
+        for (String name : names) {
+            tags.add(new Tag(name));
+        }
+        return dao.create(tags);
+    }
+
+    /**
      * Update a tag
      *
-     * @param Tag data
+     * @param data Tag
      *
      * @return Tag
      */
@@ -39,7 +55,7 @@ public class TagService {
     /**
      * Find a tag by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Tag
      */
@@ -50,7 +66,7 @@ public class TagService {
     /**
      * Delete a tag by id
      *
-     * @param Integer id
+     * @param id Integer
      */
     public static Boolean delete(Integer id) {
         Tag tag = dao.find(id);
@@ -74,13 +90,24 @@ public class TagService {
     /**
      * Get the page of tags
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page Integer
+     * @param size Integer
      *
      * @return List<Tag>
      */
     public static List<Tag> paginate(Integer page, Integer size) {
         return dao.paginate(page, size);
+    }
+
+    /**
+     * Search all tags
+     *
+     * @param search String
+     *
+     * @return List<Tag>
+     */
+    public static List<Tag> search(String search) {
+        return dao.search(search);
     }
 
     /**
@@ -92,11 +119,15 @@ public class TagService {
         return dao.count();
     }
 
+    public static List<Integer> containAll(List<Integer> tagIds) {
+        return dao.containAll(tagIds);
+    }
+
     /**
      * Add a recipe to a tag
      *
-     * @param tag
-     * @param recipe
+     * @param tagId    Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */
@@ -116,8 +147,8 @@ public class TagService {
     /**
      * Delete a recipe of a tag
      *
-     * @param tag
-     * @param recipe
+     * @param tagId    Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */

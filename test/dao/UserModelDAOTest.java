@@ -1,22 +1,19 @@
 package dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-
-import java.util.List;
-
-import org.junit.Test;
-
 import models.Recipe;
-import models.TypeUser;
 import models.User;
 import models.dao.RecipeDAO;
 import models.dao.UserDAO;
+import models.enums.TypeUser;
+import org.junit.Test;
 import play.db.jpa.JPA;
 import util.AbstractTest;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static play.test.Helpers.*;
 
 public class UserModelDAOTest extends AbstractTest {
 
@@ -63,7 +60,7 @@ public class UserModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                User user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "josevte1");
+                User user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "password");
                 assertEquals(user.username, "test");
                 assertEquals(user.email, "test@testing.dev");
                 assertEquals(user.type, TypeUser.COMUN);
@@ -88,7 +85,7 @@ public class UserModelDAOTest extends AbstractTest {
                 user = userDAO.findByEmailAddressAndPassword("test@testing.dev", "");
                 assertNull(user);
 
-                user = userDAO.findByEmailAddressAndPassword("", "josevte1");
+                user = userDAO.findByEmailAddressAndPassword("", "password");
                 assertNull(user);
 
                 user = userDAO.findByEmailAddressAndPassword("", "");

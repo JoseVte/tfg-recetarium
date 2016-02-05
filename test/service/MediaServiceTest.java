@@ -1,22 +1,16 @@
 package service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static play.test.Helpers.fakeApplication;
-import static play.test.Helpers.inMemoryDatabase;
-import static play.test.Helpers.running;
-
-import java.util.List;
-
-import org.junit.Test;
-
 import models.Media;
 import models.service.MediaService;
 import models.service.RecipeService;
+import org.junit.Test;
 import play.db.jpa.JPA;
 import util.AbstractTest;
+
+import java.util.List;
+
+import static org.junit.Assert.*;
+import static play.test.Helpers.*;
 
 public class MediaServiceTest extends AbstractTest {
 
@@ -126,7 +120,7 @@ public class MediaServiceTest extends AbstractTest {
             });
         });
     }
-    
+
     @Test
     public void testMediaServiceDeleteMediaAdmin() {
         running(fakeApplication(inMemoryDatabase()), () -> {

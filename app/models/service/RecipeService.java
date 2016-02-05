@@ -1,16 +1,15 @@
 package models.service;
 
-import java.util.List;
-
+import controllers.RecipeController.IngredientRequest;
 import controllers.RecipeController.RecipeRequest;
-import models.Category;
-import models.Recipe;
-import models.Tag;
-import models.User;
+import models.*;
 import models.dao.RecipeDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class RecipeService {
     private static RecipeDAO recipeDAO;
@@ -22,7 +21,7 @@ public class RecipeService {
     /**
      * Create a recipe
      *
-     * @param Recipe data
+     * @param data Recipe
      *
      * @return Recipe
      */
@@ -33,7 +32,7 @@ public class RecipeService {
     /**
      * Create a recipe
      *
-     * @param RecipeRequest data
+     * @param data RecipeRequest
      *
      * @return Recipe
      */
@@ -44,7 +43,7 @@ public class RecipeService {
     /**
      * Update a recipe
      *
-     * @param Recipe data
+     * @param data Recipe
      *
      * @return Recipe
      */
@@ -55,7 +54,7 @@ public class RecipeService {
     /**
      * Update a recipe
      *
-     * @param RecipeRequest data
+     * @param data RecipeRequest
      *
      * @return Recipe
      */
@@ -66,7 +65,7 @@ public class RecipeService {
     /**
      * Find a recipe by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Recipe
      */
@@ -77,19 +76,42 @@ public class RecipeService {
     /**
      * Find a recipe by slug
      *
-     * @param String slug
+     * @param slug String
      *
      * @return Recipe
      */
     public static Recipe findBySlug(String slug) {
         return recipeDAO.findBySlug(slug);
     }
-    
+
     /**
      * Find a recipe by slug
      *
-     * @param String email
-     * @param Integer idRecipe
+     * @param slug String
+     * @param user String
+     *
+     * @return Recipe
+     */
+    public static Recipe findBySlug(String slug, String user) {
+        return recipeDAO.findBySlug(slug, user);
+    }
+
+    /**
+     * Find a recipe by slug and id
+     *
+     * @param slug String
+     *
+     * @return Recipe
+     */
+    public static Recipe findBySlugAndId(String slug, Integer id) {
+        return recipeDAO.findBySlugAndId(slug, id);
+    }
+
+    /**
+     * Find a recipe by slug
+     *
+     * @param email    String
+     * @param idRecipe IntegerRecipe
      *
      * @return Recipe
      */
@@ -100,8 +122,8 @@ public class RecipeService {
     /**
      * Delete a recipe by id
      *
-     * @param String email
-     * @param Integer id
+     * @param email String
+     * @param id    Integer
      */
     public static Boolean delete(Integer id, String email) {
         Recipe recipe = recipeDAO.findByOwner(email, id);
@@ -125,29 +147,34 @@ public class RecipeService {
     /**
      * Get the page of recipes
      *
-     * @param Integer page
-     * @param Integer size
+     * @param search String
+     * @param page   Integer
+     * @param size   Integer
+     * @param user   String
      *
      * @return List<Recipe>
      */
-    public static List<Recipe> paginate(Integer page, Integer size) {
-        return recipeDAO.paginate(page, size);
+    public static List<Recipe> paginate(Integer page, Integer size, String search, String user) {
+        return recipeDAO.paginate(page, size, search, user);
     }
 
     /**
-     * Get the number of total of recipes
+     * Get the number of total of searched recipes
+     *
+     * @param search String
+     * @param user   String
      *
      * @return Long
      */
-    public static Long count() {
-        return recipeDAO.count();
+    public static Long count(String search, String user) {
+        return recipeDAO.count(search, user);
     }
 
     /**
      * Get a recipe if this is the owner
      *
-     * @param String email
-     * @param Integer idRecipe
+     * @param email    String
+     * @param idRecipe IntegerRecipe
      *
      * @return boolean
      */
@@ -158,8 +185,8 @@ public class RecipeService {
     /**
      * Add a tag to a recipe
      *
-     * @param tag
-     * @param recipe
+     * @param tagId    Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */
@@ -177,10 +204,32 @@ public class RecipeService {
     }
 
     /**
+     * Add all tags into a recipe
+     *
+     * @param tagIds   List<Integer>
+     * @param recipeId Integer
+     */
+    public static void addTags(List<Integer> tagIds, Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (recipe != null) {
+            List<Tag> tags = new ArrayList<Tag>();
+            for (Integer tagId : tagIds) {
+                Tag tag = new Tag();
+                tag.id = tagId;
+                RecipeTags tagged = new RecipeTags(tag, recipe);
+                if (!recipe.tags.contains(tagged)) {
+                    tags.add(tag);
+                }
+            }
+            RecipeDAO.addTags(tags, recipe);
+        }
+    }
+
+    /**
      * Delete a tag of a recipe
      *
-     * @param tag
-     * @param recipe
+     * @param tagId    Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */
@@ -198,10 +247,26 @@ public class RecipeService {
     }
 
     /**
+     * Delete all tags of a recipe
+     *
+     * @param recipeId Integer
+     *
+     * @return boolean
+     */
+    public static boolean deleteTags(Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (recipe != null) {
+            RecipeDAO.deleteTags(recipe);
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Add a recipe as a favorite
      *
-     * @param user
-     * @param recipe
+     * @param userId   Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */
@@ -221,8 +286,8 @@ public class RecipeService {
     /**
      * Delete a recipe favorite
      *
-     * @param user
-     * @param recipe
+     * @param userId   Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */
@@ -242,9 +307,9 @@ public class RecipeService {
     /**
      * Add a rating of a recipe
      *
-     * @param user
-     * @param recipe
-     * @param value
+     * @param userId   Integer
+     * @param recipeId Integer
+     * @param value    double
      *
      * @return boolean
      */
@@ -264,9 +329,9 @@ public class RecipeService {
     /**
      * Update a rating of a recipe
      *
-     * @param user
-     * @param recipe
-     * @param value
+     * @param userId   Integer
+     * @param recipeId Integer
+     * @param value    double
      *
      * @return boolean
      */
@@ -286,8 +351,8 @@ public class RecipeService {
     /**
      * Delete a rating of a recipe
      *
-     * @param user
-     * @param recipe
+     * @param userId   Integer
+     * @param recipeId Integer
      *
      * @return boolean
      */
@@ -307,8 +372,8 @@ public class RecipeService {
     /**
      * Add a section to a recipe
      *
-     * @param category
-     * @param recipe
+     * @param categoryId Category
+     * @param recipeId   Integer
      *
      * @return boolean
      */
@@ -327,8 +392,8 @@ public class RecipeService {
     /**
      * Update a section to a recipe
      *
-     * @param category
-     * @param recipe
+     * @param categoryId Category
+     * @param recipeId   Integer
      *
      * @return boolean
      */
@@ -345,8 +410,8 @@ public class RecipeService {
     /**
      * Delete a section of a recipe
      *
-     * @param category
-     * @param recipe
+     * @param categoryId Category
+     * @param recipeId   Integer
      *
      * @return boolean
      */
@@ -356,6 +421,55 @@ public class RecipeService {
         if (category != null && recipe != null) {
             if (category.recipes.contains(recipe)) {
                 RecipeDAO.deleteCategory(recipe);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Add an ingredient to a recipe
+     *
+     * @param recipeId          Integer
+     * @param ingredientRequest IngredientRequest
+     *
+     * @return Ingredient
+     */
+    public static Ingredient addIngredient(Integer recipeId, IngredientRequest ingredientRequest) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        Ingredient ingredient = new Ingredient(ingredientRequest);
+        if (recipe != null) {
+            ingredient.recipe = recipe;
+            IngredientService.create(ingredient);
+            return ingredient;
+        }
+        return null;
+    }
+
+    /**
+     * Update the ingredients for a recipe
+     *
+     * @param recipe Recipe
+     */
+    public static void updateIngredients(Recipe recipe) {
+        recipeDAO.deleteIngredients(recipe);
+        recipeDAO.addIngredients(recipe);
+    }
+
+    /**
+     * Add an ingredient to a recipe
+     *
+     * @param recipeId     Integer
+     * @param ingredientId Integer
+     *
+     * @return boolean
+     */
+    public static boolean deleteIngredient(Integer recipeId, Integer ingredientId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        Ingredient ingredient = IngredientService.find(ingredientId);
+        if (recipe != null && ingredient != null) {
+            if (recipe.ingredients.contains(ingredient)) {
+                IngredientService.delete(ingredientId);
                 return true;
             }
         }

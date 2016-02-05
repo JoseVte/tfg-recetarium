@@ -1,45 +1,35 @@
 package models.manytomany;
 
-import java.io.Serializable;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
-
 import models.Recipe;
 import models.User;
 
+import javax.persistence.*;
+import java.io.Serializable;
+
 @Entity
-@Table(name = "ratings", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "recipe_id" }) })
+@Table(name = "ratings", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "recipe_id"})})
 @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
-@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Rating implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    public Integer            id;
+    public Integer id;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
-    public User               user;
+    public User user;
 
     @ManyToOne
     @JoinColumn(name = "recipe_id")
-    public Recipe             recipe;
+    public Recipe recipe;
 
     @Column(precision = 10, scale = 2)
-    public Double             rating           = 0.0;
+    public Double rating = 0.0;
 
     public Rating() {
     }

@@ -1,12 +1,12 @@
 package models.service;
 
-import java.util.List;
-
 import models.Category;
 import models.dao.CategoryDAO;
 
+import java.util.List;
+
 public class CategoryService {
-    private static CategoryDAO dao;
+    private static final CategoryDAO dao;
 
     static {
         dao = new CategoryDAO();
@@ -15,7 +15,7 @@ public class CategoryService {
     /**
      * Create a section
      *
-     * @param Category data
+     * @param data Category
      *
      * @return Section
      */
@@ -26,7 +26,7 @@ public class CategoryService {
     /**
      * Update a section
      *
-     * @param Category data
+     * @param data Category
      *
      * @return Section
      */
@@ -37,7 +37,7 @@ public class CategoryService {
     /**
      * Find a section by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Section
      */
@@ -48,7 +48,7 @@ public class CategoryService {
     /**
      * Delete a section by id
      *
-     * @param Integer id
+     * @param id Integer
      */
     public static Boolean delete(Integer id) {
         Category section = dao.find(id);
@@ -72,8 +72,8 @@ public class CategoryService {
     /**
      * Get the page of sections
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page Integer
+     * @param size Integer
      *
      * @return List<Section>
      */

@@ -1,0 +1,17 @@
+language: scala
+sudo: false
+jdk:
+- oraclejdk8
+scala:
+- 2.10.4
+- 2.11.2
+sbt_args: -J-Xmx4g
+script:
+- sbt ++$TRAVIS_SCALA_VERSION test
+cache:
+  directories:
+  - "$HOME/.ivy2/cache"
+notifications:
+  email: false
+  slack:
+    secure: X6XLoHTyxZMIG0yqwdRBFs7bwrJVhejpbnF0aOBrWxf9d5P3pJLWi0eyeHRyvNELB/ExTahffEP/290WXMHcZz0FtuOKF1u2Q/d+KPMnCx2gE3/Mla3bqbPaI5bCAgQW2+PGZdetyl7p1Qj+8LX5DivGFxfYZUNruhcBwO2hu1SYJvZwvfhERPZ65ULo1R28BmGZGHD7rCciJAX1PLr5dGqKUC+BeVf5Rr8WOH0hrLnyGVEyNqkafb4f76ydRVIFHEEO8+wgLBlqBiEEYatbfIAeucnrjBWNjxBK70n5nbrgBwfhfwOiqJzu8Ch0Sp4+n/U5fXFIeR2U+zHlZhrnrx2FXwFuNijXD2Yc0HP+0DIlIJeLL1BnAF2Yh92cyi07t2QkqI/P7yTHQctdSJgsm7+huxn1RsQRKOg7e/0U5aTUtFIRv63HWfkUBV0xQdiHKxP6gOgr0bjPPr7YkOBgZAW+oheU0ZL2ifCOpDvP8Ed/o9F/gtKTw/c0LL1xd0KAiHiZ9Y+ZmTM/KFYPR7TDjX7Pjg8isGedqLGKc97p7xfH9d3owYgN/696xXhF1qmTHbqCjBFbv1o6E+961dbnJBYSBb+Ldxh+rg1BEW5EPq/t5hqGe1dRII0LYvuWj1kfC74WGE2bZh6kQo+x5bmnEUO1JkASWAgCaasTcAEUmF8=

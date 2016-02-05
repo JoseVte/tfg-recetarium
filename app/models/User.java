@@ -1,5 +1,17 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import controllers.UserController.UserRequest;
+import models.base.Model;
+import models.enums.TypeUser;
+import models.manytomany.Favorite;
+import models.manytomany.Friend;
+import models.manytomany.Rating;
+import util.Encryptation;
+
+import javax.persistence.*;
 import java.io.Serializable;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
@@ -7,90 +19,65 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
-import controllers.UserController.UserRequest;
-import models.base.Model;
-import models.manytomany.Favorite;
-import models.manytomany.Friend;
-import models.manytomany.Rating;
-import util.Encryptation;
-
 @Entity
 @Table(name = "users")
-@JsonPropertyOrder({ "id", "username", "email", "first_name", "last_name", "type", "created_at", "updated_at" })
+@JsonPropertyOrder({"id", "username", "email", "first_name", "last_name", "type", "created_at", "updated_at"})
 public class User extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Column(nullable = false, unique = true)
-    public String             username;
+    public String username;
 
     @Column(nullable = false, unique = true)
-    public String             email;
+    public String email;
 
     @JsonIgnore
     @Column(nullable = false)
-    public String             password;
+    public String password;
 
     @Column(name = "first_name")
     @JsonProperty(value = "first_name")
-    public String             firstName;
+    public String firstName;
     @Column(name = "last_name")
     @JsonProperty(value = "last_name")
-    public String             lastName;
+    public String lastName;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    public TypeUser           type;
+    public TypeUser type;
 
     @Column(name = "lost_pass_token")
     @JsonIgnore
-    public String             lostPassToken;
+    public String lostPassToken;
 
     @Column(name = "lost_pass_expire")
     @JsonIgnore
     @Temporal(TemporalType.TIMESTAMP)
-    public Date               lostPassExpire;
+    public Date lostPassExpire;
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Recipe>       recipes          = new ArrayList<Recipe>();
+    public List<Recipe> recipes = new ArrayList<Recipe>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Comment>      comments         = new ArrayList<Comment>();
+    public List<Comment> comments = new ArrayList<Comment>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Friend>       myFriends        = new ArrayList<Friend>();
+    public List<Friend> myFriends = new ArrayList<Friend>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Friend>       friends          = new ArrayList<Friend>();
+    public List<Friend> friends = new ArrayList<Friend>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Favorite>     recipesFavorites = new ArrayList<Favorite>();
+    public List<Favorite> recipesFavorites = new ArrayList<Favorite>();
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Rating>       ratings          = new ArrayList<Rating>();
-
-    @Transient
-    private boolean           updatePassword   = true;
+    public List<Rating> ratings = new ArrayList<Rating>();
 
     public User() {
     }
@@ -108,9 +95,9 @@ public class User extends Model implements Serializable {
         this.id = user.id;
         this.username = user.username;
         this.email = user.email;
-        this.password = user.password;
-        this.firstName = user.firstName;
-        this.lastName = user.lastName;
+        this.password = Encryptation.createHash(user.password);
+        this.firstName = user.first_name;
+        this.lastName = user.last_name;
         this.type = user.type;
     }
 
@@ -123,13 +110,6 @@ public class User extends Model implements Serializable {
     public void prePersistData() {
         if (firstName != null && firstName.isEmpty()) firstName = null;
         if (lastName != null && lastName.isEmpty()) lastName = null;
-        if (password != null && !password.isEmpty() && updatePassword) {
-            try {
-                password = Encryptation.createHash(password);
-            } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     /*
@@ -141,7 +121,6 @@ public class User extends Model implements Serializable {
     public void handleRelations(Model old) {
         User user = ((User) old);
         if (password == null || password.isEmpty()) {
-            this.updatePassword = user.password.equals(password);
             this.password = user.password;
         }
         this.setCreatedAt(user.getCreatedAt());

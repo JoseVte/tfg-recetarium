@@ -1,14 +1,13 @@
 package models.base;
 
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
-import java.util.List;
-
 import play.db.jpa.JPA;
 
+import javax.persistence.NoResultException;
+import java.util.List;
+
 public class CrudDAO<T extends Model> {
+    protected String TABLE;
     private Class<? extends Model> typeOfModel;
-    protected String               TABLE;
 
     public CrudDAO(Class<? extends Model> model) {
         typeOfModel = model;
@@ -18,16 +17,15 @@ public class CrudDAO<T extends Model> {
     /**
      * Create a model
      *
-     * @param Model model
+     * @param model Model
      *
      * @return Model
-     * @throws InvalidKeySpecException
-     * @throws NoSuchAlgorithmException
      */
     @SuppressWarnings("unchecked")
     public T create(Model model) {
         model.prePersistData();
         JPA.em().persist(model);
+        model.postPersistData(true);
         // Flush and refresh for check
         JPA.em().flush();
         JPA.em().refresh(model);
@@ -37,7 +35,7 @@ public class CrudDAO<T extends Model> {
     /**
      * Find a model by id
      *
-     * @param Integer id
+     * @param id Integer
      *
      * @return Model
      */
@@ -46,10 +44,29 @@ public class CrudDAO<T extends Model> {
         return (T) JPA.em().find(typeOfModel, id);
     }
 
+
+    /**
+     * Find by field
+     *
+     * @param field String
+     * @param value String
+     *
+     * @return Tag
+     */
+    @SuppressWarnings("unchecked")
+    public T findBy(String field, String value) {
+        try {
+            return (T) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + field + " = '" + value + "'").getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+
+    }
+
     /**
      * Update a model
      *
-     * @param Model model
+     * @param model Model
      *
      * @return Model
      */
@@ -58,13 +75,15 @@ public class CrudDAO<T extends Model> {
         Model aux = find(model.id);
         model.handleRelations(aux);
         model.prePersistData();
-        return (T) JPA.em().merge(model);
+        JPA.em().merge(model);
+        model.postPersistData(false);
+        return (T) model;
     }
 
     /**
      * Delete a model by id
      *
-     * @param Model model
+     * @param model Model
      */
     public void delete(Model model) {
         JPA.em().remove(model);
@@ -83,15 +102,14 @@ public class CrudDAO<T extends Model> {
     /**
      * Get the page of models
      *
-     * @param Integer page
-     * @param Integer size
+     * @param page Integer
+     * @param size Integer
      *
      * @return List<Model>
      */
     @SuppressWarnings("unchecked")
     public List<T> paginate(Integer page, Integer size) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size)
-                .setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
