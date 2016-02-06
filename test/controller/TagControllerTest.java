@@ -6,8 +6,6 @@ import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import util.AbstractTest;
 
-import java.io.File;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static play.test.Helpers.*;

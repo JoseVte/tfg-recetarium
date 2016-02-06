@@ -67,8 +67,8 @@ public class RecipeController extends AbstractController {
      */
     @Transactional(readOnly = true)
     public Result get(String slug) {
-        Recipe recipe = RecipeService.findBySlug(slug, request().username());
-        if (recipe == null) {
+        Recipe recipe = RecipeService.findBySlug(slug);
+        if (recipe == null || recipe.isDraft) {
             return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + slug)));
         }
         if (recipe.isVisible(request().username())) {
@@ -114,6 +114,30 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), notFound());
     }
 
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result getDraft() {
+        User user = Json.fromJson(Json.parse(request().username()), User.class);
+        Recipe recipe = RecipeService.getDraft(user);
+        if (recipe == null) {
+            recipe = RecipeService.createDraft(user);
+        }
+        return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
+    }
+
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result createFromDraft() {
+        User user = Json.fromJson(Json.parse(request().username()), User.class);
+        Recipe recipe = RecipeService.getDraft(user);
+        if (recipe == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found draft")));
+        }
+        recipe.isDraft = false;
+        RecipeService.update(recipe);
+        return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
+    }
+
     @Override
     @Transactional
     @Security.Authenticated(Authenticated.class)
@@ -126,7 +150,7 @@ public class RecipeController extends AbstractController {
         aux.email = Json.fromJson(Json.parse(request().username()), User.class).email;
         Recipe newRecipe = RecipeService.create(aux);
         IngredientService.create(aux.ingredients, newRecipe);
-        aux.tags.addAll(TagService.create(aux.newTags));
+        aux.tags.addAll(TagService.create(aux.new_tags));
         RecipeService.addTags(aux.tags, newRecipe.id);
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
@@ -191,7 +215,7 @@ public class RecipeController extends AbstractController {
         RecipeRequest aux = recipe.get();
         Recipe recipeModel = RecipeService.update(recipe.get());
         IngredientService.update(aux.ingredients, recipeModel);
-        aux.tags.addAll(TagService.create(aux.newTags));
+        aux.tags.addAll(TagService.create(aux.new_tags));
         RecipeService.deleteTags(recipeModel.id);
         RecipeService.addTags(aux.tags, recipeModel.id);
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
@@ -240,7 +264,8 @@ public class RecipeController extends AbstractController {
         public Integer category_id = null;
         public List<IngredientRequest> ingredients = new ArrayList<IngredientRequest>();
         public List<Integer> tags = new ArrayList<Integer>();
-        public List<String> newTags = new ArrayList<String>();
+        public List<String> new_tags = new ArrayList<String>();
+        public boolean is_draft = false;
 
         @JsonIgnore
         public String email;

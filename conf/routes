@@ -27,6 +27,8 @@ GET     /recipes                                controllers.RecipeController.lis
 #GET    /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
 GET     /recipes/:slug                          controllers.RecipeController.get(slug: String)
 POST    /recipes                                controllers.RecipeController.create()
+POST    /recipes/draft                          controllers.RecipeController.getDraft()
+POST    /recipes/create-from-draft              controllers.RecipeController.createFromDraft()
 PUT     /recipes/$id<[0-9]+>                    controllers.RecipeController.update(id: Integer)
 PATCH   /recipes/$id<[0-9]+>                    controllers.RecipeController.update(id: Integer)
 DELETE  /recipes/$id<[0-9]+>                    controllers.RecipeController.delete(id: Integer)
