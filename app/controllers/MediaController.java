@@ -109,6 +109,8 @@ public class MediaController extends Controller {
             return new Media(fileExist.getName(), recipe);
         } else {
             File fileExist = new File(path, fileName);
+            File fileStored = file.getFile();
+            fileStored.renameTo(fileExist);
             return new Media(fileExist.getName(), recipe);
         }
     }
@@ -125,6 +127,13 @@ public class MediaController extends Controller {
             media = uploadFileToLocal(file, recipe, fileName, isMain);
         }
         if (media != null) {
+            if (isMain) {
+                Media aux = MediaService.find(recipe.id, fileName);
+                if (aux != null ) {
+                    MediaService.update(aux);
+                    return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
+                }
+            }
             MediaService.create(media);
             return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
         }
