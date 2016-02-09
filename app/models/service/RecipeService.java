@@ -4,11 +4,14 @@ import controllers.RecipeController.IngredientRequest;
 import controllers.RecipeController.RecipeRequest;
 import models.*;
 import models.dao.RecipeDAO;
+import models.enums.RecipeDifficulty;
+import models.enums.RecipeVisibility;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeTags;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class RecipeService {
@@ -38,6 +41,18 @@ public class RecipeService {
      */
     public static Recipe create(RecipeRequest data) {
         return recipeDAO.create(new Recipe(data));
+    }
+
+    public static Recipe createDraft(User user) {
+        Long lastId = recipeDAO.countNumberByUser(user) + 1;
+        Recipe recipe = new Recipe("recipe-" + user.username +  "-" + lastId, "Recipe " + user.username + " " + lastId, null, new Date(0), RecipeDifficulty.EASY, 0, user, null, RecipeVisibility.PUBLIC);
+        recipe.isDraft = true;
+        return recipeDAO.create(recipe);
+    }
+
+
+    public static Recipe getDraft(User user) {
+        return recipeDAO.getDraft(user);
     }
 
     /**

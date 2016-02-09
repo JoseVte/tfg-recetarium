@@ -353,7 +353,6 @@ public class RecipeControllerTest extends AbstractTest {
             assertEquals(responseJson.get("total").intValue(), 3);
 
             response = WS.url("http://localhost:3333/recipes/new-recipe").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
-            responseJson = response.asJson();
             assertEquals(OK, response.getStatus());
 
             response = WS.url("http://localhost:3333/recipes?page=1&size=5").get().get(timeout);
@@ -362,9 +361,7 @@ public class RecipeControllerTest extends AbstractTest {
             assertEquals(responseJson.get("total").intValue(), 2);
 
             response = WS.url("http://localhost:3333/recipes/new-recipe").get().get(timeout);
-            responseJson = response.asJson();
-            assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found new-recipe");
+            assertEquals(FORBIDDEN, response.getStatus());
 
             successTest();
         });

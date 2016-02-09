@@ -3,7 +3,6 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import controllers.RecipeController.RecipeRequest;
 import models.base.Model;
@@ -30,7 +29,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "recipes")
-@JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "user",
+@JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "is_draft", "user",
         "category", "tags", "comments", "media", "created_at", "updated_at"})
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
@@ -62,6 +61,10 @@ public class Recipe extends Model implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     public RecipeVisibility visibility = RecipeVisibility.PUBLIC;
+
+    @JsonProperty(value = "is_draft")
+    @Column(nullable = false, name = "is_draft", columnDefinition = "boolean default false")
+    public Boolean isDraft = false;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
@@ -116,6 +119,7 @@ public class Recipe extends Model implements Serializable {
         this.duration = recipe.durationParsed;
         this.difficulty = recipe.difficulty;
         this.visibility = recipe.visibility;
+        this.isDraft = recipe.is_draft;
         if (recipe.num_persons != null) this.numPersons = recipe.num_persons;
         this.user = UserService.findByEmailAddress(recipe.email);
         if (recipe.category_id != null) this.category = CategoryService.find(recipe.category_id);
@@ -190,5 +194,10 @@ public class Recipe extends Model implements Serializable {
             }
         }
         return query + ")";
+    }
+
+    @JsonIgnore
+    public static String WithDrafts(Boolean with) {
+        return "(m.isDraft = " + with + ")";
     }
 }

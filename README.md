@@ -76,7 +76,11 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.5.0-hotfix-2](/doc/rocket-blue.png) 0.5.0-hotfix-2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.0-hotfix-2)
+#### [![0.5.1](/doc/rocket-blue.png) 0.5.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.1)
+
+- Generar borrador de una receta
+
+###### [![0.5.0-hotfix-2](/doc/release.png) 0.5.0-hotfix-2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.0-hotfix-2)
 
 - Arreglado problema con la visibilidad de las recetas
 
