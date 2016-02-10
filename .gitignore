@@ -20,3 +20,4 @@ project/idea.sbt
 project/activator-sbt-eclipse-shim.sbt
 /bin/
 .env
+/recetarium.iml

@@ -1,5 +1,6 @@
 package models.service;
 
+import controllers.AuthController.Profile;
 import controllers.AuthController.Register;
 import controllers.UserController.UserRequest;
 import models.Recipe;
@@ -71,6 +72,17 @@ public class UserService {
      * @return User
      */
     public static User update(UserRequest data) {
+        return userDAO.update(new User(data));
+    }
+
+    /**
+     * Update an user
+     *
+     * @param data Profile
+     *
+     * @return User
+     */
+    public static User update(Profile data) {
         return userDAO.update(new User(data));
     }
 

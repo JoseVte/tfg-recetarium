@@ -72,8 +72,7 @@ public class UserController extends AbstractController {
             return util.Json.jsonResult(response(), created(Json.toJson(newUser)));
         } catch (Exception e) {
             Logger.error(e.getMessage());
-            return util.Json.jsonResult(response(),
-                    internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
     }
 
@@ -85,8 +84,7 @@ public class UserController extends AbstractController {
             return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
         }
         if (!Objects.equals(user.get().id, id)) {
-            return util.Json.jsonResult(response(),
-                    badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
         }
         User userModel = UserService.update(user.get());
         return util.Json.jsonResult(response(), ok(Json.toJson(userModel)));
@@ -111,9 +109,7 @@ public class UserController extends AbstractController {
         @Constraints.Email
         public String email;
 
-        @Constraints.Required
         public String password;
-
         public String first_name;
         public String last_name;
 

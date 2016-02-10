@@ -3,6 +3,7 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import controllers.AuthController.Profile;
 import controllers.UserController.UserRequest;
 import models.base.Model;
 import models.enums.TypeUser;
@@ -83,7 +84,7 @@ public class User extends Model implements Serializable {
     public User(String username, String email, String password, String firstName, String lastName, TypeUser type) {
         this.username = username;
         this.email = email;
-        this.password = password;
+        if (password != null && !password.isEmpty()) this.password = Encryptation.createHash(password);
         this.firstName = firstName;
         this.lastName = lastName;
         this.type = type;
@@ -93,10 +94,19 @@ public class User extends Model implements Serializable {
         this.id = user.id;
         this.username = user.username;
         this.email = user.email;
-        this.password = Encryptation.createHash(user.password);
+        if (user.password != null && !user.password.isEmpty()) this.password = Encryptation.createHash(user.password);
         this.firstName = user.first_name;
         this.lastName = user.last_name;
         this.type = user.type;
+    }
+
+    public User(Profile user) {
+        this.id = user.id;
+        this.username = user.username;
+        this.email = user.email;
+        if (user.password != null && !user.password.isEmpty()) this.password = Encryptation.createHash(user.password);
+        this.firstName = user.first_name;
+        this.lastName = user.last_name;
     }
 
     /*
@@ -120,6 +130,9 @@ public class User extends Model implements Serializable {
         User user = ((User) old);
         if (password == null || password.isEmpty()) {
             this.password = user.password;
+        }
+        if (type == null) {
+            this.type = user.type;
         }
         this.setCreatedAt(user.getCreatedAt());
         this.recipes = user.recipes;

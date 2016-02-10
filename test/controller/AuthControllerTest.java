@@ -24,6 +24,7 @@ public class AuthControllerTest extends AbstractTest {
     private ObjectNode badRegisterJson6;
     private ObjectNode badRegisterJson7;
     private ObjectNode badRegisterJson8;
+    private ObjectNode profileOk;
 
     public AuthControllerTest() {
         loginJson = Json.newObject();
@@ -87,6 +88,12 @@ public class AuthControllerTest extends AbstractTest {
         badRegisterJson8.put("password", "password");
         badRegisterJson8.put("password_repeat", "password");
         badRegisterJson8.put("email", "test@testing.dev");
+
+        profileOk = Json.newObject();
+        profileOk.put("id", 1);
+        profileOk.put("username", "test");
+        profileOk.put("email", "test@testing.dev");
+        profileOk.put("first_name", "Test");
     }
 
     @Test
@@ -256,6 +263,48 @@ public class AuthControllerTest extends AbstractTest {
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
             assertEquals(responseJson.get("email").get(0).asText(), "This e-mail is already registered");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testUserControllerProfileOkRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/profile")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("id").intValue(), 1);
+            assertEquals(responseJson.get("username").asText(), "test");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testUserControllerUpdateProfileOkRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/profile")
+                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(profileOk).get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("id").intValue(), 1);
+            assertEquals(responseJson.get("first_name").asText(), "Test");
 
             successTest();
         });
