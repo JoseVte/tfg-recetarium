@@ -1,6 +1,5 @@
 package models.service;
 
-import controllers.AuthController.Profile;
 import controllers.AuthController.Register;
 import controllers.UserController.UserRequest;
 import models.Recipe;
@@ -15,6 +14,7 @@ import util.VerificationToken;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 public class UserService {
@@ -78,12 +78,16 @@ public class UserService {
     /**
      * Update an user
      *
-     * @param data Profile
+     * @param user User
+     * @param data Map<String, String>
      *
      * @return User
      */
-    public static User update(Profile data) {
-        return userDAO.update(new User(data));
+    public static User update(User user, Map<String, String> data) {
+        user.firstName = data.get("first_name");
+        user.lastName = data.get("last_name");
+        if (data.get("password") != null && !data.get("password").isEmpty()) user.password = Encryptation.createHash(data.get("password"));
+        return userDAO.update(user);
     }
 
     /**
@@ -245,13 +249,13 @@ public class UserService {
     /**
      * Add new token for the user
      *
-     * @param email String
      * @param token String
      *
      * @return boolean
      */
-    public static boolean validateResetToken(String email, String token) {
-        User user = userDAO.findByEmailAddress(email);
+    public static boolean validateResetToken(String token) {
+        if (token == null) return false;
+        User user = userDAO.findBy("lost_pass_token", token);
         VerificationToken tokenDB = userDAO.getLostPasswordToken(user);
         return !(user == null || tokenDB == null || !Objects.equals(token, tokenDB.getToken()) || tokenDB.hasExpired());
     }
@@ -259,11 +263,11 @@ public class UserService {
     /**
      * Change the password of the user
      *
-     * @param email    String
+     * @param token    String
      * @param password String
      */
-    public static void changePassword(String email, String password) {
-        User user = userDAO.findByEmailAddress(email);
+    public static void changePassword(String token, String password) {
+        User user = userDAO.findBy("lost_pass_token", token);
         user.password = Encryptation.createHash(password);
         user.lostPassExpire = null;
         user.lostPassToken = null;

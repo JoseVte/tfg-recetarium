@@ -144,7 +144,7 @@ public class AuthController extends Controller {
             return util.Json.jsonResult(response(), badRequest(reset.errorsAsJson()));
         }
 
-        UserService.changePassword(reset.get().email, reset.get().password);
+        UserService.changePassword(reset.get().token, reset.get().password);
 
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
     }
@@ -184,7 +184,7 @@ public class AuthController extends Controller {
         if (user.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
         }
-        User userModel = UserService.update(user.get());
+        User userModel = UserService.update(Json.fromJson(Json.parse(request().username()), User.class), user.data());
         return util.Json.jsonResult(response(), ok(Json.toJson(userModel)));
     }
 
@@ -239,40 +239,16 @@ public class AuthController extends Controller {
     }
 
     public static class Profile {
-        @Constraints.Required
-        public Integer id;
-
-        @Constraints.Required
-        public String username;
-
-        @Constraints.Required
-        @Constraints.Email
-        public String email;
-
         public String password;
         public String password_repeat;
 
         public String first_name;
         public String last_name;
 
-        @JsonIgnore
-        private UserDAO dao;
-
-        public Profile() {
-            dao = new UserDAO();
-        }
+        public Profile() { }
 
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
-            if (dao.find(id) == null) {
-                errors.add(new ValidationError("id", "This user doesn't exist"));
-            }
-            if (!dao.where("email", email, id).isEmpty()) {
-                errors.add(new ValidationError("email", "This e-mail is already registered"));
-            }
-            if (!dao.where("username", username, id).isEmpty()) {
-                errors.add(new ValidationError("username", "This username is already registered"));
-            }
             if (password != null && password_repeat != null && !password.equals(password_repeat)) {
                 errors.add(new ValidationError("password", "The passwords must be equals"));
                 errors.add(new ValidationError("password_repeat", "The passwords must be equals"));
@@ -281,13 +257,16 @@ public class AuthController extends Controller {
         }
     }
 
-    public static class ResetPassword extends Login {
+    public static class ResetPassword {
+        @Constraints.Required
+        public String password;
+
         @Constraints.Required
         public String token;
 
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<>();
-            if (!UserService.validateResetToken(email, token)) {
+            if (!UserService.validateResetToken(token)) {
                 errors.add(new ValidationError("token", "Invalid token"));
             }
             return errors.isEmpty() ? null : errors;

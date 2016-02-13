@@ -90,9 +90,6 @@ public class AuthControllerTest extends AbstractTest {
         badRegisterJson8.put("email", "test@testing.dev");
 
         profileOk = Json.newObject();
-        profileOk.put("id", 1);
-        profileOk.put("username", "test");
-        profileOk.put("email", "test@testing.dev");
         profileOk.put("first_name", "Test");
     }
 
@@ -274,8 +271,7 @@ public class AuthControllerTest extends AbstractTest {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
-            WSResponse response = WS.url("http://localhost:3333/profile")
-                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+            WSResponse response = WS.url("http://localhost:3333/profile").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
@@ -295,8 +291,7 @@ public class AuthControllerTest extends AbstractTest {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
-            WSResponse response = WS.url("http://localhost:3333/profile")
-                    .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(profileOk).get(timeout);
+            WSResponse response = WS.url("http://localhost:3333/profile").setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(profileOk).get(timeout);
 
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));

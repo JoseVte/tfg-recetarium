@@ -3,7 +3,6 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import controllers.AuthController.Profile;
 import controllers.UserController.UserRequest;
 import models.base.Model;
 import models.enums.TypeUser;
@@ -98,15 +97,6 @@ public class User extends Model implements Serializable {
         this.firstName = user.first_name;
         this.lastName = user.last_name;
         this.type = user.type;
-    }
-
-    public User(Profile user) {
-        this.id = user.id;
-        this.username = user.username;
-        this.email = user.email;
-        if (user.password != null && !user.password.isEmpty()) this.password = Encryptation.createHash(user.password);
-        this.firstName = user.first_name;
-        this.lastName = user.last_name;
     }
 
     /*
