@@ -92,6 +92,10 @@ public class UserControllerTest extends AbstractTest {
             assertEquals(UNAUTHORIZED, response.getStatus());
             response = WS.url("http://localhost:3333/users/1").delete().get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/profile").get().get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/profile").put(dataOk.put("id", 1)).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
 
             successTest();
         });

@@ -4,15 +4,19 @@
 
 # Home page
 GET     /                           controllers.UserController.index()
-
+# Routes API Rest
+## Auth
 POST    /auth/register              controllers.AuthController.register()
 POST    /auth/login                 controllers.AuthController.login()
 POST    /auth/logout                controllers.AuthController.logout()
 POST    /auth/reset/password        controllers.AuthController.sendLostPasswordToken()
 PUT     /auth/reset/password        controllers.AuthController.resetPassword()
 PATCH   /auth/reset/password        controllers.AuthController.resetPassword()
+### Profile
+GET     /profile                    controllers.AuthController.profile()
+PUT     /profile                    controllers.AuthController.updateProfile()
+PATCH   /profile                    controllers.AuthController.updateProfile()
 
-# Routes API Rest
 ## Users
 GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "")
 GET     /users/$id<[0-9]+>      controllers.UserController.get(id: Integer)
