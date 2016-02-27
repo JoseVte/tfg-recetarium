@@ -22,7 +22,7 @@ public abstract class AbstractTest extends WithApplication {
     protected RecipeDAO recipeDAO;
     protected CategoryDAO categoryDAO;
     protected CommentDAO commentDAO;
-    protected MediaDAO mediaDAO;
+    protected FileDAO fileDAO;
     protected TagDAO tagDAO;
     protected String token;
     protected int timeout = 4000;
@@ -34,7 +34,7 @@ public abstract class AbstractTest extends WithApplication {
         recipeDAO = new RecipeDAO();
         categoryDAO = new CategoryDAO();
         commentDAO = new CommentDAO();
-        mediaDAO = new MediaDAO();
+        fileDAO = new FileDAO();
         tagDAO = new TagDAO();
         ingredientDAO = new IngredientDAO();
         OS = System.getProperty("os.name");

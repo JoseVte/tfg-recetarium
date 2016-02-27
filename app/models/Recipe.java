@@ -8,16 +8,14 @@ import controllers.RecipeController.RecipeRequest;
 import models.base.Model;
 import models.enums.RecipeDifficulty;
 import models.enums.RecipeVisibility;
-import models.manytomany.Favorite;
-import models.manytomany.Friend;
-import models.manytomany.Rating;
-import models.manytomany.RecipeTags;
+import models.manytomany.*;
 import models.service.CategoryService;
 import models.service.UserService;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import play.libs.Json;
 import util.serializer.RecipeCommentsSerializer;
+import util.serializer.RecipeFilesSerializer;
 import util.serializer.RecipeTagsSerializer;
 
 import javax.persistence.*;
@@ -30,7 +28,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "recipes")
 @JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "is_draft", "user",
-        "category", "tags", "comments", "media", "created_at", "updated_at"})
+        "category", "tags", "comments", "files", "created_at", "updated_at"})
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -93,8 +91,9 @@ public class Recipe extends Model implements Serializable {
     public List<RecipeTags> tags = new ArrayList<RecipeTags>();
 
     @Fetch(value = FetchMode.SUBSELECT)
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
-    public List<Media> media = new ArrayList<Media>();
+    @JsonSerialize(using = RecipeFilesSerializer.class)
+    @OneToMany(mappedBy = "file", fetch = FetchType.EAGER, orphanRemoval = true)
+    public List<RecipeFiles> files = new ArrayList<RecipeFiles>();
 
     public Recipe() {
     }
@@ -125,57 +124,6 @@ public class Recipe extends Model implements Serializable {
         if (recipe.category_id != null) this.category = CategoryService.find(recipe.category_id);
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see models.base.Model#prePersistData()
-     */
-    @Override
-    public void prePersistData() {
-        if (steps != null && steps.isEmpty()) steps = null;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see models.base.Model#handleRelations(util.Model old)
-     */
-    @Override
-    public void handleRelations(Model old) {
-        Recipe recipe = (Recipe) old;
-        ingredients = recipe.ingredients;
-        user = recipe.user;
-        comments = recipe.comments;
-        favorites = recipe.favorites;
-        ratings = recipe.ratings;
-        media = recipe.media;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    public String toString() {
-        return "Recipe [id=" + id + ", slug=" + slug + ", title=" + title + ", steps=" + steps + ", duration="
-                + duration + ", numPersons=" + numPersons + ", difficulty=" + difficulty + ", visibility=" + visibility
-                + ", ingredients=" + ingredients.size() + ", user=" + user.id
-                + ", section=" + (category != null ? category.text : "") + ", comments=" + comments.size() + ", favorites=" + favorites.size()
-                + ", ratings=" + ratings.size() + ", tags=" + tags.size() + ", media=" + media.size() + "]";
-    }
-
-
-    @JsonIgnore
-    public boolean isVisible(String user) {
-        if (user != null && !user.equals("anonymous")) {
-            User userParsed = Json.fromJson(Json.parse(user), User.class);
-            if (visibility.equals(RecipeVisibility.FRIENDS) && (this.user.friends.contains(userParsed) || userParsed.isAdmin())) return true;
-            if (visibility.equals(RecipeVisibility.PRIVATE) && (Objects.equals(this.user.id, userParsed.id)) || userParsed.isAdmin()) return true;
-        }
-        return visibility.equals(RecipeVisibility.PUBLIC);
-    }
-
     @JsonIgnore
     public static String Search(String search) {
         return "(title LIKE '%" + search + "%' OR steps LIKE '%" + search + "%')";
@@ -199,5 +147,56 @@ public class Recipe extends Model implements Serializable {
     @JsonIgnore
     public static String WithDrafts(Boolean with) {
         return "(m.isDraft = " + with + ")";
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see models.base.Model#prePersistData()
+     */
+    @Override
+    public void prePersistData() {
+        if (steps != null && steps.isEmpty()) steps = null;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see models.base.Model#handleRelations(util.Model old)
+     */
+    @Override
+    public void handleRelations(Model old) {
+        Recipe recipe = (Recipe) old;
+        ingredients = recipe.ingredients;
+        user = recipe.user;
+        comments = recipe.comments;
+        favorites = recipe.favorites;
+        ratings = recipe.ratings;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Recipe [id=" + id + ", slug=" + slug + ", title=" + title + ", steps=" + steps + ", duration="
+                + duration + ", numPersons=" + numPersons + ", difficulty=" + difficulty + ", visibility=" + visibility
+                + ", ingredients=" + ingredients.size() + ", user=" + user.id
+                + ", section=" + (category != null ? category.text : "") + ", comments=" + comments.size() + ", favorites=" + favorites.size()
+                + ", ratings=" + ratings.size() + ", tags=" + tags.size() + ", files=" + files.size() + "]";
+    }
+
+    @JsonIgnore
+    public boolean isVisible(String user) {
+        if (user != null && !user.equals("anonymous")) {
+            User userParsed = Json.fromJson(Json.parse(user), User.class);
+            if (visibility.equals(RecipeVisibility.FRIENDS) && (this.user.friends.contains(userParsed) || userParsed.isAdmin()))
+                return true;
+            if (visibility.equals(RecipeVisibility.PRIVATE) && (Objects.equals(this.user.id, userParsed.id)) || userParsed.isAdmin())
+                return true;
+        }
+        return visibility.equals(RecipeVisibility.PUBLIC);
     }
 }

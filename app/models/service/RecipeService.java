@@ -45,7 +45,7 @@ public class RecipeService {
 
     public static Recipe createDraft(User user) {
         Long lastId = recipeDAO.countNumberByUser(user) + 1;
-        Recipe recipe = new Recipe("recipe-" + user.username +  "-" + lastId, "Recipe " + user.username + " " + lastId, null, new Date(0), RecipeDifficulty.EASY, 0, user, null, RecipeVisibility.PUBLIC);
+        Recipe recipe = new Recipe("recipe-" + user.username + "-" + lastId, "Recipe " + user.username + " " + lastId, null, new Date(0), RecipeDifficulty.EASY, 0, user, null, RecipeVisibility.PUBLIC);
         recipe.isDraft = true;
         return recipeDAO.create(recipe);
     }

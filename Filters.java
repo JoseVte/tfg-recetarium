@@ -10,6 +10,6 @@ class Filters implements HttpFilters {
     CORSFilter corsFilter;
 
     public EssentialFilter[] filters() {
-        return new EssentialFilter[] { corsFilter };
+        return new EssentialFilter[]{corsFilter};
     }
 }

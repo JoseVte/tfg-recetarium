@@ -86,7 +86,8 @@ public class UserService {
     public static User update(User user, Map<String, String> data) {
         user.firstName = data.get("first_name");
         user.lastName = data.get("last_name");
-        if (data.get("password") != null && !data.get("password").isEmpty()) user.password = Encryptation.createHash(data.get("password"));
+        if (data.get("password") != null && !data.get("password").isEmpty())
+            user.password = Encryptation.createHash(data.get("password"));
         return userDAO.update(user);
     }
 
