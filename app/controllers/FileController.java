@@ -192,15 +192,15 @@ public class FileController extends Controller {
     }
 
     @Transactional(readOnly = true)
-    public Result getByFile(Integer idRecipe, String file) {
-        models.File fileModel = FileService.find(idRecipe, file);
+    public Result getByFile(Integer idUser, String file) {
+        models.File fileModel = FileService.find(idUser, file);
         try {
             return getFile(fileModel);
         } catch (DbxException | IOException e) {
             e.printStackTrace();
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: [file: " + file + " file: " + idRecipe + "]")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: [file: " + file + " file: " + idUser + "]")));
         } catch (NullModelException e) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: [file: " + file + " file: " + idRecipe + "]")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: [file: " + file + " file: " + idUser + "]")));
         }
     }
 
