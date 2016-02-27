@@ -31,7 +31,7 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text, "test");
-                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.files.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
@@ -65,7 +65,7 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text, "test");
-                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.files.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
@@ -86,7 +86,7 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text, "test");
-                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.files.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);

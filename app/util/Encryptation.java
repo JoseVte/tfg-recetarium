@@ -32,7 +32,7 @@ public class Encryptation {
     /**
      * Computes the PBKDF2 hash of a string.
      *
-     * @param string     the string to hash.
+     * @param string the string to hash.
      *
      * @return the PBDKF2 hash of the string
      */
@@ -43,7 +43,7 @@ public class Encryptation {
     /**
      * Check if the hashed secret the same
      *
-     * @param secret string to check
+     * @param secret       string to check
      * @param secretHashed hashed string
      *
      * @return boolean

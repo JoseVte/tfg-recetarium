@@ -43,9 +43,14 @@ data:
       recipe: *recipe
       user:   *admin
       parent: *comment
-- &media !!models.Media
-      filename: test
-      recipe:   *recipe
+- &file !!models.File
+      user: *user
+      url:   test
+      type:  image
+      title: test
+- &files !!models.manytomany.RecipeFiles
+      recipe: *recipe
+      file:   *file
 - &rating !!models.manytomany.Rating
       rating: 2.5
       recipe: *recipe
