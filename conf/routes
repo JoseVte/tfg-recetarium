@@ -50,7 +50,7 @@ GET      /categories             controllers.CategoryController.list()
 ## Tags
 GET     /tags                    controllers.TagController.list(search: String ?= "")
 
-## Media
+## User files
 GET     /users/$idUser<[0-9]+>/files/$id<[0-9]+>      controllers.FileController.getById(idUser: Integer, id: Integer)
 GET     /users/$idUser<[0-9]+>/files/*file            controllers.FileController.getByFile(idUser: Integer, file: String)
 POST    /users/$idUser<[0-9]+>/files                  controllers.FileController.upload(idUser: Integer)

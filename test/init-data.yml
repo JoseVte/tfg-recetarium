@@ -44,10 +44,11 @@ data:
       user:   *admin
       parent: *comment
 - &file !!models.File
-      user: *user
-      url:   test
-      type:  image
-      title: test
+      user:     *user
+      url:      test
+      type:     image
+      title:    test
+      newTitle: test
 - &files !!models.manytomany.RecipeFiles
       recipe: *recipe
       file:   *file

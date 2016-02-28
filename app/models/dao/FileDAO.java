@@ -27,7 +27,7 @@ public class FileDAO extends CrudDAO<File> {
 
     public File find(Integer idUser, String filename) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.title = '" + filename + "' AND m.user = '" + idUser + "'", File.class).getSingleResult();
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.newTitle = '" + filename + "' AND m.user = '" + idUser + "'", File.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

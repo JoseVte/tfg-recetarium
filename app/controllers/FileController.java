@@ -7,6 +7,7 @@ import models.User;
 import models.service.FileService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import play.Play;
 import play.db.jpa.Transactional;
 import play.libs.Json;
@@ -41,15 +42,13 @@ public class FileController extends Controller {
         if (Play.isProd()) {
             DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());
             DbxClient client = new DbxClient(config, ACCESS_TOKEN);
-            return redirect(client.createTemporaryDirectUrl("/" + file.url).url);
+            return redirect(client.createTemporaryDirectUrl(file.url).url);
         }
 
         if (Play.isDev()) {
-            String path = "public" + FileService.FILE_SEPARARTOR + "files" + FileService.FILE_SEPARARTOR + file.id;
-            File dir = new File(path);
-            File f = new File(path + FileService.FILE_SEPARARTOR + URLDecoder.decode(file.title, "UTF-8"));
+            File f = new File(file.url);
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-            if (!dir.exists() && !dir.mkdirs()) {
+            if (!f.exists() && !f.isFile()) {
                 return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
             }
 
@@ -65,7 +64,7 @@ public class FileController extends Controller {
         try {
             inputStream = new FileInputStream(file.getFile());
             DbxWriteMode mode = isMain ? DbxWriteMode.force() : DbxWriteMode.add();
-            fileDropbox = client.uploadFile("/" + user.id + "/" + fileName, mode, file.getFile().length(), inputStream);
+            fileDropbox = client.uploadFile("/user/" + user.id + "/" + fileName, mode, file.getFile().length(), inputStream);
         } catch (DbxException | IOException e) {
             e.printStackTrace();
             return null;
@@ -76,11 +75,11 @@ public class FileController extends Controller {
                 e.printStackTrace();
             }
         }
-        return new models.File(fileDropbox.path, fileDropbox.iconName, fileDropbox.name, user);
+        return new models.File(fileDropbox.path, file.getContentType(), file.getFilename(), fileDropbox.name, user);
     }
 
     private models.File uploadFileToLocal(FilePart file, User user, String fileName, boolean isMain) {
-        String path = "public" + FileService.FILE_SEPARARTOR + "files" + FileService.FILE_SEPARARTOR + user.id;
+        String path = "public" + FileService.FILE_SEPARARTOR + "files" + FileService.FILE_SEPARARTOR + "user" + FileService.FILE_SEPARARTOR + user.id;
         File dir = new File(path);
 
         // Create the dir if not exists
@@ -89,7 +88,7 @@ public class FileController extends Controller {
         }
 
         if (!isMain) {
-            File fileExist = new File(path, file.getFilename());
+            File fileExist = new File(path, fileName);
             File fileStored = file.getFile();
             boolean exists = false;
             int i = 0;
@@ -99,22 +98,22 @@ public class FileController extends Controller {
                     exists = true;
                 } else {
                     i++;
-                    fileName = FilenameUtils.getName(file.getFilename()) + "_" + i + "." + FilenameUtils.getExtension(file.getFilename());
+                    fileName = FilenameUtils.getName(fileName) + "_" + i + "." + FilenameUtils.getExtension(file.getFilename());
                     fileExist = new File(path, fileName);
                 }
             }
-            return new models.File(fileExist.getPath(), "", fileExist.getName(), user);
+            return new models.File(fileExist.getPath(), file.getContentType(), file.getFilename(), fileExist.getName(), user);
         } else {
             File fileExist = new File(path, fileName);
             File fileStored = file.getFile();
             fileStored.renameTo(fileExist);
-            return new models.File(fileExist.getPath(), "", fileExist.getName(), user);
+            return new models.File(fileExist.getPath(), file.getContentType(), file.getFilename(), fileExist.getName(), user);
         }
     }
 
     private Result uploadFile(User user, MultipartFormData body, FilePart file) {
         boolean isMain = Boolean.parseBoolean(body.asFormUrlEncoded().getOrDefault("is_main", defaultValue)[0]);
-        String fileName = isMain ? "main." + FilenameUtils.getExtension(file.getFilename()) : file.getFilename();
+        String fileName = isMain ? "main." + FilenameUtils.getExtension(file.getFilename()) : RandomStringUtils.randomAlphanumeric(10) + "." + FilenameUtils.getExtension(file.getFilename());
         models.File fileModel;
         if (Play.isProd()) {
             DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());
@@ -167,7 +166,15 @@ public class FileController extends Controller {
         return util.Json.jsonResult(response(), ok(Json.toJson(msg)));
     }
 
-    private void deleteFile(models.File file) throws DbxException, IOException {
+    /**
+     * Method for delete a file in the system
+     *
+     * @param file File
+     *
+     * @throws DbxException
+     * @throws IOException
+     */
+    public static void deleteFile(models.File file) throws DbxException, IOException {
         if (Play.isProd()) {
             DbxRequestConfig config = new DbxRequestConfig(APP_NAME, Locale.getDefault().toString());
             DbxClient client = new DbxClient(config, ACCESS_TOKEN);

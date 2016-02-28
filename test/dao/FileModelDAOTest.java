@@ -78,7 +78,7 @@ public class FileModelDAOTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                File create = new File("test2", "image", "test2", userDAO.find(1));
+                File create = new File("test2", "image", "test2", "test2", userDAO.find(1));
                 File file = fileDAO.create(create);
                 assertEquals(file, create);
 

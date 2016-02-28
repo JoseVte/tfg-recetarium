@@ -79,7 +79,7 @@ public class FileServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                File create = new File("test2", "", "test2", UserService.find(1));
+                File create = new File("test2", "", "test2", "test2", UserService.find(1));
                 File file = FileService.create(create);
                 assertEquals(file, create);
 
