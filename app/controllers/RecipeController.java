@@ -152,6 +152,7 @@ public class RecipeController extends AbstractController {
         IngredientService.create(aux.ingredients, newRecipe);
         aux.tags.addAll(TagService.create(aux.new_tags));
         RecipeService.addTags(aux.tags, newRecipe.id);
+        RecipeService.syncFiles(aux.files, newRecipe);
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
 
@@ -218,6 +219,7 @@ public class RecipeController extends AbstractController {
         aux.tags.addAll(TagService.create(aux.new_tags));
         RecipeService.deleteTags(recipeModel.id);
         RecipeService.addTags(aux.tags, recipeModel.id);
+        RecipeService.syncFiles(aux.files, recipeModel);
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
     }
 
@@ -265,6 +267,7 @@ public class RecipeController extends AbstractController {
         public List<IngredientRequest> ingredients = new ArrayList<IngredientRequest>();
         public List<Integer> tags = new ArrayList<Integer>();
         public List<String> new_tags = new ArrayList<String>();
+        public List<Integer> files = new ArrayList<Integer>();
         public boolean is_draft = false;
 
         @JsonIgnore

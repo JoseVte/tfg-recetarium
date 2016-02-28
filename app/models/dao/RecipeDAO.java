@@ -4,6 +4,7 @@ import models.*;
 import models.base.CrudDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
+import models.manytomany.RecipeFiles;
 import models.manytomany.RecipeTags;
 import models.service.UserService;
 import play.db.jpa.JPA;
@@ -351,5 +352,12 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public void deleteIngredients(Recipe recipe) {
         JPA.em().createQuery("DELETE FROM " + Ingredient.class.getName() + " WHERE recipe_id = " + recipe.id).executeUpdate();
+    }
+
+    public static void syncFiles(Recipe recipe) {
+        for (RecipeFiles file : recipe.files) {
+            JPA.em().persist(file);
+        }
+        JPA.em().flush();
     }
 }

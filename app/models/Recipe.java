@@ -27,7 +27,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "recipes")
-@JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "is_draft", "user",
+@JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "visibility", "is_draft", "user",
         "category", "tags", "comments", "files", "created_at", "updated_at"})
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;

@@ -8,6 +8,7 @@ import models.enums.RecipeDifficulty;
 import models.enums.RecipeVisibility;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
+import models.manytomany.RecipeFiles;
 import models.manytomany.RecipeTags;
 
 import java.util.ArrayList;
@@ -275,6 +276,21 @@ public class RecipeService {
             return true;
         }
         return false;
+    }
+
+    public static void syncFiles(List<Integer> filesId, Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        syncFiles(filesId, recipe);
+    }
+
+    public static void syncFiles(List<Integer> filesId, Recipe recipe) {
+        if (!filesId.isEmpty() && recipe != null) {
+            recipe.files.clear();
+            for(Integer fileId : filesId) {
+                recipe.files.add(new RecipeFiles(recipe, FileService.find(fileId)));
+            }
+            RecipeDAO.syncFiles(recipe);
+        }
     }
 
     /**
