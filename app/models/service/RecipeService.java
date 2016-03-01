@@ -320,6 +320,21 @@ public class RecipeService {
     }
 
     /**
+     * Count all favorites from a recipe
+     *
+     * @param recipeId Integer
+     *
+     * @return Long
+     */
+    public static Long countFavorites(Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (recipe != null) {
+            return RecipeDAO.countFavorites(recipe);
+        }
+        return 0L;
+    }
+
+    /**
      * Add a rating of a recipe
      *
      * @param userId   Integer
