@@ -23,7 +23,7 @@ public class RecipeRatingSerializer extends JsonSerializer<List<Rating>> {
             ratingValue += rating.rating;
             ratings.put(rating.user.id, rating.rating);
         }
-        ratingValue = ratingValue / value.size();
+        if (value.size() >= 1) ratingValue = ratingValue / value.size();
         jgen.writeObjectField("rating", ratingValue);
         jgen.writeObjectField("ratings", ratings);
         jgen.writeEndObject();

@@ -83,13 +83,13 @@ public class Recipe extends Model implements Serializable {
 
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonSerialize(using = RecipeFavoritesSerializer.class)
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Favorite> favorites = new ArrayList<Favorite>();
 
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonSerialize(using = RecipeRatingSerializer.class)
     @JsonProperty(value = "rating")
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Rating> ratings = new ArrayList<Rating>();
 
     @Fetch(value = FetchMode.SUBSELECT)
