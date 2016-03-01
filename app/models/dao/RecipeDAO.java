@@ -354,9 +354,26 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         JPA.em().createQuery("DELETE FROM " + Ingredient.class.getName() + " WHERE recipe_id = " + recipe.id).executeUpdate();
     }
 
+    /**
+     * Sync the files into a recipe
+     *
+     * @param recipe Recipe
+     */
     public static void syncFiles(Recipe recipe) {
         for (RecipeFiles file : recipe.files) {
             JPA.em().persist(file);
+        }
+        JPA.em().flush();
+    }
+
+    /**
+     * Delete all files
+     *
+     * @param recipe Recipe
+     */
+    public static void deleteFiles(Recipe recipe) {
+        for (RecipeFiles file : recipe.files) {
+            JPA.em().remove(file);
         }
         JPA.em().flush();
     }

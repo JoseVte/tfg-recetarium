@@ -278,13 +278,26 @@ public class RecipeService {
         return false;
     }
 
+    /**
+     * Sync the files into a recipe
+     *
+     * @param filesId List<Integer>
+     * @param recipeId Integer
+     */
     public static void syncFiles(List<Integer> filesId, Integer recipeId) {
         Recipe recipe = recipeDAO.find(recipeId);
         syncFiles(filesId, recipe);
     }
 
+    /**
+     * Sync the files into a recipe
+     *
+     * @param filesId List<Integer>
+     * @param recipe Recipe
+     */
     public static void syncFiles(List<Integer> filesId, Recipe recipe) {
         if (!filesId.isEmpty() && recipe != null) {
+            RecipeDAO.deleteFiles(recipe);
             recipe.files.clear();
             for(Integer fileId : filesId) {
                 recipe.files.add(new RecipeFiles(recipe, FileService.find(fileId)));
