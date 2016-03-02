@@ -76,7 +76,17 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.5.1](/doc/rocket-blue.png) 0.5.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.1)
+#### [![0.6.1](/doc/rocket-blue.png) 0.6.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.6.1)
+
+- Añadidas rutas para añadir a favoritos
+- Añadida posibilidad de puntuar una receta del 0 al 5
+
+###### [![0.5.2](/doc/release.png) 0.5.2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.2)
+
+- Nuevas rutas para el perfil
+- Cambiados algunos metodos del UserService
+
+###### [![0.5.1](/doc/release.png) 0.5.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.1)
 
 - Generar borrador de una receta
 
