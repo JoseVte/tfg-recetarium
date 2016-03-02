@@ -105,6 +105,17 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     }
 
     /**
+     * Count all favorites from a recipe
+     *
+     * @param recipe Recipe
+     *
+     * @return Long
+     */
+    public static Long countFavorites(Recipe recipe) {
+        return JPA.em().createQuery("SELECT count(m) FROM " + Favorite.class.getName() + " m WHERE recipe_id = " + recipe.id, Long.class).getSingleResult();
+    }
+
+    /**
      * Add a rating of a recipe
      *
      * @param user   User
@@ -193,7 +204,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public List<Recipe> paginate(Integer page, Integer size, String search, String user) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " ORDER BY id", Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " ORDER BY id", Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
@@ -205,7 +216,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return Long
      */
     public Long count(String search, String user) {
-        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user), Long.class).getSingleResult();
+        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false), Long.class).getSingleResult();
     }
 
     /**
@@ -302,6 +313,31 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public List<Recipe> check(String field, Object value, Integer id) {
         return check(field, value, id, "=");
+    }
+
+    /**
+     * Get the number of recipes by user
+     *
+     * @param user User
+     * @return Long
+     */
+    public Long countNumberByUser(User user) {
+        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE user = '" + user.id + "'", Long.class).getSingleResult();
+    }
+
+    /**
+     * Get draft
+     *
+     * @param user User
+     *
+     * @return Recipe
+     */
+    public Recipe getDraft(User user) {
+        try {
+            return  JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE user = '" + user.id + "' AND is_draft = true", Recipe.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     /**

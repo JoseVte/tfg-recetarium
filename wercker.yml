@@ -21,8 +21,5 @@ build:
     # http://devcenter.wercker.com/docs/steps/index.html
   steps:
     - script:
-        name: cleanup
-        code: sbt clean
-    - script:
         name: tests
         code: sbt test

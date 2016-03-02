@@ -1,8 +1,8 @@
 package controllers;
 
+import middleware.Common;
 import play.mvc.Controller;
 import play.mvc.Result;
-import middleware.Common;
 import play.mvc.Security;
 
 @Security.Authenticated(Common.class)

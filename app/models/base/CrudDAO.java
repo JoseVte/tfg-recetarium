@@ -118,6 +118,6 @@ public class CrudDAO<T extends Model> {
      * @return Long
      */
     public Long count() {
-        return (Long) JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m").getSingleResult();
+        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m", Long.class).getSingleResult();
     }
 }

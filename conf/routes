@@ -4,15 +4,19 @@
 
 # Home page
 GET     /                           controllers.UserController.index()
-
+# Routes API Rest
+## Auth
 POST    /auth/register              controllers.AuthController.register()
 POST    /auth/login                 controllers.AuthController.login()
 POST    /auth/logout                controllers.AuthController.logout()
 POST    /auth/reset/password        controllers.AuthController.sendLostPasswordToken()
 PUT     /auth/reset/password        controllers.AuthController.resetPassword()
 PATCH   /auth/reset/password        controllers.AuthController.resetPassword()
+### Profile
+GET     /profile                    controllers.AuthController.profile()
+PUT     /profile                    controllers.AuthController.updateProfile()
+PATCH   /profile                    controllers.AuthController.updateProfile()
 
-# Routes API Rest
 ## Users
 GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "")
 GET     /users/$id<[0-9]+>      controllers.UserController.get(id: Integer)
@@ -27,6 +31,8 @@ GET     /recipes                                controllers.RecipeController.lis
 #GET    /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
 GET     /recipes/:slug                          controllers.RecipeController.get(slug: String)
 POST    /recipes                                controllers.RecipeController.create()
+POST    /recipes/draft                          controllers.RecipeController.getDraft()
+POST    /recipes/create-from-draft              controllers.RecipeController.createFromDraft()
 PUT     /recipes/$id<[0-9]+>                    controllers.RecipeController.update(id: Integer)
 PATCH   /recipes/$id<[0-9]+>                    controllers.RecipeController.update(id: Integer)
 DELETE  /recipes/$id<[0-9]+>                    controllers.RecipeController.delete(id: Integer)
@@ -43,6 +49,12 @@ GET      /categories             controllers.CategoryController.list()
 
 ## Tags
 GET     /tags                    controllers.TagController.list(search: String ?= "")
+
+## Favorite
+PATCH   /recipes/$id<[0-9]+>/fav    controllers.RecipeController.toggleFav(id: Integer)
+
+## Rating
+PUT     /recipes/$id<[0-9]+>/rating     controllers.RecipeController.rating(id: Integer)
 
 ## Media
 GET     /recipes/$idRecipe<[0-9]+>/media/$id<[0-9]+>      controllers.MediaController.getById(idRecipe: Integer, id: Integer)

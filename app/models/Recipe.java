@@ -3,7 +3,6 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import controllers.RecipeController.RecipeRequest;
 import models.base.Model;
@@ -19,6 +18,8 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import play.libs.Json;
 import util.serializer.RecipeCommentsSerializer;
+import util.serializer.RecipeFavoritesSerializer;
+import util.serializer.RecipeRatingSerializer;
 import util.serializer.RecipeTagsSerializer;
 
 import javax.persistence.*;
@@ -30,8 +31,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "recipes")
-@JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "user",
-        "category", "tags", "comments", "media", "created_at", "updated_at"})
+@JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "is_draft", "user",
+        "category", "tags", "comments", "favorites", "rating", "media", "created_at", "updated_at"})
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -63,6 +64,10 @@ public class Recipe extends Model implements Serializable {
     @Column(nullable = false)
     public RecipeVisibility visibility = RecipeVisibility.PUBLIC;
 
+    @JsonProperty(value = "is_draft")
+    @Column(nullable = false, name = "is_draft", columnDefinition = "boolean default false")
+    public Boolean isDraft = false;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
     public User user;
@@ -76,12 +81,15 @@ public class Recipe extends Model implements Serializable {
     @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Comment> comments = new ArrayList<Comment>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = RecipeFavoritesSerializer.class)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Favorite> favorites = new ArrayList<Favorite>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = RecipeRatingSerializer.class)
+    @JsonProperty(value = "rating")
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Rating> ratings = new ArrayList<Rating>();
 
     @Fetch(value = FetchMode.SUBSELECT)
@@ -116,6 +124,7 @@ public class Recipe extends Model implements Serializable {
         this.duration = recipe.durationParsed;
         this.difficulty = recipe.difficulty;
         this.visibility = recipe.visibility;
+        this.isDraft = recipe.is_draft;
         if (recipe.num_persons != null) this.numPersons = recipe.num_persons;
         this.user = UserService.findByEmailAddress(recipe.email);
         if (recipe.category_id != null) this.category = CategoryService.find(recipe.category_id);
@@ -190,5 +199,10 @@ public class Recipe extends Model implements Serializable {
             }
         }
         return query + ")";
+    }
+
+    @JsonIgnore
+    public static String WithDrafts(Boolean with) {
+        return "(m.isDraft = " + with + ")";
     }
 }
