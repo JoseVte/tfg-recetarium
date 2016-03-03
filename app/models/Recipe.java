@@ -10,6 +10,7 @@ import models.enums.RecipeDifficulty;
 import models.enums.RecipeVisibility;
 import models.manytomany.*;
 import models.service.CategoryService;
+import models.service.FileService;
 import models.service.UserService;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
@@ -30,7 +31,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "recipes")
 @JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "visibility", "is_draft", "user",
-        "category", "tags", "comments", "favorites", "rating", "files", "created_at", "updated_at"})
+        "category", "image_main", "tags", "comments", "favorites", "rating", "files", "created_at", "updated_at"})
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -74,6 +75,11 @@ public class Recipe extends Model implements Serializable {
     @JoinColumn(name = "category_id", nullable = true)
     public Category category;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonProperty(value = "image_main")
+    @JoinColumn(name = "image_main_id", nullable = true)
+    public File imageMain;
+
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonSerialize(using = RecipeCommentsSerializer.class)
     @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -103,7 +109,7 @@ public class Recipe extends Model implements Serializable {
     public Recipe() {
     }
 
-    public Recipe(String slug, String title, String steps, Date duration, RecipeDifficulty diff, Integer numPersons, User user, Category category, RecipeVisibility visibility) {
+    public Recipe(String slug, String title, String steps, Date duration, Integer numPersons, RecipeDifficulty diff, RecipeVisibility visibility, User user, Category category, File imageMain) {
         this.slug = slug;
         this.title = title;
         this.steps = steps;
@@ -113,6 +119,7 @@ public class Recipe extends Model implements Serializable {
         this.numPersons = numPersons;
         this.user = user;
         this.category = category;
+        this.imageMain = imageMain;
     }
 
     public Recipe(RecipeRequest recipe) {
@@ -127,6 +134,7 @@ public class Recipe extends Model implements Serializable {
         if (recipe.num_persons != null) this.numPersons = recipe.num_persons;
         this.user = UserService.findByEmailAddress(recipe.email);
         if (recipe.category_id != null) this.category = CategoryService.find(recipe.category_id);
+        if (recipe.image_main != null) this.imageMain = FileService.find(this.user, recipe.image_main);
     }
 
     @JsonIgnore
@@ -177,6 +185,7 @@ public class Recipe extends Model implements Serializable {
         comments = recipe.comments;
         favorites = recipe.favorites;
         ratings = recipe.ratings;
+        files = recipe.files;
     }
 
     /*
@@ -188,8 +197,8 @@ public class Recipe extends Model implements Serializable {
     public String toString() {
         return "Recipe [id=" + id + ", slug=" + slug + ", title=" + title + ", steps=" + steps + ", duration="
                 + duration + ", numPersons=" + numPersons + ", difficulty=" + difficulty + ", visibility=" + visibility
-                + ", ingredients=" + ingredients.size() + ", user=" + user.id
-                + ", section=" + (category != null ? category.text : "") + ", comments=" + comments.size() + ", favorites=" + favorites.size()
+                + ", ingredients=" + ingredients.size() + ", user=" + user.id + ", image_main=" + imageMain.id
+                + ", category=" + (category != null ? category.text : "") + ", comments=" + comments.size() + ", favorites=" + favorites.size()
                 + ", ratings=" + ratings.size() + ", tags=" + tags.size() + ", files=" + files.size() + "]";
     }
 

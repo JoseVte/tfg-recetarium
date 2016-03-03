@@ -2,6 +2,7 @@ package models.dao;
 
 import models.*;
 import models.base.CrudDAO;
+import models.base.Model;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeFiles;
@@ -378,7 +379,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     }
 
     /**
-     * Delete all files
+     * Delete all files into a recipe
      *
      * @param recipe Recipe
      */

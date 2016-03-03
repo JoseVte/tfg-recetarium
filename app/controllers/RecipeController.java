@@ -9,10 +9,7 @@ import models.User;
 import models.dao.RecipeDAO;
 import models.enums.RecipeDifficulty;
 import models.enums.RecipeVisibility;
-import models.service.CategoryService;
-import models.service.IngredientService;
-import models.service.RecipeService;
-import models.service.TagService;
+import models.service.*;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
@@ -146,6 +143,8 @@ public class RecipeController extends AbstractController {
         Form<RecipeRequest> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
+        }  else if (recipe.get().image_main != null && !FileService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class), recipe.get().image_main)) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file with ID " + recipe.get().image_main + " isn't in your files")));
         }
         RecipeRequest aux = recipe.get();
         aux.email = Json.fromJson(Json.parse(request().username()), User.class).email;
@@ -211,6 +210,8 @@ public class RecipeController extends AbstractController {
         }
         if (!Objects.equals(recipe.get().id, id)) {
             return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+        } else if (recipe.get().image_main != null && !FileService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class), recipe.get().image_main)) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file with ID " + recipe.get().image_main + " isn't in your files")));
         } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
             return unauthorized();
         }
@@ -330,6 +331,7 @@ public class RecipeController extends AbstractController {
         public List<String> new_tags = new ArrayList<String>();
         public List<Integer> files = new ArrayList<Integer>();
         public boolean is_draft = false;
+        public Integer image_main = null;
 
         @JsonIgnore
         public String email;

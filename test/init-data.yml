@@ -49,7 +49,7 @@ data:
       type:     image
       title:    test
       newTitle: test
-- &files !!models.manytomany.RecipeFiles
+- &recipefiles !!models.manytomany.RecipeFiles
       recipe: *recipe
       file:   *file
 - &rating !!models.manytomany.Rating

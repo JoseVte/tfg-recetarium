@@ -335,6 +335,7 @@ public class RecipeControllerTest extends AbstractTest {
         });
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testRecipeControllerPrivateEvent() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
@@ -367,6 +368,7 @@ public class RecipeControllerTest extends AbstractTest {
         });
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testRecipeControllerCreateRecipeOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
@@ -643,6 +645,7 @@ public class RecipeControllerTest extends AbstractTest {
         });
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testRecipeControllerUpdateRecipeOkRequest() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {

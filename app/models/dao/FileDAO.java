@@ -17,6 +17,14 @@ public class FileDAO extends CrudDAO<File> {
         super(File.class);
     }
 
+    /**
+     * Find a file with user id
+     *
+     * @param idUser Integer
+     * @param idFile Integer
+     *
+     * @return File
+     */
     public File find(Integer idUser, Integer idFile) {
         try {
             return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = " + idFile + " AND m.user = '" + idUser + "'", File.class).getSingleResult();
@@ -25,9 +33,33 @@ public class FileDAO extends CrudDAO<File> {
         }
     }
 
+    /**
+     * Find a file with user id
+     *
+     * @param idUser   Integer
+     * @param filename String
+     *
+     * @return File
+     */
     public File find(Integer idUser, String filename) {
         try {
             return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.newTitle = '" + filename + "' AND m.user = '" + idUser + "'", File.class).getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
+    }
+
+    /**
+     * Find a file with user id
+     *
+     * @param user   User
+     * @param idFile Integer
+     *
+     * @return File
+     */
+    public File find(User user, Integer idFile) {
+        try {
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = '" + idFile + "' AND m.user = '" + user.id + "'", File.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

@@ -1,6 +1,7 @@
 package models.service;
 
 import models.File;
+import models.User;
 import models.dao.FileDAO;
 
 import java.util.List;
@@ -68,6 +69,30 @@ public class FileService {
      */
     public static File find(Integer idUser, Integer id) {
         return dao.find(idUser, id);
+    }
+
+    /**
+     * Find a files by id
+     *
+     * @param user User
+     * @param id   Integer
+     *
+     * @return File
+     */
+    public static File find(User user, Integer id) {
+        return dao.find(user, id);
+    }
+
+    /**
+     * Check if the file for the user exists
+     *
+     * @param user User
+     * @param id   Integer
+     *
+     * @return File
+     */
+    public static boolean checkOwner(User user, Integer id) {
+        return dao.find(user, id) != null;
     }
 
     /**

@@ -23,7 +23,7 @@ public class Category extends Model implements Serializable {
     public String text;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     public List<Recipe> recipes = new ArrayList<Recipe>();
 
     public Category() {
@@ -74,4 +74,10 @@ public class Category extends Model implements Serializable {
         return "Section [id=" + id + ", text=" + text + ", recipes=" + recipes.size() + "]";
     }
 
+    @PreRemove
+    private void preRemove() {
+        for (Recipe recipe : recipes) {
+            recipe.category = null;
+        }
+    }
 }
