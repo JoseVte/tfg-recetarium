@@ -103,7 +103,7 @@ public class Recipe extends Model implements Serializable {
 
     @Fetch(value = FetchMode.SUBSELECT)
     @JsonSerialize(using = RecipeFilesSerializer.class)
-    @OneToMany(mappedBy = "file", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<RecipeFiles> files = new ArrayList<RecipeFiles>();
 
     public Recipe() {
