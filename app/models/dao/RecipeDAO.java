@@ -106,6 +106,17 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     }
 
     /**
+     * Count all favorites from a recipe
+     *
+     * @param recipe Recipe
+     *
+     * @return Long
+     */
+    public static Long countFavorites(Recipe recipe) {
+        return JPA.em().createQuery("SELECT count(m) FROM " + Favorite.class.getName() + " m WHERE recipe_id = " + recipe.id, Long.class).getSingleResult();
+    }
+
+    /**
      * Add a rating of a recipe
      *
      * @param user   User

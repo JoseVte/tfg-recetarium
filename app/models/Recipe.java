@@ -16,6 +16,8 @@ import org.hibernate.annotations.FetchMode;
 import play.libs.Json;
 import util.serializer.RecipeCommentsSerializer;
 import util.serializer.RecipeFilesSerializer;
+import util.serializer.RecipeFavoritesSerializer;
+import util.serializer.RecipeRatingSerializer;
 import util.serializer.RecipeTagsSerializer;
 
 import javax.persistence.*;
@@ -28,7 +30,7 @@ import java.util.Objects;
 @Entity
 @Table(name = "recipes")
 @JsonPropertyOrder({"id", "slug", "title", "ingredients", "steps", "duration", "num_persons", "difficulty", "visibility", "is_draft", "user",
-        "category", "tags", "comments", "files", "created_at", "updated_at"})
+        "category", "tags", "comments", "favorites", "rating", "files", "created_at", "updated_at"})
 public class Recipe extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -77,12 +79,15 @@ public class Recipe extends Model implements Serializable {
     @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Comment> comments = new ArrayList<Comment>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = RecipeFavoritesSerializer.class)
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Favorite> favorites = new ArrayList<Favorite>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "recipe", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = RecipeRatingSerializer.class)
+    @JsonProperty(value = "rating")
+    @OneToMany(mappedBy = "recipe", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Rating> ratings = new ArrayList<Rating>();
 
     @Fetch(value = FetchMode.SUBSELECT)
