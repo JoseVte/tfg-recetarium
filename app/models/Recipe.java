@@ -15,11 +15,7 @@ import models.service.UserService;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import play.libs.Json;
-import util.serializer.RecipeCommentsSerializer;
-import util.serializer.RecipeFilesSerializer;
-import util.serializer.RecipeFavoritesSerializer;
-import util.serializer.RecipeRatingSerializer;
-import util.serializer.RecipeTagsSerializer;
+import util.serializer.*;
 
 import javax.persistence.*;
 import java.io.Serializable;

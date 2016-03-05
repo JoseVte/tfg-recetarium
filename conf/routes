@@ -57,6 +57,7 @@ PATCH   /recipes/$id<[0-9]+>/fav    controllers.RecipeController.toggleFav(id: I
 PUT     /recipes/$id<[0-9]+>/rating     controllers.RecipeController.rating(id: Integer)
 
 ## User files
+GET     /users/$idUser<[0-9]+>/files                  controllers.FileController.getUserFiles(idUser: Integer)
 GET     /users/$idUser<[0-9]+>/files/$id<[0-9]+>      controllers.FileController.getById(idUser: Integer, id: Integer)
 GET     /users/$idUser<[0-9]+>/files/*file            controllers.FileController.getByFile(idUser: Integer, file: String)
 POST    /users/$idUser<[0-9]+>/files                  controllers.FileController.upload(idUser: Integer)

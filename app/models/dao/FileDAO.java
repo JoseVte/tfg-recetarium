@@ -1,6 +1,7 @@
 package models.dao;
 
 import models.File;
+import models.Recipe;
 import models.User;
 import models.base.CrudDAO;
 import models.base.Model;
@@ -15,6 +16,17 @@ import java.util.List;
 public class FileDAO extends CrudDAO<File> {
     public FileDAO() {
         super(File.class);
+    }
+
+    /**
+     * Get all files of one user
+     *
+     * @param idUser Integer
+     *
+     * @return List<File>
+     */
+    public List<File> all(Integer idUser) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.user = '" + idUser + "'", File.class).getResultList();
     }
 
     /**
@@ -59,7 +71,11 @@ public class FileDAO extends CrudDAO<File> {
      */
     public File find(User user, Integer idFile) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = '" + idFile + "' AND m.user = '" + user.id + "'", File.class).getSingleResult();
+            if (user != null) {
+                if (user.isAdmin()) return this.find(idFile);
+                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = '" + idFile + "' AND m.user = " + user.id, File.class).getSingleResult();
+            }
+            return null;
         } catch (NoResultException e) {
             return null;
         }
@@ -101,6 +117,14 @@ public class FileDAO extends CrudDAO<File> {
         } catch (NoResultException e) {
             return null;
         }
+    }
+
+    public boolean canDelete(File file, User user) {
+        String query = "SELECT m FROM " + Recipe.class.getName() + " m WHERE image_main_id = " + file.id;
+        if (user.isAdmin()) {
+            return JPA.em().createQuery(query).getResultList().size() == 0;
+        }
+        return JPA.em().createQuery(query + " AND user = " + user.id).getResultList().size() == 0;
     }
 
     /**

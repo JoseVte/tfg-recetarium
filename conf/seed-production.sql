@@ -4,7 +4,8 @@ TRUNCATE TABLE favorites;
 TRUNCATE TABLE friends;
 TRUNCATE TABLE ratings;
 TRUNCATE TABLE ingredients;
-TRUNCATE TABLE media;
+TRUNCATE TABLE files;
+TRUNCATE TABLE recipe_files;
 TRUNCATE TABLE recipe_tags;
 TRUNCATE TABLE recipes;
 TRUNCATE TABLE tags;
@@ -148,10 +149,10 @@ VALUES
 UNLOCK TABLES;
 
 ## MEDIA ##
-
+/*
 LOCK TABLES `media` WRITE;
 /*!40000 ALTER TABLE `media` DISABLE KEYS */;
-
+/*
 INSERT INTO `media` (`id`, `filename`, `recipe_id`, `created_at`, `updated_at`)
 VALUES
 	(1, 'main.jpg', 1, now(), now()),
@@ -159,8 +160,8 @@ VALUES
 	(3, 'main.jpg', 3, now(), now());
 
 /*!40000 ALTER TABLE `media` ENABLE KEYS */;
-UNLOCK TABLES;
-
+/*UNLOCK TABLES;
+*/
 ## COMMENTS ##
 
 LOCK TABLES `comments` WRITE;

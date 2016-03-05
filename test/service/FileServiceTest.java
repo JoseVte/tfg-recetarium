@@ -111,7 +111,7 @@ public class FileServiceTest extends AbstractTest {
                 long count = FileService.count();
                 assertEquals(count, 1);
 
-                assertTrue(FileService.delete(1, "test@testing.dev"));
+                assertTrue(FileService.delete(FileService.find(1), UserService.find(1)));
 
                 count = FileService.count();
                 assertEquals(count, 0);
@@ -129,7 +129,7 @@ public class FileServiceTest extends AbstractTest {
                 long count = FileService.count();
                 assertEquals(count, 1);
 
-                assertTrue(FileService.delete(1, "admin@admin.dev"));
+                assertTrue(FileService.delete(FileService.find(1), UserService.find(2)));
 
                 count = FileService.count();
                 assertEquals(count, 0);
@@ -144,9 +144,9 @@ public class FileServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                assertFalse(FileService.delete(0, "test@testing.dev"));
-                assertFalse(FileService.delete(1, ""));
-                assertFalse(FileService.delete(0, ""));
+                assertFalse(FileService.delete(null, UserService.find(1)));
+                assertFalse(FileService.delete(FileService.find(1), null));
+                assertFalse(FileService.delete(null, null));
 
                 successTest();
             });

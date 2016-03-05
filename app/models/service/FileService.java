@@ -96,14 +96,13 @@ public class FileService {
     }
 
     /**
-     * Delete a files by id
+     * Delete a files if it can
      *
-     * @param id    Integer
-     * @param email String
+     * @param file File
+     * @param user User
      */
-    public static Boolean delete(Integer id, String email) {
-        File file = dao.findByOwner(email, id);
-        if (file != null) {
+    public static Boolean delete(File file, User user) {
+        if (file != null && user != null && dao.canDelete(file, user)) {
             dao.delete(file);
             return true;
         } else {
@@ -119,6 +118,18 @@ public class FileService {
     public static List<File> all() {
         return dao.all();
     }
+
+    /**
+     * Get all files of one user
+     *
+     * @param idUser Integer
+     *
+     * @return List<File>
+     */
+    public static List<File> all(Integer idUser) {
+        return dao.all(idUser);
+    }
+
 
     /**
      * Get the page of files

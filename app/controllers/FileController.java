@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import middleware.Authenticated;
 import models.User;
 import models.service.FileService;
+import models.service.UserService;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -28,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 public class FileController extends Controller {
     private static final String ACCESS_TOKEN = Play.application().configuration().getString("dropbox.access.token");
@@ -129,8 +131,8 @@ public class FileController extends Controller {
                     return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
                 }
             }
-            FileService.create(fileModel);
-            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
+            fileModel = FileService.create(fileModel);
+            return util.Json.jsonResult(response(), ok(Json.toJson(fileModel)));
         }
         return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
     }
@@ -210,6 +212,17 @@ public class FileController extends Controller {
         }
     }
 
+    @Transactional(readOnly = true)
+    @Security.Authenticated(Authenticated.class)
+    public Result getUserFiles(Integer idUser) {
+        User user = Json.fromJson(Json.parse(request().username()), User.class);
+        if (Objects.equals(user.id, idUser) || user.isAdmin()) {
+            List<models.File> files = FileService.all(idUser);
+            return util.Json.jsonResult(response(), ok(Json.toJson(files)));
+        }
+        return unauthorized();
+    }
+
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result upload(Integer idUser) {
@@ -217,9 +230,10 @@ public class FileController extends Controller {
         boolean isMultiple = Boolean.parseBoolean(body.asFormUrlEncoded().getOrDefault("is_multiple", defaultValue)[0]);
 
         User user = Json.fromJson(Json.parse(request().username()), User.class);
-        // Check if file exist
-        if (user == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + idUser)));
+
+        // Check permissions
+        if (user == null || (!Objects.equals(user.id, idUser) && !user.isAdmin())) {
+            return unauthorized();
         }
 
         if (isMultiple) {
@@ -232,7 +246,7 @@ public class FileController extends Controller {
         } else {
             FilePart file = body.getFile("file");
             if (file != null) {
-                return uploadFile(user, body, file);
+                return uploadFile(UserService.find(idUser), body, file);
             } else {
                 return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file is required")));
             }
@@ -243,14 +257,17 @@ public class FileController extends Controller {
     @Security.Authenticated(Authenticated.class)
     public Result deleteById(Integer idUser, Integer id) {
         models.File file = FileService.find(idUser, id);
-        if (file != null && FileService.delete(id, Json.fromJson(Json.parse(request().username()), User.class).email)) {
-            try {
-                deleteFile(file);
-            } catch (IOException | DbxException e) {
-                System.err.println(e.getMessage());
-                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error deleting the file")));
+        if (file != null) {
+            if (FileService.delete(file, Json.fromJson(Json.parse(request().username()), User.class))) {
+                try {
+                    deleteFile(file);
+                } catch (IOException | DbxException e) {
+                    System.err.println(e.getMessage());
+                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error deleting the file")));
+                }
+                return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted file " + id)));
             }
-            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted file " + id)));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file " + file.title + " is used in other recipes as main image")));
         }
         return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file " + id)));
     }
@@ -259,14 +276,17 @@ public class FileController extends Controller {
     @Security.Authenticated(Authenticated.class)
     public Result deleteByFile(Integer idUser, String file) {
         models.File fileModel = FileService.find(idUser, file);
-        if (fileModel != null && FileService.delete(fileModel.id, Json.fromJson(Json.parse(request().username()), User.class).email)) {
-            try {
-                deleteFile(fileModel);
-            } catch (IOException | DbxException e) {
-                System.err.println(e.getMessage());
-                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error deleting the file " + file)));
+        if (fileModel != null) {
+            if (FileService.delete(fileModel, Json.fromJson(Json.parse(request().username()), User.class))) {
+                try {
+                    deleteFile(fileModel);
+                } catch (IOException | DbxException e) {
+                    System.err.println(e.getMessage());
+                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error deleting the file")));
+                }
+                return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted file " + fileModel)));
             }
-            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted file " + file)));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file " + fileModel.title + " is used in other recipes as main image")));
         }
         return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file " + file)));
     }

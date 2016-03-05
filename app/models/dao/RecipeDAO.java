@@ -2,7 +2,6 @@ package models.dao;
 
 import models.*;
 import models.base.CrudDAO;
-import models.base.Model;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
 import models.manytomany.RecipeFiles;

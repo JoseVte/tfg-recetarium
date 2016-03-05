@@ -216,6 +216,7 @@ public class RecipeController extends AbstractController {
             return unauthorized();
         }
         RecipeRequest aux = recipe.get();
+        aux.email = RecipeService.find(id).user.email;
         Recipe recipeModel = RecipeService.update(recipe.get());
         IngredientService.update(aux.ingredients, recipeModel);
         aux.tags.addAll(TagService.create(aux.new_tags));
