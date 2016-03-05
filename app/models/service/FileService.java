@@ -1,6 +1,7 @@
 package models.service;
 
 import models.File;
+import models.User;
 import models.dao.FileDAO;
 
 import java.util.List;
@@ -71,14 +72,37 @@ public class FileService {
     }
 
     /**
-     * Delete a files by id
+     * Find a files by id
      *
-     * @param id    Integer
-     * @param email String
+     * @param user User
+     * @param id   Integer
+     *
+     * @return File
      */
-    public static Boolean delete(Integer id, String email) {
-        File file = dao.findByOwner(email, id);
-        if (file != null) {
+    public static File find(User user, Integer id) {
+        return dao.find(user, id);
+    }
+
+    /**
+     * Check if the file for the user exists
+     *
+     * @param user User
+     * @param id   Integer
+     *
+     * @return File
+     */
+    public static boolean checkOwner(User user, Integer id) {
+        return dao.find(user, id) != null;
+    }
+
+    /**
+     * Delete a files if it can
+     *
+     * @param file File
+     * @param user User
+     */
+    public static Boolean delete(File file, User user) {
+        if (file != null && user != null && dao.canDelete(file, user)) {
             dao.delete(file);
             return true;
         } else {
@@ -94,6 +118,18 @@ public class FileService {
     public static List<File> all() {
         return dao.all();
     }
+
+    /**
+     * Get all files of one user
+     *
+     * @param idUser Integer
+     *
+     * @return List<File>
+     */
+    public static List<File> all(Integer idUser) {
+        return dao.all(idUser);
+    }
+
 
     /**
      * Get the page of files

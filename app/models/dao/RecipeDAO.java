@@ -4,6 +4,7 @@ import models.*;
 import models.base.CrudDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
+import models.manytomany.RecipeFiles;
 import models.manytomany.RecipeTags;
 import models.service.UserService;
 import play.db.jpa.JPA;
@@ -102,6 +103,17 @@ public class RecipeDAO extends CrudDAO<Recipe> {
         JPA.em().flush();
         JPA.em().refresh(user);
         JPA.em().refresh(recipe);
+    }
+
+    /**
+     * Count all favorites from a recipe
+     *
+     * @param recipe Recipe
+     *
+     * @return Long
+     */
+    public static Long countFavorites(Recipe recipe) {
+        return JPA.em().createQuery("SELECT count(m) FROM " + Favorite.class.getName() + " m WHERE recipe_id = " + recipe.id, Long.class).getSingleResult();
     }
 
     /**
@@ -351,5 +363,29 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public void deleteIngredients(Recipe recipe) {
         JPA.em().createQuery("DELETE FROM " + Ingredient.class.getName() + " WHERE recipe_id = " + recipe.id).executeUpdate();
+    }
+
+    /**
+     * Sync the files into a recipe
+     *
+     * @param recipe Recipe
+     */
+    public static void syncFiles(Recipe recipe) {
+        for (RecipeFiles file : recipe.files) {
+            JPA.em().persist(file);
+        }
+        JPA.em().flush();
+    }
+
+    /**
+     * Delete all files into a recipe
+     *
+     * @param recipe Recipe
+     */
+    public static void deleteFiles(Recipe recipe) {
+        for (RecipeFiles file : recipe.files) {
+            JPA.em().remove(file);
+        }
+        JPA.em().flush();
     }
 }

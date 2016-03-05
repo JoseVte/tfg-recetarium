@@ -8,6 +8,7 @@ import models.enums.RecipeDifficulty;
 import models.enums.RecipeVisibility;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
+import models.manytomany.RecipeFiles;
 import models.manytomany.RecipeTags;
 
 import java.util.ArrayList;
@@ -45,7 +46,7 @@ public class RecipeService {
 
     public static Recipe createDraft(User user) {
         Long lastId = recipeDAO.countNumberByUser(user) + 1;
-        Recipe recipe = new Recipe("recipe-" + user.username + "-" + lastId, "Recipe " + user.username + " " + lastId, null, new Date(0), RecipeDifficulty.EASY, 0, user, null, RecipeVisibility.PUBLIC);
+        Recipe recipe = new Recipe("recipe-" + user.username + "-" + lastId, "Recipe " + user.username + " " + lastId, null, new Date(0), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, user, null, null);
         recipe.isDraft = true;
         return recipeDAO.create(recipe);
     }
@@ -278,6 +279,34 @@ public class RecipeService {
     }
 
     /**
+     * Sync the files into a recipe
+     *
+     * @param filesId List<Integer>
+     * @param recipeId Integer
+     */
+    public static void syncFiles(List<Integer> filesId, Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        syncFiles(filesId, recipe);
+    }
+
+    /**
+     * Sync the files into a recipe
+     *
+     * @param filesId List<Integer>
+     * @param recipe Recipe
+     */
+    public static void syncFiles(List<Integer> filesId, Recipe recipe) {
+        if (!filesId.isEmpty() && recipe != null) {
+            RecipeDAO.deleteFiles(recipe);
+            recipe.files.clear();
+            for(Integer fileId : filesId) {
+                recipe.files.add(new RecipeFiles(recipe, FileService.find(fileId)));
+            }
+            RecipeDAO.syncFiles(recipe);
+        }
+    }
+
+    /**
      * Add a recipe as a favorite
      *
      * @param userId   Integer
@@ -317,6 +346,21 @@ public class RecipeService {
             }
         }
         return false;
+    }
+
+    /**
+     * Count all favorites from a recipe
+     *
+     * @param recipeId Integer
+     *
+     * @return Long
+     */
+    public static Long countFavorites(Integer recipeId) {
+        Recipe recipe = recipeDAO.find(recipeId);
+        if (recipe != null) {
+            return RecipeDAO.countFavorites(recipe);
+        }
+        return 0L;
     }
 
     /**
