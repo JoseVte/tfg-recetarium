@@ -76,7 +76,11 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.6.1](/doc/rocket-blue.png) 0.6.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.6.1)
+#### [![0.7.1](/doc/rocket-blue.png) 0.7.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.7.1)
+
+- Añadida galeria para elegir imagenes en la receta y el perfil de usuario
+
+###### [![0.6.1](/app/doc/release.png) 0.6.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.6.1)
 
 - Añadidas rutas para añadir a favoritos
 - Añadida posibilidad de puntuar una receta del 0 al 5
