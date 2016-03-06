@@ -65,6 +65,7 @@ public class Recipe extends Model implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonSerialize(using = RecipeUserSerializer.class)
     public User user;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = true)
