@@ -4,6 +4,7 @@ import models.*;
 import models.base.CrudDAO;
 import models.manytomany.Favorite;
 import models.manytomany.Rating;
+import models.manytomany.RecipeFiles;
 import models.manytomany.RecipeTags;
 import models.service.UserService;
 import play.db.jpa.JPA;
@@ -228,7 +229,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe findBySlug(String slug) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'" , Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'", Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -244,7 +245,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe findBySlug(String slug, String user) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND "  + Recipe.IsVisible(user), Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND " + Recipe.IsVisible(user), Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -319,6 +320,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * Get the number of recipes by user
      *
      * @param user User
+     *
      * @return Long
      */
     public Long countNumberByUser(User user) {
@@ -334,7 +336,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe getDraft(User user) {
         try {
-            return  JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE user = '" + user.id + "' AND is_draft = true", Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE user = '" + user.id + "' AND is_draft = true", Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -361,5 +363,29 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public void deleteIngredients(Recipe recipe) {
         JPA.em().createQuery("DELETE FROM " + Ingredient.class.getName() + " WHERE recipe_id = " + recipe.id).executeUpdate();
+    }
+
+    /**
+     * Sync the files into a recipe
+     *
+     * @param recipe Recipe
+     */
+    public static void syncFiles(Recipe recipe) {
+        for (RecipeFiles file : recipe.files) {
+            JPA.em().persist(file);
+        }
+        JPA.em().flush();
+    }
+
+    /**
+     * Delete all files into a recipe
+     *
+     * @param recipe Recipe
+     */
+    public static void deleteFiles(Recipe recipe) {
+        for (RecipeFiles file : recipe.files) {
+            JPA.em().remove(file);
+        }
+        JPA.em().flush();
     }
 }

@@ -59,6 +59,10 @@ public class User extends Model implements Serializable {
 
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    public List<File> files = new ArrayList<File>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment> comments = new ArrayList<Comment>();
 
     @JsonIgnore
@@ -126,6 +130,7 @@ public class User extends Model implements Serializable {
         }
         this.setCreatedAt(user.getCreatedAt());
         this.recipes = user.recipes;
+        this.files = user.files;
         this.myFriends = user.myFriends;
         this.friends = user.friends;
         this.recipesFavorites = user.recipesFavorites;
@@ -142,9 +147,9 @@ public class User extends Model implements Serializable {
     public String toString() {
         return "User [id=" + id + ", username=" + username + ", email=" + email + ", password=" + password
                 + ", firstName=" + firstName + ", lastName=" + lastName + ", type=" + type.toString() + ", recipes="
-                + recipes.size() + ", comments=" + comments.size() + ", myFriends=" + myFriends.size() + ", friends="
-                + friends.size() + ", recipesFavorites=" + recipesFavorites.size() + ", ratings=" + ratings.size()
-                + ", lostPassToken=" + lostPassToken + ", lostPassExpire=" + lostPassExpire + "]";
+                + recipes.size() + ", files=" + files.size() + ", comments=" + comments.size() + ", myFriends="
+                + myFriends.size() + ", friends=" + friends.size() + ", recipesFavorites=" + recipesFavorites.size()
+                + ", ratings=" + ratings.size() + ", lostPassToken=" + lostPassToken + ", lostPassExpire=" + lostPassExpire + "]";
     }
 
     /**
