@@ -2,6 +2,7 @@ package controllers;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import it.innove.play.pdf.PdfGenerator;
 import middleware.Authenticated;
 import models.Ingredient;
 import models.Recipe;
@@ -17,7 +18,9 @@ import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
+import views.html.recipe;
 
+import javax.inject.Inject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,6 +33,9 @@ public class RecipeController extends AbstractController {
     private static Form<RecipeRequest> recipeForm = Form.form(RecipeRequest.class);
     private static Form<IngredientRequest> ingredientForm = Form.form(IngredientRequest.class);
     private static Form<RatingRequest> ratingForm = Form.form(RatingRequest.class);
+
+    @Inject
+    public PdfGenerator pdfGenerator;
 
     @Override
     @Transactional(readOnly = true)
@@ -73,6 +79,17 @@ public class RecipeController extends AbstractController {
             return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
         }
         return util.Json.jsonResult(response(), forbidden());
+    }
+
+    /**
+     * Get the recipe in PDF
+     *
+     * @return Result
+     */
+    @Transactional(readOnly = true)
+    public Result getPDF(String slug) {
+        Recipe recipeModel = RecipeService.findBySlug(slug);
+        return pdfGenerator.ok(recipe.render(recipeModel), "localhost:9000");
     }
 
     /**

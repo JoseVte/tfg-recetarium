@@ -30,6 +30,7 @@ GET     /recipes                                controllers.RecipeController.lis
 # This URI is not necessary, the recipes are identified by a slug
 #GET    /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
 GET     /recipes/:slug                          controllers.RecipeController.get(slug: String)
+GET     /recipes/:slug/pdf                      controllers.RecipeController.getPDF(slug: String)
 POST    /recipes                                controllers.RecipeController.create()
 POST    /recipes/draft                          controllers.RecipeController.getDraft()
 POST    /recipes/create-from-draft              controllers.RecipeController.createFromDraft()

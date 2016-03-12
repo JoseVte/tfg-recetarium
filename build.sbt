@@ -21,7 +21,9 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-mailer" % "3.0.1",
   "commons-io" % "commons-io" % "2.4",
   "org.mindrot" % "jbcrypt" % "0.3m",
-  "com.dropbox.core" % "dropbox-core-sdk" % "[1.7,1.8)"
+  "com.dropbox.core" % "dropbox-core-sdk" % "[1.7,1.8)",
+  "it.innove" % "play2-pdf" % "1.4.0",
+  "org.webjars.bower" % "angular-material" % "1.0.6"
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the

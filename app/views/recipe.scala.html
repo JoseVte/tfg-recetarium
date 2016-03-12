@@ -1,0 +1,40 @@
+@(recipe:Recipe)
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+    <!-- If you delete this meta tag, the ground will open and swallow you. -->
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title></title>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="shortcut icon" type="image/png" href="/public/@routes.Assets.versioned("images/favicon.png")">
+</head>
+<body>
+<div class="container">
+    @routes.FileController.getByFile(recipe.user.id, recipe.imageMain.newTitle)
+    <img src="http://localhost:9000/@routes.FileController.getByFile(recipe.user.id, recipe.imageMain.newTitle)" />
+    <h4><i class="material-icons">timelapse</i> Duración: @recipe.duration</h4>
+    <h4><i class="material-icons">people</i> Núm de personas: @recipe.numPersons</h4>
+    <h4><i class="material-icons">stars</i> Dificultad: @recipe.difficulty</h4>
+    <h4><i class="material-icons">bookmark</i> Categoría: @recipe.category.text</h4>
+
+    <span class="md-headline"><i class="material-icons">kitchen</i>Ingredientes</span>
+    <ul>
+    @for(ingredient <- recipe.ingredients) {
+        <li>@ingredient.name @ingredient.count</li>
+    }
+    </ul>
+    <span class="md-headline">Pasos</span>
+    @Html(recipe.steps)
+    <span class="md-headline">Imágenes</span>
+<!--
+        @for(file <- recipe.files) {
+            <img src="/users/@recipe.user.id/files/@file.id" />
+        }-->
+</div>
+<!-- Compiled and minified JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.5/js/materialize.min.js"></script>
+</body>
+</html>
