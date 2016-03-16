@@ -1,12 +1,9 @@
 package controllers;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import middleware.Anonymous;
 import middleware.Authenticated;
 import models.User;
-import models.dao.UserDAO;
-import models.enums.TypeUser;
 import models.service.EmailService;
 import models.service.UserService;
 import play.data.Form;

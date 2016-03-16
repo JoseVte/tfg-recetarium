@@ -9,10 +9,7 @@ import models.User;
 import models.dao.RecipeDAO;
 import models.enums.RecipeDifficulty;
 import models.enums.RecipeVisibility;
-import models.service.CategoryService;
-import models.service.IngredientService;
-import models.service.RecipeService;
-import models.service.TagService;
+import models.service.*;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
@@ -146,6 +143,8 @@ public class RecipeController extends AbstractController {
         Form<RecipeRequest> recipe = recipeForm.bindFromRequest();
         if (recipe.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
+        }  else if (recipe.get().image_main != null && !FileService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class), recipe.get().image_main)) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file with ID " + recipe.get().image_main + " isn't in your files")));
         }
         RecipeRequest aux = recipe.get();
         aux.email = Json.fromJson(Json.parse(request().username()), User.class).email;
@@ -153,6 +152,7 @@ public class RecipeController extends AbstractController {
         IngredientService.create(aux.ingredients, newRecipe);
         aux.tags.addAll(TagService.create(aux.new_tags));
         RecipeService.addTags(aux.tags, newRecipe.id);
+        RecipeService.syncFiles(aux.files, newRecipe);
         return util.Json.jsonResult(response(), created(Json.toJson(newRecipe)));
     }
 
@@ -210,15 +210,19 @@ public class RecipeController extends AbstractController {
         }
         if (!Objects.equals(recipe.get().id, id)) {
             return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+        } else if (recipe.get().image_main != null && !FileService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class), recipe.get().image_main)) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file with ID " + recipe.get().image_main + " isn't in your files")));
         } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
             return unauthorized();
         }
         RecipeRequest aux = recipe.get();
+        aux.email = RecipeService.find(id).user.email;
         Recipe recipeModel = RecipeService.update(recipe.get());
         IngredientService.update(aux.ingredients, recipeModel);
         aux.tags.addAll(TagService.create(aux.new_tags));
         RecipeService.deleteTags(recipeModel.id);
         RecipeService.addTags(aux.tags, recipeModel.id);
+        RecipeService.syncFiles(aux.files, recipeModel);
         return util.Json.jsonResult(response(), ok(Json.toJson(recipeModel)));
     }
 
@@ -326,7 +330,9 @@ public class RecipeController extends AbstractController {
         public List<IngredientRequest> ingredients = new ArrayList<IngredientRequest>();
         public List<Integer> tags = new ArrayList<Integer>();
         public List<String> new_tags = new ArrayList<String>();
+        public List<Integer> files = new ArrayList<Integer>();
         public boolean is_draft = false;
+        public Integer image_main = null;
 
         @JsonIgnore
         public String email;

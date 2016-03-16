@@ -1,6 +1,6 @@
 package dao;
 
-import models.Media;
+import models.File;
 import org.junit.Test;
 import play.db.jpa.JPA;
 import util.AbstractTest;
@@ -11,16 +11,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static play.test.Helpers.*;
 
-public class MediaModelDAOTest extends AbstractTest {
+public class FileModelDAOTest extends AbstractTest {
 
     @Test
-    public void testMediaDAOFindMedia() {
+    public void testFileDAOFindFile() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = mediaDAO.find(1);
-                assertEquals(media.filename, "test");
-                assertEquals(media.recipe.id.intValue(), 1);
+                File file = fileDAO.find(1);
+                assertEquals(file.url, "test");
+                assertEquals(file.user.id.intValue(), 1);
 
                 successTest();
             });
@@ -28,12 +28,12 @@ public class MediaModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaDAONotFoundMedia() {
+    public void testFileDAONotFoundFile() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = mediaDAO.find(0);
-                assertNull(media);
+                File file = fileDAO.find(0);
+                assertNull(file);
 
                 successTest();
             });
@@ -41,15 +41,15 @@ public class MediaModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaDAOFindAllMedias() {
+    public void testFileDAOFindAllFiles() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Media> media = mediaDAO.all();
-                long count = mediaDAO.count();
+                List<File> file = fileDAO.all();
+                long count = fileDAO.count();
                 assertEquals(count, 1);
 
-                assertEquals(media.get(0).filename, "test");
+                assertEquals(file.get(0).url, "test");
 
                 successTest();
             });
@@ -57,16 +57,16 @@ public class MediaModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaDAOPageMedias() {
+    public void testFileDAOPageFiles() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                List<Media> media = mediaDAO.paginate(0, 1);
-                assertEquals(media.get(0).filename, "test");
-                assertEquals(media.size(), 1);
+                List<File> file = fileDAO.paginate(0, 1);
+                assertEquals(file.get(0).url, "test");
+                assertEquals(file.size(), 1);
 
-                media = mediaDAO.paginate(1, 1);
-                assertEquals(media.size(), 0);
+                file = fileDAO.paginate(1, 1);
+                assertEquals(file.size(), 0);
 
                 successTest();
             });
@@ -74,13 +74,13 @@ public class MediaModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaDAOCreateMedia() {
+    public void testFileDAOCreateFile() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media create = new Media("test2", recipeDAO.find(1));
-                Media media = mediaDAO.create(create);
-                assertEquals(media, create);
+                File create = new File("test2", "image", "test2", "test2", userDAO.find(1));
+                File file = fileDAO.create(create);
+                assertEquals(file, create);
 
                 successTest();
             });
@@ -88,14 +88,14 @@ public class MediaModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaDAOUpdateMedia() {
+    public void testFileDAOUpdateFile() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = mediaDAO.find(1);
-                media.filename = "Update test";
-                Media update = mediaDAO.update(media);
-                assertEquals(update.filename, "Update test");
+                File file = fileDAO.find(1);
+                file.url = "Update test";
+                File update = fileDAO.update(file);
+                assertEquals(update.url, "Update test");
 
                 successTest();
             });
@@ -103,17 +103,17 @@ public class MediaModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaDAODeleteMedia() {
+    public void testFileDAODeleteFile() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = mediaDAO.find(1);
-                long count = mediaDAO.count();
+                File file = fileDAO.find(1);
+                long count = fileDAO.count();
                 assertEquals(count, 1);
 
-                mediaDAO.delete(media);
+                fileDAO.delete(file);
 
-                count = mediaDAO.count();
+                count = fileDAO.count();
                 assertEquals(count, 0);
 
                 successTest();
@@ -122,14 +122,14 @@ public class MediaModelDAOTest extends AbstractTest {
     }
 
     @Test
-    public void testMediaDAODeleteNotFoundMedia() {
+    public void testFileDAODeleteNotFoundFile() {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Media media = mediaDAO.find(0);
+                File file = fileDAO.find(0);
 
                 try {
-                    mediaDAO.delete(media);
+                    fileDAO.delete(file);
                 } catch (Exception e) {
                 }
 

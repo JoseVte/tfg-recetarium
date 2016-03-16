@@ -5,6 +5,7 @@ import models.Ingredient;
 import models.Recipe;
 import models.enums.RecipeDifficulty;
 import models.enums.RecipeVisibility;
+import models.service.FileService;
 import models.service.RecipeService;
 import models.service.UserService;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text, "test");
-                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.files.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
@@ -65,7 +66,7 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text, "test");
-                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.files.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
@@ -86,7 +87,7 @@ public class RecipeServiceTest extends AbstractTest {
                 assertEquals(recipe.steps, "Description test");
                 assertEquals(recipe.user.id.intValue(), 1);
                 assertEquals(recipe.category.text, "test");
-                assertEquals(recipe.media.size(), 1);
+                assertEquals(recipe.files.size(), 1);
                 assertEquals(recipe.tags.size(), 1);
                 assertEquals(recipe.favorites.size(), 1);
                 assertEquals(recipe.ratings.size(), 1);
@@ -169,7 +170,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe create = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0, UserService.find(1), null, RecipeVisibility.PUBLIC);
+                Recipe create = new Recipe("test2", "Test2", null, new Date(), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, UserService.find(1), null, FileService.find(1));
                 Recipe recipe = RecipeService.create(create);
                 assertEquals(recipe, create);
 
@@ -284,8 +285,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null, RecipeVisibility.PUBLIC);
+                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, UserService.find(1), null, FileService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertEquals(recipe.tags.size(), 0);
@@ -305,8 +305,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null, RecipeVisibility.PUBLIC);
+                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, UserService.find(1), null, FileService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addTag(1, recipe.id));
@@ -390,8 +389,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null, RecipeVisibility.PUBLIC);
+                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, UserService.find(1), null, FileService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertFalse(RecipeService.deleteTag(1, recipe.id));
@@ -406,8 +404,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null, RecipeVisibility.PUBLIC);
+                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, UserService.find(1), null, FileService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addFavorite(1, recipe.id));
@@ -489,8 +486,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null, RecipeVisibility.PUBLIC);
+                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, UserService.find(1), null, FileService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addRating(1, recipe.id, 4.3));
@@ -614,8 +610,7 @@ public class RecipeServiceTest extends AbstractTest {
         running(fakeApplication(inMemoryDatabase()), () -> {
             JPA.withTransaction(() -> {
                 initializeDataModel();
-                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), RecipeDifficulty.EASY, 0,
-                        UserService.find(1), null, RecipeVisibility.PUBLIC);
+                Recipe recipe = new Recipe("test2", "Test2", null, new Date(), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, UserService.find(1), null, FileService.find(1));
                 recipe = RecipeService.create(recipe);
 
                 assertTrue(RecipeService.addCategory(1, recipe.id));
