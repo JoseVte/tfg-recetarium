@@ -113,6 +113,20 @@ public class CrudDAO<T extends Model> {
     }
 
     /**
+     * Get the page of models order by
+     *
+     * @param page  Integer
+     * @param size  Integer
+     * @param order String
+     *
+     * @return List<Model>
+     */
+    @SuppressWarnings("unchecked")
+    public List<T> paginate(Integer page, Integer size, String order) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY " + order).setFirstResult(page * size).setMaxResults(size).getResultList();
+    }
+
+    /**
      * Get the number of total row
      *
      * @return Long

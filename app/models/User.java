@@ -44,6 +44,10 @@ public class User extends Model implements Serializable {
     @Column(nullable = false)
     public TypeUser type;
 
+    @JsonProperty(value = "num_recipes")
+    @Column(nullable = false, name = "num_recipes", columnDefinition = "int(5) default '0'")
+    public Integer numRecipes = 0;
+
     @Column(name = "lost_pass_token")
     @JsonIgnore
     public String lostPassToken;
@@ -129,6 +133,7 @@ public class User extends Model implements Serializable {
             this.type = user.type;
         }
         this.setCreatedAt(user.getCreatedAt());
+        this.numRecipes = user.numRecipes;
         this.recipes = user.recipes;
         this.files = user.files;
         this.myFriends = user.myFriends;
