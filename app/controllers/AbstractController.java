@@ -13,10 +13,11 @@ public abstract class AbstractController extends Controller {
      * @param page   Integer
      * @param size   Integer
      * @param search Search
+     * @param order  Search
      *
      * @return Result
      */
-    public abstract Result list(Integer page, Integer size, String search);
+    public abstract Result list(Integer page, Integer size, String search, String order);
 
     /**
      * Get one model by id

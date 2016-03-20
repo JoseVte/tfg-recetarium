@@ -37,13 +37,13 @@ public class UserController extends AbstractController {
     @Transactional(readOnly = true)
     @Security.Authenticated(Authenticated.class)
     @SuppressWarnings("deprecation")
-    public Result list(Integer page, Integer size, String search) {
+    public Result list(Integer page, Integer size, String search, String order) {
         List<User> models = UserService.paginate(page - 1, size);
         Long count = UserService.count();
         String[] routesString = new String[3];
-        routesString[0] = routes.UserController.list(page - 1, size, search).toString();
-        routesString[1] = routes.UserController.list(page + 1, size, search).toString();
-        routesString[2] = routes.UserController.list(page, size, search).toString();
+        routesString[0] = routes.UserController.list(page - 1, size, search, order).toString();
+        routesString[1] = routes.UserController.list(page + 1, size, search, order).toString();
+        routesString[2] = routes.UserController.list(page, size, search, order).toString();
 
         ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString, !Objects.equals(search, ""));
 

@@ -33,13 +33,14 @@ public class RecipeController extends AbstractController {
 
     @Override
     @Transactional(readOnly = true)
-    public Result list(Integer page, Integer size, String search) {
-        List<Recipe> models = RecipeService.paginate(page - 1, size, search, request().username());
+    public Result list(Integer page, Integer size, String search, String order) {
+        order = order.replace('+', ' ');
+        List<Recipe> models = RecipeService.paginate(page - 1, size, search, request().username(), order);
         Long count = RecipeService.count(search, request().username());
         String[] routesString = new String[3];
-        routesString[0] = routes.RecipeController.list(page - 1, size, search).toString();
-        routesString[1] = routes.RecipeController.list(page + 1, size, search).toString();
-        routesString[2] = routes.RecipeController.list(page, size, search).toString();
+        routesString[0] = routes.RecipeController.list(page - 1, size, search, order).toString();
+        routesString[1] = routes.RecipeController.list(page + 1, size, search, order).toString();
+        routesString[2] = routes.RecipeController.list(page, size, search, order).toString();
 
         ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString, !Objects.equals(search, ""));
 
@@ -119,6 +120,7 @@ public class RecipeController extends AbstractController {
         Recipe recipe = RecipeService.getDraft(user);
         if (recipe == null) {
             recipe = RecipeService.createDraft(user);
+            UserService.addRecipeCount(user);
         }
         return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
     }

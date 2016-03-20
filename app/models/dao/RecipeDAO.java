@@ -209,6 +209,21 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     }
 
     /**
+     * Get the page of models order by field
+     *
+     * @param search String
+     * @param page   Integer
+     * @param size   Integer
+     * @param user   String
+     * @param order  String
+     *
+     * @return List<Recipe>
+     */
+    public List<Recipe> paginate(Integer page, Integer size, String search, String user, String order) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " ORDER BY " + order, Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+    }
+
+    /**
      * Count the all events with search parameter
      *
      * @param search String
