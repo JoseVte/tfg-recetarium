@@ -76,11 +76,20 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.7.1](/doc/rocket-blue.png) 0.7.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.7.1)
+#### [![0.8.1](/doc/rocket-blue.png) 0.8.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.1)
+
+- CRUD de recetas
+
+###### [![0.8.0-hotfix](/doc/release.png) 0.8.0-hotfix](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.0-hotfix)
+
+- Ordenar recetas por fecha
+- Nuevo sistema para contar las recetas
+
+###### [![0.7.1](/doc/release.png) 0.7.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.7.1)
 
 - Añadida galeria para elegir imagenes en la receta y el perfil de usuario
 
-###### [![0.6.1](/app/doc/release.png) 0.6.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.6.1)
+###### [![0.6.1](/doc/release.png) 0.6.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.6.1)
 
 - Añadidas rutas para añadir a favoritos
 - Añadida posibilidad de puntuar una receta del 0 al 5
