@@ -24,6 +24,7 @@ public class RecipeControllerTest extends AbstractTest {
     private ObjectNode dataError6;
     private ObjectNode dataError7;
     private ObjectNode dataError8;
+    private ObjectNode dataCommentOk;
     private ObjectNode loginJson;
     private ObjectNode loginAdmin;
     private ObjectNode ingredientsCreate;
@@ -117,6 +118,9 @@ public class RecipeControllerTest extends AbstractTest {
         dataError8.put("duration", "00:10:00");
         dataError8.put("visibility", "PUBLIC");
 
+        dataCommentOk = Json.newObject();
+        dataCommentOk.put("text", "Comment test");
+
         loginJson = Json.newObject();
         loginJson.put("email", "test@testing.dev");
         loginJson.put("password", "password");
@@ -135,6 +139,13 @@ public class RecipeControllerTest extends AbstractTest {
             response = WS.url("http://localhost:3333/recipes/1").put(dataOk.put("id", 1)).get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
             response = WS.url("http://localhost:3333/recipes/1").delete().get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+
+            response = WS.url("http://localhost:3333/recipes/1/comments").post(dataOk).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/recipes/1/comments/1").put(dataCommentOk).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
+            response = WS.url("http://localhost:3333/recipes/1/comments/1").delete().get(timeout);
             assertEquals(UNAUTHORIZED, response.getStatus());
 
             successTest();
@@ -950,6 +961,227 @@ public class RecipeControllerTest extends AbstractTest {
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
             assertEquals(responseJson.get("error").asText(), "Not found 5");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerGetReplies() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isArray());
+            assertEquals(responseJson.size(), 1);
+            assertEquals(responseJson.get(0).get("id").intValue(), 2);
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCreateCommentOk() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments").setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataCommentOk).get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("id").intValue(), 3);
+            assertEquals(responseJson.get("text").asText(), "Comment test");
+
+            response = WS.url("http://localhost:3333/recipes/1/comments/3").setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataCommentOk).get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("id").intValue(), 4);
+            assertEquals(responseJson.get("text").asText(), "Comment test");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCreateCommentBadRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments").setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(Json.newObject()).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("text").get(0).asText(), "This field is required");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerCreateCommentNotFound() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/0/comments").setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataCommentOk).get(timeout);
+
+            assertEquals(NOT_FOUND, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("error").asText(), "Not found recipe");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateCommentOk() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataCommentOk).get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("id").intValue(), 1);
+            assertEquals(responseJson.get("text").asText(), "Comment test");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateCommentBadRequest() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(Json.newObject()).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("text").get(0).asText(), "This field is required");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateCommentBadRequest2() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginAdmin).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataCommentOk).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("error").asText(), "You can't edit the comment of other user");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerUpdateCommentBadRequest3() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/2/comments/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataCommentOk).get(timeout);
+
+            assertEquals(BAD_REQUEST, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("error").asText(), "The ID of recipe doesn't coincide");
+
+            successTest();
+        });
+    }
+    @Test
+    public void testRecipeControllerUpdateCommentNotFound() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments/0").setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataCommentOk).get(timeout);
+
+            assertEquals(NOT_FOUND, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("error").asText(), "Not found comment");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerDeleteCommentOk() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
+
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("msg").asText(), "Deleted 1");
+
+            successTest();
+        });
+    }
+
+    @Test
+    public void testRecipeControllerDeleteCommentNotFound() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
+            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            WSResponse response = WS.url("http://localhost:3333/recipes/1/comments/0").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
+
+            assertEquals(NOT_FOUND, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
+
+            JsonNode responseJson = response.asJson();
+            assertTrue(responseJson.isObject());
+            assertEquals(responseJson.get("error").asText(), "Not found comment");
 
             successTest();
         });

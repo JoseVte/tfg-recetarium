@@ -3,6 +3,7 @@ package controllers;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import middleware.Authenticated;
+import models.Comment;
 import models.Ingredient;
 import models.Recipe;
 import models.User;
@@ -30,6 +31,7 @@ public class RecipeController extends AbstractController {
     private static Form<RecipeRequest> recipeForm = Form.form(RecipeRequest.class);
     private static Form<IngredientRequest> ingredientForm = Form.form(IngredientRequest.class);
     private static Form<RatingRequest> ratingForm = Form.form(RatingRequest.class);
+    private static Form<CommentRequest> commentForm = Form.form(CommentRequest.class);
 
     @Override
     @Transactional(readOnly = true)
@@ -293,9 +295,77 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), ok(data));
     }
 
+    @Transactional(readOnly = true)
+    public Result getReplies(Integer id, Integer commentId) {
+        List<Comment> comments = CommentService.getReplies(id, commentId);
+        return util.Json.jsonResult(response(), ok(Json.toJson(comments)));
+    }
+
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result createComment(Integer id, Integer commentId) {
+        User user = Json.fromJson(Json.parse(request().username()), User.class);
+        Form<CommentRequest> comment = commentForm.bindFromRequest();
+        if (comment.hasErrors()) {
+            return util.Json.jsonResult(response(), badRequest(comment.errorsAsJson()));
+        }
+        Recipe recipe = RecipeService.find(id);
+        if (recipe == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found recipe")));
+        }
+        Comment commentModel = new Comment(comment.get().text, user, recipe, commentId == null ? null : CommentService.find(commentId));
+        commentModel = CommentService.create(commentModel);
+        return util.Json.jsonResult(response(), ok(Json.toJson(commentModel)));
+    }
+
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result updateComment(Integer id, Integer commentId) {
+        User user = Json.fromJson(Json.parse(request().username()), User.class);
+        Form<CommentRequest> comment = commentForm.bindFromRequest();
+        if (comment.hasErrors()) {
+            return util.Json.jsonResult(response(), badRequest(comment.errorsAsJson()));
+        }
+        Comment commentModel = CommentService.find(commentId);
+        if (commentModel == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found comment")));
+        }
+        if (!Objects.equals(commentModel.user.id, user.id)) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("You can't edit the comment of other user")));
+        }
+        if (!Objects.equals(commentModel.recipe.id, id)) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The ID of recipe doesn't coincide")));
+        }
+        commentModel.text = comment.get().text;
+        commentModel = CommentService.update(commentModel);
+        return util.Json.jsonResult(response(), ok(Json.toJson(commentModel)));
+    }
+
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result deleteComment(Integer id, Integer commentId) {
+        User user = Json.fromJson(Json.parse(request().username()), User.class);
+        Comment commentModel = CommentService.find(commentId);
+        if (commentModel == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found comment")));
+        }
+        if (!Objects.equals(commentModel.user.id, user.id) && !user.isAdmin()) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("You can't delete the comment of other user")));
+        }
+        if (CommentService.delete(commentModel)) {
+            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
+        }
+        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
+    }
+
     public static class RatingRequest {
         @Constraints.Required
         public Double rating;
+    }
+
+    public static class CommentRequest {
+        @Constraints.Required
+        public String text;
     }
 
     public static class IngredientRequest {

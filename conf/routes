@@ -56,6 +56,14 @@ PATCH   /recipes/$id<[0-9]+>/fav    controllers.RecipeController.toggleFav(id: I
 ## Rating
 PUT     /recipes/$id<[0-9]+>/rating     controllers.RecipeController.rating(id: Integer)
 
+## Comments
+GET     /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.getReplies(id: Integer, commentId: Integer)
+POST    /recipes/$id<[0-9]+>/comments                       controllers.RecipeController.createComment(id: Integer, commentId: Integer = null)
+POST    /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.createComment(id: Integer, commentId: Integer)
+PUT     /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.updateComment(id: Integer, commentId: Integer)
+PATCH   /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.updateComment(id: Integer, commentId: Integer)
+DELETE  /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.deleteComment(id: Integer, commentId: Integer)
+
 ## User files
 GET     /users/$idUser<[0-9]+>/files                  controllers.FileController.getUserFiles(idUser: Integer)
 GET     /users/$idUser<[0-9]+>/files/$id<[0-9]+>      controllers.FileController.getById(idUser: Integer, id: Integer)

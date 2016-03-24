@@ -52,6 +52,15 @@ public class CommentService {
      */
     public static Boolean delete(Integer id) {
         Comment comment = dao.find(id);
+        return delete(comment);
+    }
+
+    /**
+     * Delete a comment by model
+     *
+     * @param comment Comment
+     */
+    public static Boolean delete(Comment comment) {
         if (comment != null) {
             dao.delete(comment);
             return true;
@@ -88,5 +97,9 @@ public class CommentService {
      */
     public static Long count() {
         return dao.count();
+    }
+
+    public static List<Comment> getReplies(Integer recipeId, Integer id) {
+        return dao.replies(recipeId, id);
     }
 }
