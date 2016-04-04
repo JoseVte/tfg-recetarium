@@ -26,7 +26,7 @@ PATCH   /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
 
 ## Recipes
-GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "created_at+desc")
+GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "created_at+desc", tags: Seq[Integer])
 # This URI is not necessary, the recipes are identified by a slug
 #GET    /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
 GET     /recipes/:slug                          controllers.RecipeController.get(slug: String)

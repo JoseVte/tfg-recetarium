@@ -10,6 +10,8 @@ import models.service.UserService;
 import play.db.jpa.JPA;
 
 import javax.persistence.NoResultException;
+import javax.persistence.TypedQuery;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeDAO extends CrudDAO<Recipe> {
@@ -205,7 +207,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public List<Recipe> paginate(Integer page, Integer size, String search, String user) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " ORDER BY id", Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+        return paginate(page, size, search, user, "id");
     }
 
     /**
@@ -220,7 +222,29 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public List<Recipe> paginate(Integer page, Integer size, String search, String user, String order) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " ORDER BY " + order, Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+        return paginate(page, size, search, user, order, new ArrayList<Integer>());
+    }
+
+    /**
+     * Get the page of models order by field and tags
+     *
+     * @param search String
+     * @param page   Integer
+     * @param size   Integer
+     * @param user   String
+     * @param order  String
+     * @param tags   Seq
+     *
+     * @return List<Recipe>
+     */
+    public List<Recipe> paginate(Integer page, Integer size, String search, String user, String order, List<Integer> tags) {
+        TypedQuery<Recipe> queryObject;
+        if (!tags.isEmpty()) {
+            queryObject = JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.tags t WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " AND t.id IN (:tags) ORDER BY " + order, Recipe.class).setParameter("tags", tags);
+        } else {
+            queryObject = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " ORDER BY " + order, Recipe.class);
+        }
+        return queryObject.setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
@@ -232,7 +256,26 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return Long
      */
     public Long count(String search, String user) {
-        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false), Long.class).getSingleResult();
+        return count(search, user, new ArrayList<Integer>());
+    }
+
+    /**
+     * Count the all events with search parameter
+     *
+     * @param search String
+     * @param user   String
+     * @param tags   List
+     *
+     * @return Long
+     */
+    public Long count(String search, String user, List<Integer> tags) {
+        TypedQuery<Long> queryObject;
+        if (!tags.isEmpty()) {
+            queryObject = JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m JOIN m.tags t WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " AND t.id IN (:tags)", Long.class).setParameter("tags", tags);
+        } else {
+            queryObject = JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false), Long.class);
+        }
+        return queryObject.getSingleResult();
     }
 
     /**
