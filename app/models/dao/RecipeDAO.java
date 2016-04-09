@@ -240,7 +240,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     public List<Recipe> paginate(Integer page, Integer size, String search, String user, String order, List<Integer> tags) {
         TypedQuery<Recipe> queryObject;
         if (!tags.isEmpty()) {
-            queryObject = JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.tags t WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " AND t.id IN (:tags) ORDER BY " + order, Recipe.class).setParameter("tags", tags);
+            queryObject = JPA.em().createQuery("SELECT DISTINCT m FROM " + TABLE + " m JOIN m.tags t WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " AND t.tag.id IN (:tags) ORDER BY " + order, Recipe.class).setParameter("tags", tags);
         } else {
             queryObject = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " ORDER BY " + order, Recipe.class);
         }
@@ -271,7 +271,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     public Long count(String search, String user, List<Integer> tags) {
         TypedQuery<Long> queryObject;
         if (!tags.isEmpty()) {
-            queryObject = JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m JOIN m.tags t WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " AND t.id IN (:tags)", Long.class).setParameter("tags", tags);
+            queryObject = JPA.em().createQuery("SELECT count(DISTINCT m) FROM " + TABLE + " m JOIN m.tags t WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " AND t.tag.id IN (:tags)", Long.class).setParameter("tags", tags);
         } else {
             queryObject = JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false), Long.class);
         }

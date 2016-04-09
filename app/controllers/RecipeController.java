@@ -436,7 +436,7 @@ public class RecipeController extends AbstractController {
             if (category_id != null && CategoryService.find(category_id) == null) {
                 errors.add(new ValidationError("category", "The category doesn't exist"));
             }
-            List<Integer> list = TagService.containAll(tags);
+            List<Integer> list = TagService.containAll(new ArrayList<>(tags));
             if (!list.isEmpty()) {
                 errors.add(new ValidationError("tag", "The tag don't exist: " + list.toString()));
             }
