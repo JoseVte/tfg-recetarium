@@ -76,9 +76,13 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.8.1](/doc/rocket-blue.png) 0.8.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.1)
+#### [![0.9.1](/doc/rocket-blue.png) 0.9.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.9.1)
 
-- CRUD de recetas
+- Busqueda de recetas por tags
+
+###### [![0.8.1](/doc/release.png) 0.8.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.8.1)
+
+- CRUD de comentarios
 
 ###### [![0.8.0-hotfix](/doc/release.png) 0.8.0-hotfix](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.0-hotfix)
 

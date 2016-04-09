@@ -36,13 +36,18 @@ public class RecipeController extends AbstractController {
     @Override
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size, String search, String order) {
+        return list(page, size, search, order, null);
+    }
+
+    @Transactional(readOnly = true)
+    public Result list(Integer page, Integer size, String search, String order, scala.collection.Seq<Integer> tags) {
         order = order.replace('+', ' ');
-        List<Recipe> models = RecipeService.paginate(page - 1, size, search, request().username(), order);
-        Long count = RecipeService.count(search, request().username());
+        List<Recipe> models = RecipeService.paginate(page - 1, size, search, request().username(), order, scala.collection.JavaConversions.seqAsJavaList(tags));
+        Long count = RecipeService.count(search, request().username(), scala.collection.JavaConversions.seqAsJavaList(tags));
         String[] routesString = new String[3];
-        routesString[0] = routes.RecipeController.list(page - 1, size, search, order).toString();
-        routesString[1] = routes.RecipeController.list(page + 1, size, search, order).toString();
-        routesString[2] = routes.RecipeController.list(page, size, search, order).toString();
+        routesString[0] = routes.RecipeController.list(page - 1, size, search, order, tags).toString();
+        routesString[1] = routes.RecipeController.list(page + 1, size, search, order, tags).toString();
+        routesString[2] = routes.RecipeController.list(page, size, search, order, tags).toString();
 
         ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString, !Objects.equals(search, ""));
 
@@ -431,7 +436,7 @@ public class RecipeController extends AbstractController {
             if (category_id != null && CategoryService.find(category_id) == null) {
                 errors.add(new ValidationError("category", "The category doesn't exist"));
             }
-            List<Integer> list = TagService.containAll(tags);
+            List<Integer> list = TagService.containAll(new ArrayList<>(tags));
             if (!list.isEmpty()) {
                 errors.add(new ValidationError("tag", "The tag don't exist: " + list.toString()));
             }

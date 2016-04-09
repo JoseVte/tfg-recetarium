@@ -177,6 +177,7 @@ public class Recipe extends Model implements Serializable {
     @Override
     public void handleRelations(Model old) {
         Recipe recipe = (Recipe) old;
+        this.setCreatedAt(recipe.getCreatedAt());
         ingredients = recipe.ingredients;
         user = recipe.user;
         comments = recipe.comments;
