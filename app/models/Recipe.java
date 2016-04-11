@@ -159,6 +159,15 @@ public class Recipe extends Model implements Serializable {
         return "(m.isDraft = " + with + ")";
     }
 
+    @JsonIgnore
+    public static String WithTags(List<Integer> tags) {
+        String query = "";
+        for (Integer id : tags) {
+            query += " AND ((SELECT count(*) FROM " + RecipeTags.class.getName() + " t WHERE m.id = t.recipe.id AND t.tag.id = " + id + ") > 0)";
+        }
+        return query;
+    }
+
     /*
      * (non-Javadoc)
      *
