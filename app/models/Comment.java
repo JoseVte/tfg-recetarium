@@ -4,12 +4,15 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import models.base.Model;
 import models.dao.CommentDAO;
 import play.data.validation.Constraints;
+import util.serializer.CommentParentSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -24,22 +27,21 @@ public class Comment extends Model implements Serializable {
     public String text;
 
     @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "recipe_id")
     public Recipe recipe;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     public User user;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonSerialize(using = CommentParentSerializer.class)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "parent_comment_id")
     public Comment parent;
 
-    // @JsonIgnore
-    @OneToMany(mappedBy = "parent", fetch = FetchType.LAZY, orphanRemoval = true)
-    public List<Comment> replies;
+    @OneToMany(mappedBy = "parent", fetch = FetchType.EAGER, orphanRemoval = true)
+    public List<Comment> replies = new ArrayList<Comment>();
 
     public Comment() {
         dao = new CommentDAO();
@@ -55,7 +57,7 @@ public class Comment extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#prePersistData()
      */
     @Override
@@ -64,7 +66,7 @@ public class Comment extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see util.Model#handleRelations(util.Model old)
      */
     @Override
@@ -76,7 +78,7 @@ public class Comment extends Model implements Serializable {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see java.lang.Object#toString()
      */
     @Override

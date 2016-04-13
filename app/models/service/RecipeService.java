@@ -45,7 +45,7 @@ public class RecipeService {
     }
 
     public static Recipe createDraft(User user) {
-        Long lastId = recipeDAO.countNumberByUser(user) + 1;
+        Integer lastId = user.numRecipes + 1;
         Recipe recipe = new Recipe("recipe-" + user.username + "-" + lastId, "Recipe " + user.username + " " + lastId, null, new Date(0), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, user, null, null);
         recipe.isDraft = true;
         return recipeDAO.create(recipe);
@@ -175,6 +175,22 @@ public class RecipeService {
     }
 
     /**
+     * Get the page of models order by field
+     *
+     * @param search String
+     * @param page   Integer
+     * @param size   Integer
+     * @param user   String
+     * @param order  String
+     * @param tags   List
+     *
+     * @return List<Recipe>
+     */
+    public static List<Recipe> paginate(Integer page, Integer size, String search, String user, String order, List<Integer> tags) {
+        return recipeDAO.paginate(page, size, search, user, order, tags);
+    }
+
+    /**
      * Get the number of total of searched recipes
      *
      * @param search String
@@ -184,6 +200,19 @@ public class RecipeService {
      */
     public static Long count(String search, String user) {
         return recipeDAO.count(search, user);
+    }
+
+    /**
+     * Get the number of total of searched recipes
+     *
+     * @param search String
+     * @param user   String
+     * @param tags   List
+     *
+     * @return Long
+     */
+    public static Long count(String search, String user, List<Integer> tags) {
+        return recipeDAO.count(search, user, tags);
     }
 
     /**

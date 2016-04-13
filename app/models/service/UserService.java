@@ -427,4 +427,8 @@ public class UserService {
         }
         return false;
     }
+
+    public static void addRecipeCount(User user){
+        userDAO.addRecipeCount(user);
+    }
 }
