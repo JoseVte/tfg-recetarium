@@ -39,6 +39,7 @@ DELETE  /recipes/$id<[0-9]+>                    controllers.RecipeController.del
 HEAD    /recipes/:slug/check                    controllers.RecipeController.checkSlug(slug: String, id: Integer = null)
 HEAD    /recipes/:slug/check/$id<[0-9]+>        controllers.RecipeController.checkSlug(slug: String, id: Integer)
 HEAD    /recipes/:slug/mine                     controllers.RecipeController.isMine(slug: String)
+GET     /users/$id<[0-9]+>/recipes              controllers.RecipeController.getAllByUser(id : Integer)
 
 ## Ingredients
 POST    /recipes/$id<[0-9]+>/ingredient                               controllers.RecipeController.addIngredient(id: Integer)
