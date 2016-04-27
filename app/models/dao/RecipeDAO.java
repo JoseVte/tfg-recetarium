@@ -339,7 +339,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
                 if (logged.isAdmin()) {
                     return find(idRecipe);
                 }
-                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m JOIN m.user u WHERE m.id = '" + idRecipe + "' AND u.id = '" + logged.id + "'", Recipe.class).getSingleResult();
+                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = '" + idRecipe + "' AND m.user = '" + logged.id + "'", Recipe.class).getSingleResult();
             }
             return null;
         } catch (NoResultException e) {
@@ -383,6 +383,10 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Long countNumberByUser(User user) {
         return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE user = '" + user.id + "'", Long.class).getSingleResult();
+    }
+
+    public List<Recipe> getAllByUser(Integer idUser) {
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.user = " + idUser, Recipe.class).getResultList();
     }
 
     /**

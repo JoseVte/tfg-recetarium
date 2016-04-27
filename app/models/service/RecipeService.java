@@ -228,6 +228,17 @@ public class RecipeService {
     }
 
     /**
+     * Get all recipes by user
+     *
+     * @param idUser Integer
+     *
+     * @return List<Recipe>
+     */
+    public static List<Recipe> getAllByUser(Integer idUser) {
+        return recipeDAO.getAllByUser(idUser);
+    }
+
+    /**
      * Add a tag to a recipe
      *
      * @param tagId    Integer

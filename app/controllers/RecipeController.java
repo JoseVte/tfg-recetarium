@@ -54,6 +54,12 @@ public class RecipeController extends AbstractController {
         return util.Json.jsonResult(response(), ok(result));
     }
 
+    @Transactional(readOnly = true)
+    public Result getAllByUser(Integer id) {
+        List<Recipe> result = RecipeService.getAllByUser(id);
+        return util.Json.jsonResult(response(), ok(Json.toJson(result)));
+    }
+
     @Override
     @Transactional(readOnly = true)
     public Result get(Integer id) {

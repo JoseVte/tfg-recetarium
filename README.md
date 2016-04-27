@@ -76,7 +76,11 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.8.2-hotfix](/doc/rocket-blue.png) 0.8.2-hotfix](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.2-hotfix)
+#### [![0.9.1](/doc/rocket-blue.png) 0.9.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.9.1)
+
+- Ver las recetas por usuario
+
+###### [![0.8.2-hotfix](/doc/release.png) 0.8.2-hotfix](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.8.2-hotfix)
 
 - Fixeada query para la busqueda de recetas por tags
 
