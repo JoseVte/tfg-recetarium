@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class UserController extends AbstractController {
+public class UserController extends AbstractCrudController {
     private Form<UserRequest> formModel = Form.form(UserRequest.class);
 
     /**

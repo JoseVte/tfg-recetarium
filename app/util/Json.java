@@ -39,9 +39,12 @@ public class Json {
         return mapper().createObjectNode().put("msg", msg);
     }
 
+    public static ObjectNode generateJsonBooleanInfoMessages(String field, boolean value) {
+        return mapper().createObjectNode().put(field, value);
+    }
+
     @SuppressWarnings("deprecation")
-    public static ObjectNode generateJsonPaginateObject(List<? extends Model> models, Long count, Integer page,
-                                                        Integer size, String[] routes, boolean search) {
+    public static ObjectNode generateJsonPaginateObject(List<? extends Model> models, Long count, Integer page, Integer size, String[] routes, boolean search) {
         ObjectNode object = mapper().createObjectNode();
         object.put("data", play.libs.Json.toJson(models));
         object.put("total", count);

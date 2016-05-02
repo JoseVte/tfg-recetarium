@@ -27,7 +27,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public class RecipeController extends AbstractController {
+public class RecipeController extends AbstractCrudController {
     private static Form<RecipeRequest> recipeForm = Form.form(RecipeRequest.class);
     private static Form<IngredientRequest> ingredientForm = Form.form(IngredientRequest.class);
     private static Form<RatingRequest> ratingForm = Form.form(RatingRequest.class);

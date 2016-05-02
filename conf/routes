@@ -25,6 +25,11 @@ PUT     /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 PATCH   /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
 
+## Friends
+GET     /users/$id<[0-9]+>/friends                      controllers.FriendController.list(id: Integer, page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "id")
+POST    /users/$id<[0-9]+>/friends                      controllers.FriendController.create(id: Integer)
+DELETE  /users/$id<[0-9]+>/friends/$friendId<[0-9]+>    controllers.FriendController.delete(id: Integer, friendId: Integer)
+
 ## Recipes
 GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "created_at+desc", tags: Seq[Integer])
 # This URI is not necessary, the recipes are identified by a slug

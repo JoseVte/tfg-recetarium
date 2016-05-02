@@ -275,6 +275,14 @@ public class UserService {
         userDAO.update(user);
     }
 
+    public static List<User> getFriendsPaginate(Integer userId, Integer page, Integer size, String search, String order) {
+        return userDAO.getFriendsPaginate(userId, page, size, search, order);
+    }
+
+    public static Long countFriends(Integer userId, String search) {
+        return userDAO.countFriends(userId, search);
+    }
+
     /**
      * Add new friend to an user
      *
