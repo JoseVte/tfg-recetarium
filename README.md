@@ -76,7 +76,11 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.9.1](/doc/rocket-blue.png) 0.9.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.9.1)
+#### [![0.10.1](/doc/rocket-blue.png) 0.10.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.1)
+
+- Rutas para ver, agregar y borrar amigos
+
+###### [![0.9.1](/doc/release.png) 0.9.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.9.1)
 
 - Ver las recetas por usuario
 

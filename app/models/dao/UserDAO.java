@@ -39,6 +39,18 @@ public class UserDAO extends CrudDAO<User> {
         return Encryptation.check(password, correctHash);
     }
 
+    public List<User> getFriendsPaginate(Integer userId, Integer page, Integer size, String search, String order) {
+        return JPA.em().createQuery("SELECT u FROM " + Friend.class.getName() + " f JOIN f.friend u WHERE f.user = " + userId
+                + " AND (u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search +
+                "%' OR u.lastName LIKE '%" + search + "%') ORDER BY u." + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+    }
+
+    public Long countFriends(Integer userId, String search) {
+        return JPA.em().createQuery("SELECT count(u) FROM " + Friend.class.getName() + " f JOIN f.friend u WHERE f.user = " + userId
+                + " AND (u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search +
+                "%' OR u.lastName LIKE '%" + search + "%')", Long.class).getSingleResult();
+    }
+
     /**
      * Add new friend to an user
      *
