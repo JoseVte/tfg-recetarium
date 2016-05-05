@@ -12,8 +12,7 @@ import java.util.List;
 public class RecipeCommentsSerializer extends JsonSerializer<List<Comment>> {
 
     @Override
-    public void serialize(List<Comment> value, JsonGenerator jgen, SerializerProvider provider)
-            throws IOException, JsonProcessingException {
+    public void serialize(List<Comment> value, JsonGenerator jgen, SerializerProvider provider) throws IOException, JsonProcessingException {
         jgen.writeStartArray();
         for (Comment comment : value) {
             if (comment.parent == null) {
