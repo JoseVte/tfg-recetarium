@@ -37,7 +37,7 @@ public class FriendController extends AbstractController {
     @Security.Authenticated(Authenticated.class)
     public Result create(Integer id) {
         Form<FriendRequest> friend = friendForm.bindFromRequest();
-        if (Objects.equals(Json.fromJson(Json.parse(request().username()), User.class).id, id)) {
+        if (!Objects.equals(Json.fromJson(Json.parse(request().username()), User.class).id, id)) {
             return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
         }
         if (!UserService.addFriend(id, friend.get().id)) {
@@ -49,10 +49,10 @@ public class FriendController extends AbstractController {
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id, Integer friendId) {
-        if (Objects.equals(Json.fromJson(Json.parse(request().username()), User.class).id, id)) {
+        if (!Objects.equals(Json.fromJson(Json.parse(request().username()), User.class).id, id)) {
             return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
         }
-        if (!UserService.addFriend(id, friendId)) {
+        if (!UserService.deleteFriend(id, friendId)) {
             return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
         }
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonBooleanInfoMessages("deleted", true)));

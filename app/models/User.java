@@ -3,13 +3,17 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import controllers.UserController.UserRequest;
 import models.base.Model;
 import models.enums.TypeUser;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import util.Encryptation;
+import util.serializer.UserFriendsSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,7 +23,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "users")
-@JsonPropertyOrder({"id", "username", "email", "first_name", "last_name", "type", "created_at", "updated_at"})
+@JsonPropertyOrder({"id", "username", "email", "first_name", "last_name", "type", "myFriends", "friends", "created_at", "updated_at"})
 public class User extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -69,12 +73,14 @@ public class User extends Model implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment> comments = new ArrayList<Comment>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = UserFriendsSerializer.class)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Friend> myFriends = new ArrayList<Friend>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = UserFriendsSerializer.class)
+    @OneToMany(mappedBy = "friend", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Friend> friends = new ArrayList<Friend>();
 
     @JsonIgnore
