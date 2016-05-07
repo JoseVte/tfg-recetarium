@@ -28,6 +28,31 @@ public class UserDAO extends CrudDAO<User> {
     }
 
     /**
+     * Get the page of models order by field
+     *
+     * @param search String
+     * @param page   Integer
+     * @param size   Integer
+     * @param order  String
+     *
+     * @return List<User>
+     */
+    public List<User> paginate(Integer page, Integer size, String search, String order) {
+        return JPA.em().createQuery("SELECT u FROM " + TABLE + " u WHERE " + User.Search(search) + " ORDER BY " + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+    }
+
+    /**
+     * Count the all user with search parameter
+     *
+     * @param search String
+     *
+     * @return Long
+     */
+    public Long count(String search) {
+        return JPA.em().createQuery("SELECT count(u) FROM " + TABLE + " u WHERE " + User.Search(search), Long.class).getSingleResult();
+    }
+
+    /**
      * Validates a password using a hash.
      *
      * @param password    the password to check
@@ -39,10 +64,20 @@ public class UserDAO extends CrudDAO<User> {
         return Encryptation.check(password, correctHash);
     }
 
+    /**
+     * Get the page of models order by field
+     *
+     * @param userId Integer
+     * @param search String
+     * @param page   Integer
+     * @param size   Integer
+     * @param order  String
+     *
+     * @return List<User>
+     */
     public List<User> getFriendsPaginate(Integer userId, Integer page, Integer size, String search, String order) {
         return JPA.em().createQuery("SELECT u FROM " + Friend.class.getName() + " f JOIN f.friend u WHERE f.user = " + userId
-                + " AND (u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search +
-                "%' OR u.lastName LIKE '%" + search + "%') ORDER BY u." + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+                + " AND " + User.Search(search) + " ORDER BY u." + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     public Long countFriends(Integer userId, String search) {
