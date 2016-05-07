@@ -38,8 +38,8 @@ public class UserController extends AbstractCrudController {
     @Security.Authenticated(Authenticated.class)
     @SuppressWarnings("deprecation")
     public Result list(Integer page, Integer size, String search, String order) {
-        List<User> models = UserService.paginate(page - 1, size);
-        Long count = UserService.count();
+        List<User> models = UserService.paginate(page - 1, size, search, order);
+        Long count = UserService.count(search);
         String[] routesString = new String[3];
         routesString[0] = routes.UserController.list(page - 1, size, search, order).toString();
         routesString[1] = routes.UserController.list(page + 1, size, search, order).toString();

@@ -172,4 +172,9 @@ public class User extends Model implements Serializable {
     public boolean isAdmin() {
         return type.equals(TypeUser.ADMIN);
     }
+
+    @JsonIgnore
+    public static String Search(String search) {
+        return "(u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search + "%' OR u.lastName LIKE '%" + search + "%')";
+    }
 }

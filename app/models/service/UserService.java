@@ -135,7 +135,21 @@ public class UserService {
      * @return List<User>
      */
     public static List<User> paginate(Integer page, Integer size) {
-        return userDAO.paginate(page, size);
+        return paginate(page, size, "", "id");
+    }
+
+    /**
+     * Get the page of users
+     *
+     * @param page Integer
+     * @param size Integer
+     * @param search String
+     * @param order String
+     *
+     * @return List<User>
+     */
+    public static List<User> paginate(Integer page, Integer size, String search, String order) {
+        return userDAO.paginate(page, size, search, order);
     }
 
     /**
@@ -144,7 +158,18 @@ public class UserService {
      * @return Long
      */
     public static Long count() {
-        return userDAO.count();
+        return count("");
+    }
+
+    /**
+     * Get the number of total of users
+     *
+     * @param search String
+     *
+     * @return Long
+     */
+    public static Long count(String search) {
+        return userDAO.count(search);
     }
 
     /**
