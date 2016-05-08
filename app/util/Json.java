@@ -76,13 +76,12 @@ public class Json {
      *
      * @return String
      */
-    public static String createJwt(String subject, boolean setExpiration) throws JoseException {
+    public static String createJwt(String subject) throws JoseException {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         int expiration = Play.application().configuration().getInt("jwt.expiry.minutes");
         Key key = new HmacKey(keySecret.getBytes());
 
         JwtClaims claims = new JwtClaims();
-        if (setExpiration) claims.setExpirationTimeMinutesInTheFuture(expiration);
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(2);
@@ -107,8 +106,7 @@ public class Json {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         Key key = new AesKey(keySecret.getBytes());
 
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setAllowedClockSkewInSeconds(30).setRequireSubject()
-                .setVerificationKey(key).build();
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setAllowedClockSkewInSeconds(30).setRequireSubject().setVerificationKey(key).build();
 
         try {
             // Validate the JWT and process it to the Claims

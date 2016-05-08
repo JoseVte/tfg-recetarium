@@ -15,6 +15,7 @@ import static play.test.Helpers.*;
 public class AuthControllerTest extends AbstractTest {
     private ObjectNode loginJson;
     private ObjectNode badJson;
+    private ObjectNode notActive;
     private ObjectNode registerJson;
     private ObjectNode badRegisterJson1;
     private ObjectNode badRegisterJson2;
@@ -34,6 +35,10 @@ public class AuthControllerTest extends AbstractTest {
         badJson = Json.newObject();
         badJson.put("email", "test@testing.dev");
         badJson.put("password", "passwor1");
+
+        notActive = Json.newObject();
+        notActive.put("email", "newtest@test.dev");
+        notActive.put("password", "password");
 
         registerJson = Json.newObject();
         registerJson.put("username", "Yasuo");
@@ -121,17 +126,27 @@ public class AuthControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testAuthControllerRegisterOk() {
+    public void testAuthControllerLoginNotActive() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/auth/register").post(registerJson).get(30000);
             assertEquals(OK, response.getStatus());
             assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
 
-            JsonNode responseJson = response.asJson();
-            assertTrue(responseJson.isObject());
-            assertNotNull(responseJson.get(AuthController.AUTH_TOKEN));
+            response = WS.url("http://localhost:3333/auth/login").post(notActive).get(timeout);
+            assertEquals(UNAUTHORIZED, response.getStatus());
 
+            successTest();
+        });
+    }
+
+    @Test
+    public void testAuthControllerRegisterOk() {
+        running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
+            initializeDataController();
+            WSResponse response = WS.url("http://localhost:3333/auth/register").post(registerJson).get(30000);
+            assertEquals(OK, response.getStatus());
+            assertEquals("application/json; charset=utf-8", response.getHeader("Content-Type"));
             successTest();
         });
     }

@@ -10,6 +10,7 @@ import models.enums.TypeUser;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
+import models.service.FileService;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import util.Encryptation;
@@ -61,6 +62,15 @@ public class User extends Model implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     public Date lostPassExpire;
 
+    @Column(name = "validation_email_token")
+    @JsonIgnore
+    public String validationEmailToken;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonProperty(value = "avatar")
+    @JoinColumn(name = "avatar_id", nullable = true)
+    public File avatar;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Recipe> recipes = new ArrayList<Recipe>();
@@ -111,6 +121,7 @@ public class User extends Model implements Serializable {
         this.firstName = user.first_name;
         this.lastName = user.last_name;
         this.type = user.type;
+        if (user.avatar != null) this.avatar = FileService.find(this, user.avatar);
     }
 
     /*
@@ -176,5 +187,10 @@ public class User extends Model implements Serializable {
     @JsonIgnore
     public static String Search(String search) {
         return "(u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search + "%' OR u.lastName LIKE '%" + search + "%')";
+    }
+
+    @JsonIgnore
+    public boolean isActive() {
+        return this.validationEmailToken == null;
     }
 }

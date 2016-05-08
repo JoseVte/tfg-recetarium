@@ -112,6 +112,7 @@ public class UserController extends AbstractCrudController {
         public String password;
         public String first_name;
         public String last_name;
+        public Integer avatar = null;
 
         @Constraints.Required
         public TypeUser type;
