@@ -188,8 +188,7 @@ public class UserDAO extends CrudDAO<User> {
      * @param recipe Recipe
      */
     public static void deleteRating(User user, Recipe recipe) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
-                + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         JPA.em().remove(rating);
         // Reload entities
         JPA.em().flush();
@@ -208,8 +207,7 @@ public class UserDAO extends CrudDAO<User> {
      * @throws NoSuchAlgorithmException
      */
     public User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        User user = new User(register.username, register.email, register.password, register.first_name,
-                register.last_name, TypeUser.COMUN);
+        User user = new User(register.username, register.email, register.password, register.first_name, register.last_name, TypeUser.COMUN);
         return this.create(user);
     }
 
@@ -224,8 +222,7 @@ public class UserDAO extends CrudDAO<User> {
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id, String comparison) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
-                + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
     }
 
     /**
@@ -266,10 +263,12 @@ public class UserDAO extends CrudDAO<User> {
         try {
             ObjectMapper json = new ObjectMapper();
             ObjectNode object = json.createObjectNode();
+            user.friends.clear();
+            user.myFriends.clear();
             object.put("user", Json.toJson(user));
             object.put("setExpiration", setExpiration);
 
-            return util.Json.createJwt(object.toString(), setExpiration);
+            return util.Json.createJwt(object.toString());
         } catch (JoseException e) {
             Logger.error(e.getMessage());
             return "";
@@ -311,6 +310,17 @@ public class UserDAO extends CrudDAO<User> {
     }
 
     /**
+     * Active the account
+     *
+     * @param token String
+     */
+    public void activeAccount(String token) {
+        User user = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.validationEmailToken = '" + token + "'", User.class).getSingleResult();
+        user.validationEmailToken = null;
+        update(user);
+    }
+
+    /**
      * Find an user by email
      *
      * @param email String
@@ -320,8 +330,7 @@ public class UserDAO extends CrudDAO<User> {
     public User findByEmailAddress(String email) {
         if (email == null) return null;
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class)
-                    .getSingleResult();
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class).getSingleResult();
         } catch (Exception e) {
             return null;
         }

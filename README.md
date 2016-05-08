@@ -76,7 +76,13 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.10.2](/doc/rocket-blue.png) 0.10.2](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.2)
+#### [![0.10.3](/doc/rocket-blue.png) 0.10.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.3)
+
+- Validacion del email durante el registro
+- Añadido avatar al usuario
+- Recreacion del JWT
+
+###### [![0.10.2](/doc/release.png) 0.10.2](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.10.2)
 
 - Busqueda de usuarios
 

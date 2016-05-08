@@ -86,6 +86,7 @@ public class UserService {
     public static User update(User user, Map<String, String> data) {
         user.firstName = data.get("first_name");
         user.lastName = data.get("last_name");
+        if (data.get("avatar") != null) user.avatar = FileService.find(user, Integer.valueOf(data.get("avatar")));
         if (data.get("password") != null && !data.get("password").isEmpty())
             user.password = Encryptation.createHash(data.get("password"));
         return userDAO.update(user);
@@ -195,7 +196,9 @@ public class UserService {
      * @throws NoSuchAlgorithmException
      */
     public static User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return userDAO.register(register);
+        User user = userDAO.register(register);
+        addVerificationEmail(user);
+        return user;
     }
 
     /**
@@ -268,6 +271,29 @@ public class UserService {
         VerificationToken token = new VerificationToken();
         user.lostPassToken = token.getToken();
         user.lostPassExpire = token.getExpiryDate();
+        userDAO.update(user);
+        return token;
+    }
+
+    /**
+     * Active the account
+     *
+     * @param token String
+     */
+    public static void activeAccount(String token) {
+        userDAO.activeAccount(token);
+    }
+
+    /**
+     * Add new token for validation email in the user
+     *
+     * @param user User
+     *
+     * @return VerificationToken
+     */
+    public static VerificationToken addVerificationEmail(User user) {
+        VerificationToken token = new VerificationToken();
+        user.validationEmailToken = token.getToken();
         userDAO.update(user);
         return token;
     }
