@@ -20,6 +20,7 @@ import util.VerificationToken;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class UserDAO extends CrudDAO<User> {
@@ -289,7 +290,7 @@ public class UserDAO extends CrudDAO<User> {
             JsonNode json = Json.parse(util.Json.checkJwt(jwt));
             if (!json.has("user")) throw new Exception("Token malformed");
 
-            return Json.fromJson(json.get("user"), User.class);
+            return new User(Json.fromJson(json.get("user"), LinkedHashMap.class));
         } catch (Exception e) {
             return null;
         }
