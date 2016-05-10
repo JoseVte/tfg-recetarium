@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class UserController extends AbstractController {
+public class UserController extends AbstractCrudController {
     private Form<UserRequest> formModel = Form.form(UserRequest.class);
 
     /**
@@ -38,8 +38,8 @@ public class UserController extends AbstractController {
     @Security.Authenticated(Authenticated.class)
     @SuppressWarnings("deprecation")
     public Result list(Integer page, Integer size, String search, String order) {
-        List<User> models = UserService.paginate(page - 1, size);
-        Long count = UserService.count();
+        List<User> models = UserService.paginate(page - 1, size, search, order);
+        Long count = UserService.count(search);
         String[] routesString = new String[3];
         routesString[0] = routes.UserController.list(page - 1, size, search, order).toString();
         routesString[1] = routes.UserController.list(page + 1, size, search, order).toString();
@@ -112,6 +112,7 @@ public class UserController extends AbstractController {
         public String password;
         public String first_name;
         public String last_name;
+        public Integer avatar = null;
 
         @Constraints.Required
         public TypeUser type;

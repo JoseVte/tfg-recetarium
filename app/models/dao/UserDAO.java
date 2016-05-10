@@ -20,11 +20,37 @@ import util.VerificationToken;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 public class UserDAO extends CrudDAO<User> {
     public UserDAO() {
         super(User.class);
+    }
+
+    /**
+     * Get the page of models order by field
+     *
+     * @param search String
+     * @param page   Integer
+     * @param size   Integer
+     * @param order  String
+     *
+     * @return List<User>
+     */
+    public List<User> paginate(Integer page, Integer size, String search, String order) {
+        return JPA.em().createQuery("SELECT u FROM " + TABLE + " u WHERE " + User.Search(search) + " ORDER BY " + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+    }
+
+    /**
+     * Count the all user with search parameter
+     *
+     * @param search String
+     *
+     * @return Long
+     */
+    public Long count(String search) {
+        return JPA.em().createQuery("SELECT count(u) FROM " + TABLE + " u WHERE " + User.Search(search), Long.class).getSingleResult();
     }
 
     /**
@@ -37,6 +63,28 @@ public class UserDAO extends CrudDAO<User> {
      */
     public static boolean validatePassword(String password, String correctHash) throws NoSuchAlgorithmException, InvalidKeySpecException {
         return Encryptation.check(password, correctHash);
+    }
+
+    /**
+     * Get the page of models order by field
+     *
+     * @param userId Integer
+     * @param search String
+     * @param page   Integer
+     * @param size   Integer
+     * @param order  String
+     *
+     * @return List<User>
+     */
+    public List<User> getFriendsPaginate(Integer userId, Integer page, Integer size, String search, String order) {
+        return JPA.em().createQuery("SELECT u FROM " + Friend.class.getName() + " f JOIN f.friend u WHERE f.user = " + userId
+                + " AND " + User.Search(search) + " ORDER BY u." + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+    }
+
+    public Long countFriends(Integer userId, String search) {
+        return JPA.em().createQuery("SELECT count(u) FROM " + Friend.class.getName() + " f JOIN f.friend u WHERE f.user = " + userId
+                + " AND (u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search +
+                "%' OR u.lastName LIKE '%" + search + "%')", Long.class).getSingleResult();
     }
 
     /**
@@ -141,8 +189,7 @@ public class UserDAO extends CrudDAO<User> {
      * @param recipe Recipe
      */
     public static void deleteRating(User user, Recipe recipe) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
-                + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         JPA.em().remove(rating);
         // Reload entities
         JPA.em().flush();
@@ -161,8 +208,7 @@ public class UserDAO extends CrudDAO<User> {
      * @throws NoSuchAlgorithmException
      */
     public User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        User user = new User(register.username, register.email, register.password, register.first_name,
-                register.last_name, TypeUser.COMUN);
+        User user = new User(register.username, register.email, register.password, register.first_name, register.last_name, TypeUser.COMUN);
         return this.create(user);
     }
 
@@ -177,8 +223,7 @@ public class UserDAO extends CrudDAO<User> {
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id, String comparison) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
-                + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
+        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
     }
 
     /**
@@ -219,10 +264,12 @@ public class UserDAO extends CrudDAO<User> {
         try {
             ObjectMapper json = new ObjectMapper();
             ObjectNode object = json.createObjectNode();
+            user.friends.clear();
+            user.myFriends.clear();
             object.put("user", Json.toJson(user));
             object.put("setExpiration", setExpiration);
 
-            return util.Json.createJwt(object.toString(), setExpiration);
+            return util.Json.createJwt(object.toString());
         } catch (JoseException e) {
             Logger.error(e.getMessage());
             return "";
@@ -243,7 +290,7 @@ public class UserDAO extends CrudDAO<User> {
             JsonNode json = Json.parse(util.Json.checkJwt(jwt));
             if (!json.has("user")) throw new Exception("Token malformed");
 
-            return Json.fromJson(json.get("user"), User.class);
+            return new User(Json.fromJson(json.get("user"), LinkedHashMap.class));
         } catch (Exception e) {
             return null;
         }
@@ -264,6 +311,17 @@ public class UserDAO extends CrudDAO<User> {
     }
 
     /**
+     * Active the account
+     *
+     * @param token String
+     */
+    public void activeAccount(String token) {
+        User user = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.validationEmailToken = '" + token + "'", User.class).getSingleResult();
+        user.validationEmailToken = null;
+        update(user);
+    }
+
+    /**
      * Find an user by email
      *
      * @param email String
@@ -273,8 +331,7 @@ public class UserDAO extends CrudDAO<User> {
     public User findByEmailAddress(String email) {
         if (email == null) return null;
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class)
-                    .getSingleResult();
+            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class).getSingleResult();
         } catch (Exception e) {
             return null;
         }

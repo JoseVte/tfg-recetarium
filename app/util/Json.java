@@ -39,9 +39,12 @@ public class Json {
         return mapper().createObjectNode().put("msg", msg);
     }
 
+    public static ObjectNode generateJsonBooleanInfoMessages(String field, boolean value) {
+        return mapper().createObjectNode().put(field, value);
+    }
+
     @SuppressWarnings("deprecation")
-    public static ObjectNode generateJsonPaginateObject(List<? extends Model> models, Long count, Integer page,
-                                                        Integer size, String[] routes, boolean search) {
+    public static ObjectNode generateJsonPaginateObject(List<? extends Model> models, Long count, Integer page, Integer size, String[] routes, boolean search) {
         ObjectNode object = mapper().createObjectNode();
         object.put("data", play.libs.Json.toJson(models));
         object.put("total", count);
@@ -73,17 +76,17 @@ public class Json {
      *
      * @return String
      */
-    public static String createJwt(String subject, boolean setExpiration) throws JoseException {
+    public static String createJwt(String subject) throws JoseException {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         int expiration = Play.application().configuration().getInt("jwt.expiry.minutes");
         Key key = new HmacKey(keySecret.getBytes());
 
         JwtClaims claims = new JwtClaims();
-        if (setExpiration) claims.setExpirationTimeMinutesInTheFuture(expiration);
         claims.setGeneratedJwtId();
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(2);
         claims.setSubject(subject);
+        claims.setExpirationTimeMinutesInTheFuture(expiration);
 
         JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());
@@ -104,8 +107,7 @@ public class Json {
         String keySecret = Play.application().configuration().getString("play.crypto.secret");
         Key key = new AesKey(keySecret.getBytes());
 
-        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setAllowedClockSkewInSeconds(30).setRequireSubject()
-                .setVerificationKey(key).build();
+        JwtConsumer jwtConsumer = new JwtConsumerBuilder().setAllowedClockSkewInSeconds(30).setRequireSubject().setVerificationKey(key).build();
 
         try {
             // Validate the JWT and process it to the Claims

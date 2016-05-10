@@ -53,17 +53,13 @@ public class AuthController extends Controller {
         User user;
         try {
             user = UserService.register(register);
-            // Login after register
             if (user == null) {
                 return util.Json.jsonResult(response(), unauthorized());
             } else {
                 if (mailer.sendRegistrationEmails(user) == null) {
                     return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
                 }
-                String authToken = UserService.createJWT(user, register.setExpiration);
-                ObjectNode authTokenJson = Json.newObject();
-                authTokenJson.put(AUTH_TOKEN, authToken);
-                return util.Json.jsonResult(response(), ok(authTokenJson));
+                return util.Json.jsonResult(response(), ok());
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
@@ -89,7 +85,7 @@ public class AuthController extends Controller {
 
         User user = UserService.findByEmailAddressAndPassword(login.email, login.password);
 
-        if (user == null) {
+        if (user == null || !user.isActive()) {
             return util.Json.jsonResult(response(), unauthorized());
         } else {
             String authToken = UserService.createJWT(user, login.setExpiration);
@@ -158,6 +154,45 @@ public class AuthController extends Controller {
     }
 
     /**
+     * Check the token and creates a new
+     *
+     * @return Result
+     */
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result checkToken() {
+        Form<Check> checkForm = Form.form(Check.class).bindFromRequest();
+        Check check = checkForm.get();
+        User user = UserService.findByEmailAddress(check.email);
+        if (user.equals(Json.fromJson(Json.parse(request().username()), User.class))) {
+            String authToken = UserService.createJWT(user, check.setExpiration);
+            ObjectNode authTokenJson = Json.newObject();
+            authTokenJson.put(AUTH_TOKEN, authToken);
+            return util.Json.jsonResult(response(), ok(authTokenJson));
+        }
+        return unauthorized();
+    }
+
+    /**
+     * Active the account by token
+     *
+     * @return Result
+     */
+    @Transactional
+    @Security.Authenticated(Anonymous.class)
+    public Result activeToken() {
+        Form<ActiveAccount> active = Form.form(ActiveAccount.class).bindFromRequest();
+
+        if (active.hasErrors()) {
+            return util.Json.jsonResult(response(), badRequest(active.errorsAsJson()));
+        }
+
+        UserService.activeAccount(active.get().token);
+
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Account actived successfully")));
+    }
+
+    /**
      * Get user profile
      *
      * @return Result
@@ -194,6 +229,10 @@ public class AuthController extends Controller {
         @Constraints.Required
         @Constraints.Email
         public String email;
+    }
+
+    public static class Check extends RecoverPassword {
+        public boolean setExpiration = true;
     }
 
     public static class Login extends RecoverPassword {
@@ -241,6 +280,7 @@ public class AuthController extends Controller {
 
         public String first_name;
         public String last_name;
+        public Integer image_main = null;
 
         public Profile() { }
 
@@ -252,6 +292,11 @@ public class AuthController extends Controller {
             }
             return errors.isEmpty() ? null : errors;
         }
+    }
+
+    public static class ActiveAccount {
+        @Constraints.Required
+        public String token;
     }
 
     public static class ResetPassword {

@@ -86,6 +86,7 @@ public class UserService {
     public static User update(User user, Map<String, String> data) {
         user.firstName = data.get("first_name");
         user.lastName = data.get("last_name");
+        if (data.get("avatar") != null) user.avatar = FileService.find(user, Integer.valueOf(data.get("avatar")));
         if (data.get("password") != null && !data.get("password").isEmpty())
             user.password = Encryptation.createHash(data.get("password"));
         return userDAO.update(user);
@@ -135,7 +136,21 @@ public class UserService {
      * @return List<User>
      */
     public static List<User> paginate(Integer page, Integer size) {
-        return userDAO.paginate(page, size);
+        return paginate(page, size, "", "id");
+    }
+
+    /**
+     * Get the page of users
+     *
+     * @param page Integer
+     * @param size Integer
+     * @param search String
+     * @param order String
+     *
+     * @return List<User>
+     */
+    public static List<User> paginate(Integer page, Integer size, String search, String order) {
+        return userDAO.paginate(page, size, search, order);
     }
 
     /**
@@ -144,7 +159,18 @@ public class UserService {
      * @return Long
      */
     public static Long count() {
-        return userDAO.count();
+        return count("");
+    }
+
+    /**
+     * Get the number of total of users
+     *
+     * @param search String
+     *
+     * @return Long
+     */
+    public static Long count(String search) {
+        return userDAO.count(search);
     }
 
     /**
@@ -170,7 +196,9 @@ public class UserService {
      * @throws NoSuchAlgorithmException
      */
     public static User register(Register register) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return userDAO.register(register);
+        User user = userDAO.register(register);
+        addVerificationEmail(user);
+        return user;
     }
 
     /**
@@ -248,6 +276,29 @@ public class UserService {
     }
 
     /**
+     * Active the account
+     *
+     * @param token String
+     */
+    public static void activeAccount(String token) {
+        userDAO.activeAccount(token);
+    }
+
+    /**
+     * Add new token for validation email in the user
+     *
+     * @param user User
+     *
+     * @return VerificationToken
+     */
+    public static VerificationToken addVerificationEmail(User user) {
+        VerificationToken token = new VerificationToken();
+        user.validationEmailToken = token.getToken();
+        userDAO.update(user);
+        return token;
+    }
+
+    /**
      * Add new token for the user
      *
      * @param token String
@@ -273,6 +324,14 @@ public class UserService {
         user.lostPassExpire = null;
         user.lostPassToken = null;
         userDAO.update(user);
+    }
+
+    public static List<User> getFriendsPaginate(Integer userId, Integer page, Integer size, String search, String order) {
+        return userDAO.getFriendsPaginate(userId, page, size, search, order);
+    }
+
+    public static Long countFriends(Integer userId, String search) {
+        return userDAO.countFriends(userId, search);
     }
 
     /**

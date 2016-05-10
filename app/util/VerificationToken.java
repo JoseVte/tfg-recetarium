@@ -7,8 +7,7 @@ import java.util.Date;
 import java.util.UUID;
 
 public class VerificationToken {
-    private static final int DEFAULT_EXPIRY_TIME_IN_MINS = Play.application().configuration()
-            .getInt("lostPassword.expiry.minutes");
+    private static final int DEFAULT_EXPIRY_TIME_IN_MINS = Play.application().configuration() .getInt("lostPassword.expiry.minutes");
     private final String token;
     private Date expiryDate;
 

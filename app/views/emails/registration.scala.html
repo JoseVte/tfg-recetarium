@@ -8,10 +8,9 @@
 <div style="width:550px">
     <h3>Welcome to Recetarium: @user.firstName @user.lastName</h3>
 
-    <p>You now can create new recipes for all users</p>
-    <br>
+    <p>Click in the link below to active the account:</p>
 
-    <p><a href="@url">@url</a></p>
+    <p><a href="@url/active/@user.validationEmailToken">@url/active/@user.validationEmailToken</a></p>
 </div>
 </body>
 </html>

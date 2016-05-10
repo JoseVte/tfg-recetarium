@@ -9,6 +9,9 @@ GET     /                           controllers.UserController.index()
 POST    /auth/register              controllers.AuthController.register()
 POST    /auth/login                 controllers.AuthController.login()
 POST    /auth/logout                controllers.AuthController.logout()
+POST    /auth/check                 controllers.AuthController.checkToken()
+PUT     /auth/active                controllers.AuthController.activeToken()
+PATCH   /auth/active                controllers.AuthController.activeToken()
 POST    /auth/reset/password        controllers.AuthController.sendLostPasswordToken()
 PUT     /auth/reset/password        controllers.AuthController.resetPassword()
 PATCH   /auth/reset/password        controllers.AuthController.resetPassword()
@@ -24,6 +27,11 @@ POST    /users                  controllers.UserController.create()
 PUT     /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 PATCH   /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
+
+## Friends
+GET     /users/$id<[0-9]+>/friends                      controllers.FriendController.list(id: Integer, page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "id")
+POST    /users/$id<[0-9]+>/friends                      controllers.FriendController.create(id: Integer)
+DELETE  /users/$id<[0-9]+>/friends/$friendId<[0-9]+>    controllers.FriendController.delete(id: Integer, friendId: Integer)
 
 ## Recipes
 GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "created_at+desc", tags: Seq[Integer])

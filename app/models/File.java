@@ -9,6 +9,7 @@ import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import util.serializer.CountRecipeFilesSerializer;
 import util.serializer.CountRecipesSerializer;
+import util.serializer.RecipeUserSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -36,6 +37,7 @@ public class File extends Model implements Serializable {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonSerialize(using = RecipeUserSerializer.class)
     public User user;
 
     @Fetch(value = FetchMode.SUBSELECT)

@@ -18,6 +18,12 @@ public class RecipeUserSerializer extends JsonSerializer<User> {
         jgen.writeStringField("email", value.email);
         jgen.writeStringField("first_name", value.firstName);
         jgen.writeStringField("last_name", value.lastName);
+        if (value.avatar != null) {
+            jgen.writeObjectFieldStart("avatar");
+            jgen.writeNumberField("id", value.avatar.id);
+            jgen.writeStringField("new_title", value.avatar.newTitle);
+            jgen.writeEndObject();
+        }
         jgen.writeEndObject();
     }
 }

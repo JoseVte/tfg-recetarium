@@ -3,23 +3,29 @@ package models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import controllers.UserController.UserRequest;
 import models.base.Model;
 import models.enums.TypeUser;
 import models.manytomany.Favorite;
 import models.manytomany.Friend;
 import models.manytomany.Rating;
+import models.service.FileService;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import util.Encryptation;
+import util.serializer.UserFriendsSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Entity
 @Table(name = "users")
-@JsonPropertyOrder({"id", "username", "email", "first_name", "last_name", "type", "created_at", "updated_at"})
+@JsonPropertyOrder({"id", "username", "email", "first_name", "last_name", "type", "myFriends", "friends", "created_at", "updated_at"})
 public class User extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -57,6 +63,15 @@ public class User extends Model implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     public Date lostPassExpire;
 
+    @Column(name = "validation_email_token")
+    @JsonIgnore
+    public String validationEmailToken;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JsonProperty(value = "avatar")
+    @JoinColumn(name = "avatar_id", nullable = true)
+    public File avatar;
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Recipe> recipes = new ArrayList<Recipe>();
@@ -69,12 +84,14 @@ public class User extends Model implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Comment> comments = new ArrayList<Comment>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = UserFriendsSerializer.class)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Friend> myFriends = new ArrayList<Friend>();
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "friend", fetch = FetchType.LAZY, orphanRemoval = true)
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = UserFriendsSerializer.class)
+    @OneToMany(mappedBy = "friend", fetch = FetchType.EAGER, orphanRemoval = true)
     public List<Friend> friends = new ArrayList<Friend>();
 
     @JsonIgnore
@@ -105,6 +122,21 @@ public class User extends Model implements Serializable {
         this.firstName = user.first_name;
         this.lastName = user.last_name;
         this.type = user.type;
+        if (user.avatar != null) this.avatar = FileService.find(this, user.avatar);
+    }
+
+    public User(LinkedHashMap map) {
+        this.id = Integer.valueOf(map.get("id").toString());
+        this.username = map.get("username").toString();
+        this.email = map.get("email").toString();
+
+        if (map.get("first_name") != null) this.firstName = map.get("first_name").toString();
+        if (map.get("last_name") != null) this.lastName = map.get("last_name").toString();
+        this.type = TypeUser.valueOf(map.get("type").toString());
+        this.numRecipes = Integer.valueOf(map.get("num_recipes").toString());
+
+        this.setCreatedAt(new Date(Long.valueOf(map.get("created_at").toString())));
+        this.setUpdatedAt(new Date(Long.valueOf(map.get("updated_at").toString())));
     }
 
     /*
@@ -165,5 +197,15 @@ public class User extends Model implements Serializable {
     @JsonIgnore
     public boolean isAdmin() {
         return type.equals(TypeUser.ADMIN);
+    }
+
+    @JsonIgnore
+    public static String Search(String search) {
+        return "(u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search + "%' OR u.lastName LIKE '%" + search + "%')";
+    }
+
+    @JsonIgnore
+    public boolean isActive() {
+        return this.validationEmailToken == null;
     }
 }
