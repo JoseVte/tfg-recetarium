@@ -20,6 +20,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Entity
@@ -122,6 +123,20 @@ public class User extends Model implements Serializable {
         this.lastName = user.last_name;
         this.type = user.type;
         if (user.avatar != null) this.avatar = FileService.find(this, user.avatar);
+    }
+
+    public User(LinkedHashMap map) {
+        this.id = Integer.valueOf(map.get("id").toString());
+        this.username = map.get("username").toString();
+        this.email = map.get("email").toString();
+
+        if (map.get("first_name") != null) this.firstName = map.get("first_name").toString();
+        if (map.get("last_name") != null) this.lastName = map.get("last_name").toString();
+        this.type = TypeUser.valueOf(map.get("type").toString());
+        this.numRecipes = Integer.valueOf(map.get("num_recipes").toString());
+
+        this.setCreatedAt(new Date(Long.valueOf(map.get("created_at").toString())));
+        this.setUpdatedAt(new Date(Long.valueOf(map.get("updated_at").toString())));
     }
 
     /*

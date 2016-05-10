@@ -86,6 +86,7 @@ public class Json {
         claims.setIssuedAtToNow();
         claims.setNotBeforeMinutesInThePast(2);
         claims.setSubject(subject);
+        claims.setExpirationTimeMinutesInTheFuture(expiration);
 
         JsonWebSignature jws = new JsonWebSignature();
         jws.setPayload(claims.toJson());

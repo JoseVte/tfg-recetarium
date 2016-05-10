@@ -13,8 +13,7 @@ public class Authenticated extends Security.Authenticator {
     @Override
     public String getUsername(Context ctx) {
         String[] authTokenHeaderValues = ctx.request().headers().get(AuthController.AUTH_TOKEN_HEADER);
-        if ((authTokenHeaderValues != null) && (authTokenHeaderValues.length == 1)
-                && (authTokenHeaderValues[0] != null)) {
+        if ((authTokenHeaderValues != null) && (authTokenHeaderValues.length == 1) && (authTokenHeaderValues[0] != null)) {
             User user = UserService.checkJWT(authTokenHeaderValues[0]);
             if (user != null) {
                 return Json.stringify(Json.toJson(user));

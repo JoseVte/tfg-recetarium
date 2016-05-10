@@ -76,7 +76,11 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.10.3](/doc/rocket-blue.png) 0.10.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.3)
+#### [![0.10.3-hotfix](/doc/rocket-blue.png) 0.10.3-hotfix](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.3-hotfix)
+
+- Arreglos en los Serializer
+
+###### [![0.10.3](/doc/release.png) 0.10.3](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.10.3)
 
 - Validacion del email durante el registro
 - Añadido avatar al usuario
