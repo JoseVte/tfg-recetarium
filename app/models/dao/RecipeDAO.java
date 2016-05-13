@@ -396,9 +396,11 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public List<Recipe> listByUser(Integer idUser, String user, Integer page, Integer size, boolean favorites) {
-        String query = "SELECT recipes FROM " + TABLE + " recipes WHERE recipes.user = '" + idUser + "' AND " + Recipe.IsVisible(user);
+        String query = "SELECT recipes FROM " + TABLE + " recipes WHERE " + Recipe.IsVisible(user);
         if (favorites) {
             query += " AND " + Recipe.WithFavorite(idUser);
+        } else {
+            query += "AND recipes.user = '" + idUser + "'";
         }
         return JPA.em().createQuery(query + " ORDER BY created_at DESC", Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
     }
@@ -412,9 +414,11 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return Long
      */
     public Long countByUser(Integer idUser, String user, boolean favorites) {
-        String query = "SELECT count(recipes) FROM " + TABLE + " recipes WHERE recipes.user = '" + idUser + "' AND " + Recipe.IsVisible(user);
+        String query = "SELECT count(recipes) FROM " + TABLE + " recipes WHERE " + Recipe.IsVisible(user);
         if (favorites) {
             query += " AND " + Recipe.WithFavorite(idUser);
+        } else {
+            query += "AND recipes.user = '" + idUser + "'";
         }
         return JPA.em().createQuery(query, Long.class).getSingleResult();
     }
