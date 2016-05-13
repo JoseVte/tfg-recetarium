@@ -12,6 +12,6 @@ public class CommentDAO extends CrudDAO<Comment> {
     }
 
     public List<Comment> replies(Integer recipeId, Integer id) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE recipe_id = " + recipeId + " AND parent_comment_id = " + id, Comment.class).getResultList();
+        return JPA.em().createQuery("SELECT comments FROM " + TABLE + " comments WHERE recipe_id = " + recipeId + " AND parent_comment_id = " + id, Comment.class).getResultList();
     }
 }

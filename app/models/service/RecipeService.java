@@ -228,14 +228,57 @@ public class RecipeService {
     }
 
     /**
-     * Get all recipes by user
+     * Get all recipes by user paginated
      *
      * @param idUser Integer
+     * @param user   String
+     * @param page   Integer
+     * @param size   Integer
      *
      * @return List<Recipe>
      */
-    public static List<Recipe> getAllByUser(Integer idUser) {
-        return recipeDAO.getAllByUser(idUser);
+    public static List<Recipe> listByUser(Integer idUser, String user, Integer page, Integer size) {
+        return listByUser(idUser, user, page, size, false);
+    }
+
+    /**
+     * Get the number of total of user's recipes
+     *
+     * @param idUser Integer
+     * @param user   String
+     *
+     * @return Long
+     */
+    public static Long countByUser(Integer idUser, String user) {
+        return countByUser(idUser, user, false);
+    }
+
+    /**
+     * Get all recipes by user paginated
+     *
+     * @param idUser    Integer
+     * @param user      String
+     * @param page      Integer
+     * @param size      Integer
+     * @param favorites boolean
+     *
+     * @return List<Recipe>
+     */
+    public static List<Recipe> listByUser(Integer idUser, String user, Integer page, Integer size, boolean favorites) {
+        return recipeDAO.listByUser(idUser, user, page, size, favorites);
+    }
+
+    /**
+     * Get the number of total of user's recipes
+     *
+     * @param idUser    Integer
+     * @param user      String
+     * @param favorites boolean
+     *
+     * @return Long
+     */
+    public static Long countByUser(Integer idUser, String user, boolean favorites) {
+        return recipeDAO.countByUser(idUser, user, favorites);
     }
 
     /**

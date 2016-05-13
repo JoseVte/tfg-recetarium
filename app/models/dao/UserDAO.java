@@ -39,7 +39,7 @@ public class UserDAO extends CrudDAO<User> {
      * @return List<User>
      */
     public List<User> paginate(Integer page, Integer size, String search, String order) {
-        return JPA.em().createQuery("SELECT u FROM " + TABLE + " u WHERE " + User.Search(search) + " ORDER BY " + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT users FROM " + TABLE + " users WHERE " + User.Search(search) + " ORDER BY " + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
@@ -50,7 +50,7 @@ public class UserDAO extends CrudDAO<User> {
      * @return Long
      */
     public Long count(String search) {
-        return JPA.em().createQuery("SELECT count(u) FROM " + TABLE + " u WHERE " + User.Search(search), Long.class).getSingleResult();
+        return JPA.em().createQuery("SELECT count(users) FROM " + TABLE + " users WHERE " + User.Search(search), Long.class).getSingleResult();
     }
 
     /**
@@ -77,14 +77,13 @@ public class UserDAO extends CrudDAO<User> {
      * @return List<User>
      */
     public List<User> getFriendsPaginate(Integer userId, Integer page, Integer size, String search, String order) {
-        return JPA.em().createQuery("SELECT u FROM " + Friend.class.getName() + " f JOIN f.friend u WHERE f.user = " + userId
-                + " AND " + User.Search(search) + " ORDER BY u." + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT users FROM " + Friend.class.getName() + " friends JOIN friends.friend users WHERE friends.user = " + userId
+                + " AND " + User.Search(search) + " ORDER BY users." + order, User.class).setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     public Long countFriends(Integer userId, String search) {
-        return JPA.em().createQuery("SELECT count(u) FROM " + Friend.class.getName() + " f JOIN f.friend u WHERE f.user = " + userId
-                + " AND (u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search +
-                "%' OR u.lastName LIKE '%" + search + "%')", Long.class).getSingleResult();
+        return JPA.em().createQuery("SELECT count(users) FROM " + Friend.class.getName() + " friends JOIN friends.friend users WHERE friends.user = " + userId
+                + " AND " + User.Search(search), Long.class).getSingleResult();
     }
 
     /**
@@ -109,7 +108,7 @@ public class UserDAO extends CrudDAO<User> {
      * @param friend User
      */
     public static void deleteFriend(User user, User friend) {
-        Friend friendship = JPA.em().createQuery("SELECT m FROM " + Friend.class.getName() + " m WHERE user_id = "
+        Friend friendship = JPA.em().createQuery("SELECT friends FROM " + Friend.class.getName() + " friends WHERE user_id = "
                 + user.id + " AND friend_id = " + friend.id, Friend.class).getSingleResult();
         JPA.em().remove(friendship);
         // Reload entities
@@ -140,7 +139,7 @@ public class UserDAO extends CrudDAO<User> {
      * @param recipe Recipe
      */
     public static void deleteFavorite(User user, Recipe recipe) {
-        Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName() + " m WHERE user_id = "
+        Favorite fav = JPA.em().createQuery("SELECT favorites FROM " + Favorite.class.getName() + " favorites WHERE user_id = "
                 + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
         JPA.em().remove(fav);
         // Reload entities
@@ -172,7 +171,7 @@ public class UserDAO extends CrudDAO<User> {
      * @param recipe Recipe
      */
     public static void updateRating(User user, Recipe recipe, double value) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id
+        Rating rating = JPA.em().createQuery("SELECT ratings FROM " + Rating.class.getName() + " ratings WHERE user_id = " + user.id
                 + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         rating.rating = value;
         JPA.em().merge(rating);
@@ -189,7 +188,7 @@ public class UserDAO extends CrudDAO<User> {
      * @param recipe Recipe
      */
     public static void deleteRating(User user, Recipe recipe) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT ratings FROM " + Rating.class.getName() + " ratings WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         JPA.em().remove(rating);
         // Reload entities
         JPA.em().flush();
@@ -223,7 +222,7 @@ public class UserDAO extends CrudDAO<User> {
      * @return List<User>
      */
     public List<User> where(String field, Object value, Integer id, String comparison) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
+        return JPA.em().createQuery("SELECT users FROM " + TABLE + " users WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", User.class).getResultList();
     }
 
     /**
@@ -316,7 +315,7 @@ public class UserDAO extends CrudDAO<User> {
      * @param token String
      */
     public void activeAccount(String token) {
-        User user = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.validationEmailToken = '" + token + "'", User.class).getSingleResult();
+        User user = JPA.em().createQuery("SELECT users FROM " + TABLE + " users WHERE users.validationEmailToken = '" + token + "'", User.class).getSingleResult();
         user.validationEmailToken = null;
         update(user);
     }
@@ -331,7 +330,7 @@ public class UserDAO extends CrudDAO<User> {
     public User findByEmailAddress(String email) {
         if (email == null) return null;
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE email = '" + email + "'", User.class).getSingleResult();
+            return JPA.em().createQuery("SELECT users FROM " + TABLE + " users WHERE email = '" + email + "'", User.class).getSingleResult();
         } catch (Exception e) {
             return null;
         }
@@ -358,6 +357,6 @@ public class UserDAO extends CrudDAO<User> {
     }
 
     public void addRecipeCount(User user) {
-        JPA.em().createQuery("UPDATE " + TABLE + " m SET num_recipes = '" + user.numRecipes + 1 + "' WHERE id = " + user.id).executeUpdate();
+        JPA.em().createQuery("UPDATE " + TABLE + " users SET num_recipes = '" + user.numRecipes + 1 + "' WHERE id = " + user.id).executeUpdate();
     }
 }

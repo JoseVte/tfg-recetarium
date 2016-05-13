@@ -76,7 +76,11 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.10.3-hotfix](/doc/rocket-blue.png) 0.10.3-hotfix](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.3-hotfix)
+#### [![0.11.1](/doc/rocket-blue.png) 0.11.1](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.11.1)
+
+- Ver las recetas favoritas en el perfil
+
+###### [![0.10.3-hotfix](/doc/release.png) 0.10.3-hotfix](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.10.3-hotfix)
 
 - Arreglos en los Serializer
 

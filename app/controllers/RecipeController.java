@@ -55,9 +55,33 @@ public class RecipeController extends AbstractCrudController {
     }
 
     @Transactional(readOnly = true)
-    public Result getAllByUser(Integer id) {
-        List<Recipe> result = RecipeService.getAllByUser(id);
-        return util.Json.jsonResult(response(), ok(Json.toJson(result)));
+    public Result listByUser(Integer id, Integer page, Integer size) {
+        List<Recipe> models = RecipeService.listByUser(id, request().username(), page - 1, size);
+        Long count = RecipeService.countByUser(id, request().username());
+
+        String[] routesString = new String[3];
+        routesString[0] = routes.RecipeController.listByUser(id, page - 1, size).toString();
+        routesString[1] = routes.RecipeController.listByUser(id, page + 1, size).toString();
+        routesString[2] = routes.RecipeController.listByUser(id, page, size).toString();
+
+        ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString, false);
+
+        return util.Json.jsonResult(response(), ok(result));
+    }
+
+    @Transactional(readOnly = true)
+    public Result listFavByUser(Integer id, Integer page, Integer size) {
+        List<Recipe> models = RecipeService.listByUser(id, request().username(), page - 1, size, true);
+        Long count = RecipeService.countByUser(id, request().username(), true);
+
+        String[] routesString = new String[3];
+        routesString[0] = routes.RecipeController.listByUser(id, page - 1, size).toString();
+        routesString[1] = routes.RecipeController.listByUser(id, page + 1, size).toString();
+        routesString[2] = routes.RecipeController.listByUser(id, page, size).toString();
+
+        ObjectNode result = util.Json.generateJsonPaginateObject(models, count, page, size, routesString, false);
+
+        return util.Json.jsonResult(response(), ok(result));
     }
 
     @Override
