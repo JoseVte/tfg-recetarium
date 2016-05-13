@@ -201,7 +201,7 @@ public class User extends Model implements Serializable {
 
     @JsonIgnore
     public static String Search(String search) {
-        return "(u.username LIKE '%" + search + "%' OR u.email LIKE '%" + search + "%' OR u.firstName LIKE '%" + search + "%' OR u.lastName LIKE '%" + search + "%')";
+        return "(users.username LIKE '%" + search + "%' OR users.email LIKE '%" + search + "%' OR users.firstName LIKE '%" + search + "%' OR users.lastName LIKE '%" + search + "%')";
     }
 
     @JsonIgnore

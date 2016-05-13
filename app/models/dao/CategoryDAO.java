@@ -22,7 +22,7 @@ public class CategoryDAO extends CrudDAO<Category> {
      * @return List<Category>
      */
     private List<Category> check(String field, Object value, Integer id, String comparison) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " "
+        return JPA.em().createQuery("SELECT categories FROM " + TABLE + " categories WHERE id != " + id + " AND " + field + " "
                 + comparison + " '" + value + "' ORDER BY id", Category.class).getResultList();
     }
 

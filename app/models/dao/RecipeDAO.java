@@ -339,7 +339,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
                 if (logged.isAdmin()) {
                     return find(idRecipe);
                 }
-                return JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE m.id = '" + idRecipe + "' AND recipes.user = '" + logged.id + "'", Recipe.class).getSingleResult();
+                return JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE recipes.id = '" + idRecipe + "' AND recipes.user = '" + logged.id + "'", Recipe.class).getSingleResult();
             }
             return null;
         } catch (NoResultException e) {
