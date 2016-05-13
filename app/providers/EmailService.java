@@ -1,7 +1,8 @@
-package models.service;
+package providers;
 
 import models.User;
 import models.enums.TypeUser;
+import models.service.UserService;
 import play.Play;
 import play.libs.mailer.Email;
 import play.libs.mailer.MailerClient;

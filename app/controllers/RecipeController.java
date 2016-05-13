@@ -276,32 +276,6 @@ public class RecipeController extends AbstractCrudController {
     }
 
     /**
-     * Toggle favorite the current user into a recipe
-     *
-     * @param id Integer
-     *
-     * @return Result
-     */
-    @Transactional
-    @Security.Authenticated(Authenticated.class)
-    public Result toggleFav(Integer id) {
-        ObjectNode data = Json.newObject();
-        boolean fav = RecipeService.addFavorite(Json.fromJson(Json.parse(request().username()), User.class).id, id);
-        if (!fav) {
-            boolean noFav = RecipeService.deleteFavorite(Json.fromJson(Json.parse(request().username()), User.class).id, id);
-            if (!noFav) {
-                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
-            }
-            data.put("fav", false);
-        } else {
-            data.put("fav", true);
-        }
-        data.put("favorites", RecipeService.countFavorites(id));
-
-        return util.Json.jsonResult(response(), ok(data));
-    }
-
-    /**
      * Add rating the current user into a recipe
      *
      * @param id Integer

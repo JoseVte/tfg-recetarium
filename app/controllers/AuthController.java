@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import middleware.Anonymous;
 import middleware.Authenticated;
 import models.User;
-import models.service.EmailService;
+import providers.EmailService;
 import models.service.UserService;
 import play.data.Form;
 import play.data.validation.Constraints;

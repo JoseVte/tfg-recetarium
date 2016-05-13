@@ -61,7 +61,7 @@ GET      /categories             controllers.CategoryController.list()
 GET     /tags                    controllers.TagController.list(search: String ?= "")
 
 ## Favorite
-PATCH   /recipes/$id<[0-9]+>/fav    controllers.RecipeController.toggleFav(id: Integer)
+PATCH   /recipes/$id<[0-9]+>/fav    controllers.UserController.toggleFav(id: Integer)
 
 ## Rating
 PUT     /recipes/$id<[0-9]+>/rating     controllers.RecipeController.rating(id: Integer)
