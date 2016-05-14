@@ -18,7 +18,9 @@ import play.db.jpa.Transactional;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
+import providers.PusherService;
 
+import javax.inject.Inject;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -32,6 +34,12 @@ public class RecipeController extends AbstractCrudController {
     private static Form<IngredientRequest> ingredientForm = Form.form(IngredientRequest.class);
     private static Form<RatingRequest> ratingForm = Form.form(RatingRequest.class);
     private static Form<CommentRequest> commentForm = Form.form(CommentRequest.class);
+    private final PusherService pusher;
+
+    @Inject
+    public RecipeController() {
+        this.pusher = new PusherService();
+    }
 
     @Override
     @Transactional(readOnly = true)
@@ -322,8 +330,17 @@ public class RecipeController extends AbstractCrudController {
         if (recipe == null) {
             return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found recipe")));
         }
-        Comment commentModel = new Comment(comment.get().text, user, recipe, commentId == null ? null : CommentService.find(commentId));
-        commentModel = CommentService.create(commentModel);
+        Comment commentModel = new Comment(comment.get().text, user, recipe,null);
+        if (commentId == null) {
+            commentModel = CommentService.create(commentModel);
+            pusher.notificateComment(recipe, user);
+        } else {
+            Comment commentParent = CommentService.find(commentId);
+            commentModel.parent = commentParent;
+            commentModel = CommentService.create(commentModel);
+            pusher.notificateReply(recipe, user, commentParent.user);
+        }
+
         return util.Json.jsonResult(response(), ok(Json.toJson(commentModel)));
     }
 

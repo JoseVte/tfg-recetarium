@@ -1,26 +1,28 @@
 package providers;
 
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.pusher.rest.Pusher;
 import models.Recipe;
 import models.User;
 import play.Play;
-import play.libs.Json;
 
 import java.util.Collections;
 
 public class PusherService {
-    private final Pusher pusher;
+    private Pusher pusher;
 
     public PusherService() {
-        this.pusher = new Pusher(
-                Play.application().configuration().getString("pusher.appID"),
-                Play.application().configuration().getString("pusher.key"),
-                Play.application().configuration().getString("pusher.secret")
-        );
-        this.pusher.setCluster("eu");
-        this.pusher.setEncrypted(true);
+        try {
+            this.pusher = new Pusher(
+                    Play.application().configuration().getString("pusher.appID"),
+                    Play.application().configuration().getString("pusher.key"),
+                    Play.application().configuration().getString("pusher.secret")
+            );
+            this.pusher.setCluster("eu");
+            this.pusher.setEncrypted(true);
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+        }
     }
 
     public void sendTest() {
@@ -28,12 +30,42 @@ public class PusherService {
     }
 
     public void sendNotificationToUser(User user, String eventName, Object body) {
-        pusher.trigger("user_" + user.id, eventName, body);
+        if (pusher != null) {
+            pusher.trigger("user_" + user.id, eventName, body);
+        }
     }
 
+    /**
+     * Send the notification when an user check as favorite a recipe
+     *
+     * @param recipe Recipe
+     * @param user   User
+     */
     public void notificateFavorite(Recipe recipe, User user) {
-        ObjectNode data = Json.newObject();
-        data.put("msg", "Al usuario " + user.getFullName() + " le ha gustado tu receta '" + recipe.title + "'");
+        String data = "{ \"msg\": \"Al usuario " + user.getFullName() + " le ha gustado tu receta '" + recipe.title + "'\"}";
         sendNotificationToUser(recipe.user, "recipe_favorite", data);
+    }
+
+    /**
+     * Send the notification when an user comment a recipe
+     *
+     * @param recipe Recipe
+     * @param user   User
+     */
+    public void notificateComment(Recipe recipe, User user) {
+        String data = "{ \"msg\": \"El usuario " + user.getFullName() + " ha comentado tu receta '" + recipe.title + "'\"}";
+        sendNotificationToUser(recipe.user, "recipe_comment", data);
+    }
+
+    /**
+     * Send the notification when an user reply a comment
+     *
+     * @param recipe Recipe
+     * @param user   User
+     * @param owner  User
+     */
+    public void notificateReply(Recipe recipe, User user, User owner) {
+        String data = "{ \"msg\": \"El usuario " + user.getFullName() + " ha contestado un comentario tuyo en la receta '" + recipe.title + "'\"}";
+        sendNotificationToUser(owner, "comment_reply", data);
     }
 }
