@@ -21,7 +21,7 @@ public class PusherService {
             this.pusher.setCluster("eu");
             this.pusher.setEncrypted(true);
         } catch (IllegalArgumentException e) {
-            System.err.println(e.getMessage());
+            if (!Play.isTest()) System.err.println(e.getMessage());
         }
     }
 
