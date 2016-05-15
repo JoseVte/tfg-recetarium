@@ -108,7 +108,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertNotNull(responseJson.get(AuthController.AUTH_TOKEN));
+            assertNotNull(responseJson.get(AuthController.AUTH_TOKEN_FIELD));
 
             successTest();
         });
@@ -285,7 +285,7 @@ public class AuthControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/profile").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
             assertEquals(OK, response.getStatus());
@@ -305,7 +305,7 @@ public class AuthControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/profile").setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(profileOk).get(timeout);
 
             assertEquals(OK, response.getStatus());

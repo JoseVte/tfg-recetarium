@@ -58,7 +58,7 @@ public class FriendControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1/friends?search=admin")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
             assertEquals(OK, response.getStatus());
@@ -92,12 +92,12 @@ public class FriendControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginAdmin).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOkUser).get(timeout);
 
             login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             response = WS.url("http://localhost:3333/users/1/friends")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
 
@@ -117,7 +117,7 @@ public class FriendControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/2/friends")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
 
@@ -137,7 +137,7 @@ public class FriendControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1/friends/2")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
 
@@ -157,7 +157,7 @@ public class FriendControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/3/friends/2")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
 

@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import middleware.Anonymous;
 import middleware.Authenticated;
 import models.User;
-import models.service.EmailService;
+import play.Play;
+import providers.EmailService;
 import models.service.UserService;
 import play.data.Form;
 import play.data.validation.Constraints;
@@ -25,7 +26,8 @@ import java.util.List;
 
 public class AuthController extends Controller {
     public final static String AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
-    public static final String AUTH_TOKEN = "auth_token";
+    public static final String AUTH_TOKEN_FIELD = "auth_token";
+    public static final String PUSHER_KEY = "pusher_key";
     public static final String REDIRECT_PATH = "/";
 
     private final EmailService mailer;
@@ -33,6 +35,13 @@ public class AuthController extends Controller {
     @Inject
     public AuthController(MailerClient mailer) {
         this.mailer = new EmailService(mailer);
+    }
+
+    private ObjectNode generateAuthJson(String token) {
+        ObjectNode json = Json.newObject();
+        json.put(AUTH_TOKEN_FIELD, token);
+        json.put(PUSHER_KEY, Play.application().configuration().getString("pusher.key"));
+        return json;
     }
 
     /**
@@ -89,9 +98,7 @@ public class AuthController extends Controller {
             return util.Json.jsonResult(response(), unauthorized());
         } else {
             String authToken = UserService.createJWT(user, login.setExpiration);
-            ObjectNode authTokenJson = Json.newObject();
-            authTokenJson.put(AUTH_TOKEN, authToken);
-            return util.Json.jsonResult(response(), ok(authTokenJson));
+            return util.Json.jsonResult(response(), ok(generateAuthJson(authToken)));
         }
     }
 
@@ -166,9 +173,7 @@ public class AuthController extends Controller {
         User user = UserService.findByEmailAddress(check.email);
         if (user.equals(Json.fromJson(Json.parse(request().username()), User.class))) {
             String authToken = UserService.createJWT(user, check.setExpiration);
-            ObjectNode authTokenJson = Json.newObject();
-            authTokenJson.put(AUTH_TOKEN, authToken);
-            return util.Json.jsonResult(response(), ok(authTokenJson));
+            return util.Json.jsonResult(response(), ok(generateAuthJson(authToken)));
         }
         return unauthorized();
     }

@@ -21,7 +21,8 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-mailer" % "3.0.1",
   "commons-io" % "commons-io" % "2.4",
   "org.mindrot" % "jbcrypt" % "0.3m",
-  "com.dropbox.core" % "dropbox-core-sdk" % "[1.7,1.8)"
+  "com.dropbox.core" % "dropbox-core-sdk" % "[1.7,1.8)",
+  "com.pusher" % "pusher-http-java" % "0.9.3"
 )
 
 // Play provides two styles of routers, one expects its actions to be injected, the
