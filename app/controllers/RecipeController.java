@@ -338,6 +338,7 @@ public class RecipeController extends AbstractCrudController {
             Comment commentParent = CommentService.find(commentId);
             commentModel.parent = commentParent;
             commentModel = CommentService.create(commentModel);
+            pusher.notificateComment(recipe, user);
             pusher.notificateReply(recipe, user, commentParent.user);
         }
 

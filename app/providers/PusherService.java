@@ -42,8 +42,10 @@ public class PusherService {
      * @param user   User
      */
     public void notificateFavorite(Recipe recipe, User user) {
-        String data = "{ \"msg\": \"Al usuario " + user.getFullName() + " le ha gustado tu receta '" + recipe.title + "'\"}";
-        sendNotificationToUser(recipe.user, "recipe_favorite", data);
+        if (!recipe.user.equals(user)) {
+            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"Al usuario " + user.getFullName() + " le ha gustado tu receta '" + recipe.title + "'\"}";
+            sendNotificationToUser(recipe.user, "recipe_favorite", data);
+        }
     }
 
     /**
@@ -53,8 +55,10 @@ public class PusherService {
      * @param user   User
      */
     public void notificateComment(Recipe recipe, User user) {
-        String data = "{ \"msg\": \"El usuario " + user.getFullName() + " ha comentado tu receta '" + recipe.title + "'\"}";
-        sendNotificationToUser(recipe.user, "recipe_comment", data);
+        if (!recipe.user.equals(user)) {
+            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"El usuario " + user.getFullName() + " ha comentado tu receta '" + recipe.title + "'\"}";
+            sendNotificationToUser(recipe.user, "recipe_comment", data);
+        }
     }
 
     /**
@@ -65,7 +69,9 @@ public class PusherService {
      * @param owner  User
      */
     public void notificateReply(Recipe recipe, User user, User owner) {
-        String data = "{ \"msg\": \"El usuario " + user.getFullName() + " ha contestado un comentario tuyo en la receta '" + recipe.title + "'\"}";
-        sendNotificationToUser(owner, "comment_reply", data);
+        if (!user.equals(owner)) {
+            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"El usuario " + user.getFullName() + " ha contestado un comentario tuyo en la receta '" + recipe.title + "'\"}";
+            sendNotificationToUser(owner, "comment_reply", data);
+        }
     }
 }
