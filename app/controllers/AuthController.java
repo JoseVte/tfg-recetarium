@@ -5,6 +5,7 @@ import middleware.Anonymous;
 import middleware.Authenticated;
 import models.User;
 import play.Play;
+import play.i18n.Messages;
 import providers.EmailService;
 import models.service.UserService;
 import play.data.Form;
@@ -66,12 +67,12 @@ public class AuthController extends Controller {
                 return util.Json.jsonResult(response(), unauthorized());
             } else {
                 if (mailer.sendRegistrationEmails(user) == null) {
-                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
                 }
                 return util.Json.jsonResult(response(), ok());
             }
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
-            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
         }
 
     }
@@ -118,16 +119,16 @@ public class AuthController extends Controller {
         String email = recover.get().email;
         User user = UserService.findByEmailAddress(email);
         if (user == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found email " + email)));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), "email", email))));
         }
         token = UserService.getActiveLostPasswordToken(user);
         if (token == null) {
             UserService.addVerification(user);
         }
         if (mailer.sendVerificationToken(user) == null) {
-            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
         }
-        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Reset password email sent")));
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.reset-password"))));
     }
 
     /**
@@ -146,7 +147,7 @@ public class AuthController extends Controller {
 
         UserService.changePassword(reset.get().token, reset.get().password);
 
-        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Changed password successfully")));
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.change-password"))));
     }
 
     /**
@@ -194,7 +195,7 @@ public class AuthController extends Controller {
 
         UserService.activeAccount(active.get().token);
 
-        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Account actived successfully")));
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.actived-account"))));
     }
 
     /**
@@ -260,14 +261,14 @@ public class AuthController extends Controller {
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
             if (!UserService.where("email", email).isEmpty()) {
-                errors.add(new ValidationError("email", "This e-mail is already registered"));
+                errors.add(new ValidationError("email", Messages.get("error.field-existing", "email")));
             }
             if (!UserService.where("username", username).isEmpty()) {
-                errors.add(new ValidationError("username", "This username is already registered"));
+                errors.add(new ValidationError("username", Messages.get("error.field-existing", "username")));
             }
             if (password != null && password_repeat != null && !password.equals(password_repeat)) {
-                errors.add(new ValidationError("password", "The passwords must be equals"));
-                errors.add(new ValidationError("password_repeat", "The passwords must be equals"));
+                errors.add(new ValidationError("password", Messages.get("error.field-equals", Messages.get("article.female-plural"), Messages.get("field.passwords"))));
+                errors.add(new ValidationError("password_repeat", Messages.get("error.field-equals", Messages.get("article.female-plural"), Messages.get("field.passwords"))));
             }
             return errors.isEmpty() ? null : errors;
         }
@@ -292,8 +293,8 @@ public class AuthController extends Controller {
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
             if (password != null && password_repeat != null && !password.equals(password_repeat)) {
-                errors.add(new ValidationError("password", "The passwords must be equals"));
-                errors.add(new ValidationError("password_repeat", "The passwords must be equals"));
+                errors.add(new ValidationError("password", Messages.get("error.field-equals", Messages.get("article.female-plural"), Messages.get("field.passwords"))));
+                errors.add(new ValidationError("password_repeat", Messages.get("error.field-equals", Messages.get("article.female-plural"), Messages.get("field.passwords"))));
             }
             return errors.isEmpty() ? null : errors;
         }
@@ -314,7 +315,7 @@ public class AuthController extends Controller {
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<>();
             if (!UserService.validateResetToken(token)) {
-                errors.add(new ValidationError("token", "Invalid token"));
+                errors.add(new ValidationError("token", Messages.get("error.invalid-token")));
             }
             return errors.isEmpty() ? null : errors;
         }

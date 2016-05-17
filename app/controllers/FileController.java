@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import play.Play;
 import play.db.jpa.Transactional;
+import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Http.MultipartFormData;
@@ -50,7 +51,7 @@ public class FileController extends Controller {
             File f = new File(file.url);
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
             if (!f.exists() && !f.isFile()) {
-                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
             }
 
             return ok(FileUtils.readFileToByteArray(f)).as(mimeTypesMap.getContentType(f));
@@ -128,13 +129,13 @@ public class FileController extends Controller {
                 models.File aux = FileService.find(user.id, fileName);
                 if (aux != null) {
                     FileService.update(aux);
-                    return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("File '" + fileName + "' uploaded")));
+                    return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.file-upload", file.getFilename()))));
                 }
             }
             fileModel = FileService.create(fileModel);
             return util.Json.jsonResult(response(), ok(Json.toJson(fileModel)));
         }
-        return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error uploading the file")));
+        return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.file-upload", file.getFilename()))));
     }
 
     private Result uploadFiles(User user, List<FilePart> files) {
@@ -146,20 +147,20 @@ public class FileController extends Controller {
             for (FilePart file : files) {
                 fileModel = uploadFileToDropbox(client, file, user, file.getFilename(), false);
                 if (fileModel == null) {
-                    msg.add(util.Json.generateJsonErrorMessages("Error uploading the file: " + file.getFilename()));
+                    msg.add(util.Json.generateJsonErrorMessages(Messages.get("error.file-upload", file.getFilename())));
                 } else {
                     FileService.create(fileModel);
-                    msg.add(util.Json.generateJsonInfoMessages("File '" + fileModel.title + "' uploaded"));
+                    msg.add(util.Json.generateJsonInfoMessages(Messages.get("info.file-upload", fileModel.title)));
                 }
             }
         } else if (Play.isDev()) {
             for (FilePart file : files) {
                 fileModel = uploadFileToLocal(file, user, file.getFilename(), false);
                 if (fileModel == null) {
-                    msg.add(util.Json.generateJsonErrorMessages("Error uploading the file: " + file.getFilename()));
+                    msg.add(util.Json.generateJsonErrorMessages(Messages.get("error.file-upload", file.getFilename())));
                 } else {
                     FileService.create(fileModel);
-                    msg.add(util.Json.generateJsonInfoMessages("File '" + fileModel.title + "' uploaded"));
+                    msg.add(util.Json.generateJsonInfoMessages(Messages.get("info.file-upload", fileModel.title)));
                 }
             }
         }
@@ -193,9 +194,9 @@ public class FileController extends Controller {
             return getFile(file);
         } catch (DbxException | IOException e) {
             e.printStackTrace();
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: [id: " + id + " file: " + idUser + "]")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.file"), id))));
         } catch (NullModelException e) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: [id: " + id + " file: " + idUser + "]")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.file"), id))));
         }
     }
 
@@ -206,9 +207,9 @@ public class FileController extends Controller {
             return getFile(fileModel);
         } catch (DbxException | IOException e) {
             e.printStackTrace();
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: [file: " + file + " file: " + idUser + "]")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.file"), file))));
         } catch (NullModelException e) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file: [file: " + file + " file: " + idUser + "]")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.file"), file))));
         }
     }
 
@@ -239,7 +240,7 @@ public class FileController extends Controller {
         if (isMultiple) {
             List<FilePart> files = body.getFiles();
             if (files.isEmpty()) {
-                return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("No files have been included in the request.")));
+                return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.no-files"))));
             } else {
                 return uploadFiles(user, files);
             }
@@ -248,7 +249,7 @@ public class FileController extends Controller {
             if (file != null) {
                 return uploadFile(UserService.find(idUser), body, file);
             } else {
-                return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file is required")));
+                return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-required", Messages.get("article.male-single"), Messages.get("field.file")))));
             }
         }
     }
@@ -263,13 +264,13 @@ public class FileController extends Controller {
                     deleteFile(file);
                 } catch (IOException | DbxException e) {
                     System.err.println(e.getMessage());
-                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error deleting the file")));
+                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.delete", Messages.get("article.male-single"), Messages.get("field.file"), file.title))));
                 }
-                return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted file " + id)));
+                return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.delete", Messages.get("article.male-single"), Messages.get("field.file"), file.title))));
             }
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file " + file.title + " is used in other recipes as main image")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.file-used", file.title))));
         }
-        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file " + id)));
+        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.file"), id))));
     }
 
     @Transactional
@@ -282,13 +283,13 @@ public class FileController extends Controller {
                     deleteFile(fileModel);
                 } catch (IOException | DbxException e) {
                     System.err.println(e.getMessage());
-                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Error deleting the file")));
+                    return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.delete", Messages.get("article.male-single"), Messages.get("field.file"), fileModel.title))));
                 }
-                return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted file " + fileModel)));
+                return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.delete", Messages.get("article.male-single"), Messages.get("field.file"), fileModel.title))));
             }
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file " + fileModel.title + " is used in other recipes as main image")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.file-used", fileModel.title))));
         }
-        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found file " + file)));
+        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.file"), file))));
     }
 
 }

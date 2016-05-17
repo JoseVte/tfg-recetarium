@@ -1,0 +1,45 @@
+error.server=something went wrong!
+error.not-found=not found {0} {1} {2}
+error.delete=error deleting {0} {1} {2}
+
+error.field-required={0} {1} is required
+error.field-existing=this {0} is already registered
+error.field-no-existing={0} {1} doesn''t exist: {2}
+error.field-equals={0} {1} must be equals
+error.invalid-token=invalid token
+error.invalid-value=invalid value {0}
+
+article.male-single=the
+article.female-single=the
+article.male-plural=the
+article.male-plural=the
+
+action.delete=delete
+action.edit=edit
+
+field.password=password
+field.passwords=passwords
+field.tags=tags
+field.draft=draft
+field.category=category
+field.comment=comment
+field.file=file
+field.user=user
+field.recipe=recipe
+
+error.upload-file=error uploading the file <strong>{0}</strong>
+error.no-files=no files have been included in the request
+error.file-used=the file <strong>{0}</strong> is used in other recipes as main image
+error.file-not-found=the file with ID {0} isn't in your files
+
+error.comment-owner=you can''t {0} the comment of other user
+
+info.reset-password=reset password email sent
+info.change-password=changed password successfully
+info.account-actived=account actived successfully
+info.file-upload=file <strong>{0}</strong> uploaded
+info.delete=deleted {0} {1} <strong>{2}</strong>
+
+pusher.favorite=the user <strong>{0}</strong> liked your recipe <em>{1}</em>
+pusher.comment=the user <strong>{0}</strong> has comment your recipe <em>{1}</em>
+pusher.reply=the user <strong>{0}</strong> has replied your comment in the recipe <em>{1}</em>

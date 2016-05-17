@@ -15,6 +15,7 @@ import play.data.Form;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
+import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -97,7 +98,7 @@ public class RecipeController extends AbstractCrudController {
     public Result get(Integer id) {
         Recipe recipe = RecipeService.find(id);
         if (recipe == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.female-single"), Messages.get("field.recipe"), id))));
         }
         return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
     }
@@ -113,7 +114,7 @@ public class RecipeController extends AbstractCrudController {
     public Result get(String slug) {
         Recipe recipe = RecipeService.findBySlug(slug);
         if (recipe == null || recipe.isDraft) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + slug)));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.female-single"), Messages.get("field.recipe"), slug))));
         }
         if (recipe.isVisible(request().username())) {
             return util.Json.jsonResult(response(), ok(Json.toJson(recipe)));
@@ -176,7 +177,7 @@ public class RecipeController extends AbstractCrudController {
         User user = Json.fromJson(Json.parse(request().username()), User.class);
         Recipe recipe = RecipeService.getDraft(user);
         if (recipe == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found draft")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.draft"), ""))));
         }
         recipe.isDraft = false;
         RecipeService.update(recipe);
@@ -191,7 +192,7 @@ public class RecipeController extends AbstractCrudController {
         if (recipe.hasErrors()) {
             return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }  else if (recipe.get().image_main != null && !FileService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class), recipe.get().image_main)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file with ID " + recipe.get().image_main + " isn't in your files")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.file-not-found", recipe.get().image_main))));
         }
         RecipeRequest aux = recipe.get();
         aux.email = Json.fromJson(Json.parse(request().username()), User.class).email;
@@ -221,7 +222,7 @@ public class RecipeController extends AbstractCrudController {
         }
         Ingredient ingredientModel = RecipeService.addIngredient(id, ingredient.get());
         if (ingredientModel == null) {
-            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
         }
         return util.Json.jsonResult(response(), ok(Json.toJson(ingredientModel)));
     }
@@ -242,7 +243,7 @@ public class RecipeController extends AbstractCrudController {
             return unauthorized();
         }
         if (!RecipeService.deleteIngredient(id, ingredientId)) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + ingredientId)));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.ingredient"), ingredientId))));
         }
         return util.Json.jsonResult(response(), ok());
     }
@@ -256,9 +257,9 @@ public class RecipeController extends AbstractCrudController {
             return util.Json.jsonResult(response(), badRequest(recipe.errorsAsJson()));
         }
         if (!Objects.equals(recipe.get().id, id)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-equals", Messages.get("article.male-plural"), "IDs"))));
         } else if (recipe.get().image_main != null && !FileService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class), recipe.get().image_main)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The file with ID " + recipe.get().image_main + " isn't in your files")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.file-not-found", recipe.get().image_main))));
         } else if (!RecipeService.checkOwner(Json.fromJson(Json.parse(request().username()), User.class).email, id)) {
             return unauthorized();
         }
@@ -278,9 +279,9 @@ public class RecipeController extends AbstractCrudController {
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id) {
         if (RecipeService.delete(id, Json.fromJson(Json.parse(request().username()), User.class).email)) {
-            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
+            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.delete", Messages.get("article.female-single"), Messages.get("field.recipe"), id))));
         }
-        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
+        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.female-single"), Messages.get("field.recipe"), id))));
     }
 
     /**
@@ -302,7 +303,7 @@ public class RecipeController extends AbstractCrudController {
         if (!val) {
             val = RecipeService.updateRating(Json.fromJson(Json.parse(request().username()), User.class).id, id, rating.get().rating);
             if (!val) {
-                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
             }
             data.put("rating", false);
         } else {
@@ -328,7 +329,7 @@ public class RecipeController extends AbstractCrudController {
         }
         Recipe recipe = RecipeService.find(id);
         if (recipe == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found recipe")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.recipe"), id))));
         }
         Comment commentModel = new Comment(comment.get().text, user, recipe,null);
         if (commentId == null) {
@@ -355,13 +356,13 @@ public class RecipeController extends AbstractCrudController {
         }
         Comment commentModel = CommentService.find(commentId);
         if (commentModel == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found comment")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.comment"), commentId))));
         }
         if (!Objects.equals(commentModel.user.id, user.id)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("You can't edit the comment of other user")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.comment-owner", Messages.get("action.edit")))));
         }
         if (!Objects.equals(commentModel.recipe.id, id)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The ID of recipe doesn't coincide")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-equals", Messages.get("article.male-plural"), "IDs"))));
         }
         commentModel.text = comment.get().text;
         commentModel = CommentService.update(commentModel);
@@ -374,15 +375,15 @@ public class RecipeController extends AbstractCrudController {
         User user = Json.fromJson(Json.parse(request().username()), User.class);
         Comment commentModel = CommentService.find(commentId);
         if (commentModel == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found comment")));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.comment"), commentId))));
         }
         if (!Objects.equals(commentModel.user.id, user.id) && !user.isAdmin()) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("You can't delete the comment of other user")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.comment-owner", Messages.get("action.delete")))));
         }
         if (CommentService.delete(commentModel)) {
-            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
+            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.delete", Messages.get("article.male-single"), Messages.get("field.comment"), commentId))));
         }
-        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
+        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.female-single"), Messages.get("field.recipe"), id))));
     }
 
     public static class RatingRequest {
@@ -450,23 +451,23 @@ public class RecipeController extends AbstractCrudController {
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
             if (id != null && dao.find(id) == null) {
-                errors.add(new ValidationError("id", "This recipe doesn't exist"));
+                errors.add(new ValidationError("id", Messages.get("error.no-existing", Messages.get("article.male-single"), "ID", id)));
             }
             if (!dao.check("slug", slug, id).isEmpty()) {
-                errors.add(new ValidationError("slug", "This slug is already used"));
+                errors.add(new ValidationError("slug", Messages.get("error.existing", "slug")));
             }
             if (category_id != null && CategoryService.find(category_id) == null) {
-                errors.add(new ValidationError("category", "The category doesn't exist"));
+                errors.add(new ValidationError("category", Messages.get("error.no-existing", Messages.get("article.female-single"), Messages.get("field.category"), category_id)));
             }
             List<Integer> list = TagService.containAll(new ArrayList<>(tags));
             if (!list.isEmpty()) {
-                errors.add(new ValidationError("tag", "The tag don't exist: " + list.toString()));
+                errors.add(new ValidationError("tag", Messages.get("error.no-existing", Messages.get("article.female-plural"), Messages.get("field.tags"), list.toString())));
             }
             // TODO Checkear tags e ingredientes
             try {
                 durationParsed = format.parse(duration);
             } catch (ParseException e) {
-                errors.add(new ValidationError("duration", "Invalid value"));
+                errors.add(new ValidationError("duration", Messages.get("error.invalid value", duration)));
             }
             return errors.isEmpty() ? null : errors;
         }
