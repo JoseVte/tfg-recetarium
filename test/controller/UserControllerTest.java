@@ -162,7 +162,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found 5");
+            assertEquals(responseJson.get("error").asText(), "not found the user 5");
 
             successTest();
         });
@@ -228,7 +228,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("username").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("username").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -248,7 +248,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("email").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -268,7 +268,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("password").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("password").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -288,7 +288,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("type").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("type").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -308,7 +308,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("username").get(0).asText(), "This username is already registered");
+            assertEquals(responseJson.get("username").get(0).asText(), "this username is already registered");
 
             successTest();
         });
@@ -328,7 +328,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "This e-mail is already registered");
+            assertEquals(responseJson.get("email").get(0).asText(), "this email is already registered");
 
             successTest();
         });
@@ -348,7 +348,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("type").get(0).asText(), "Invalid value");
+            assertEquals(responseJson.get("type").get(0).asText(), "invalid value");
 
             successTest();
         });
@@ -389,7 +389,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("username").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("username").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -409,7 +409,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("email").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -429,7 +429,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "The IDs don't coincide");
+            assertEquals(responseJson.get("error").asText(), "the IDs must be equals");
 
             successTest();
         });
@@ -449,7 +449,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("id").get(0).asText(), "This user doesn't exist");
+            assertEquals(responseJson.get("id").get(0).asText(), "the ID doesn't exist: 5");
 
             successTest();
         });
@@ -469,7 +469,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("msg").asText(), "Deleted 1");
+            assertEquals(responseJson.get("msg").asText(), "deleted the user <strong>1</strong>");
 
             successTest();
         });
@@ -489,7 +489,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found 5");
+            assertEquals(responseJson.get("error").asText(), "not found the user 5");
 
             successTest();
         });

@@ -96,7 +96,7 @@ public class UserController extends AbstractCrudController {
             return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
         }
         if (!Objects.equals(user.get().id, id)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.no-existing", Messages.get("article.male-single"), "ID", id))));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-equals", Messages.get("article.male-plural"), "IDs"))));
         }
         User userModel = UserService.update(user.get());
         return util.Json.jsonResult(response(), ok(Json.toJson(userModel)));
@@ -169,16 +169,16 @@ public class UserController extends AbstractCrudController {
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
             if (id != null && dao.find(id) == null) {
-                errors.add(new ValidationError("id", Messages.get("error.no-existing", Messages.get("article.male-single"), "ID", id)));
+                errors.add(new ValidationError("id", Messages.get("error.field-no-existing", Messages.get("article.male-single"), "ID", id)));
             }
             if (!dao.where("email", email, id).isEmpty()) {
-                errors.add(new ValidationError("email", Messages.get("error.existing", "email")));
+                errors.add(new ValidationError("email", Messages.get("error.field-existing", "email")));
             }
             if (!dao.where("username", username, id).isEmpty()) {
-                errors.add(new ValidationError("username", Messages.get("error.existing", "username")));
+                errors.add(new ValidationError("username", Messages.get("error.field-existing", "username")));
             }
             if ((id == null || dao.find(id) == null) && (password == null || password.isEmpty())) {
-                errors.add(new ValidationError("password", Messages.get("error.field-required", Messages.get("article.female-single"), Messages.get("field.password"))));
+                errors.add(new ValidationError("password", Messages.get("error.required")));
             }
             return errors.isEmpty() ? null : errors;
         }

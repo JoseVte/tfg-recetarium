@@ -126,7 +126,7 @@ public class FriendControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "The IDs don't coincide");
+            assertEquals(responseJson.get("error").asText(), "the IDs must be equals");
 
             successTest();
         });
@@ -166,7 +166,7 @@ public class FriendControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "The IDs don't coincide");
+            assertEquals(responseJson.get("error").asText(), "the IDs must be equals");
 
             successTest();
         });

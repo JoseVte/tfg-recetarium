@@ -145,7 +145,12 @@ public class AuthController extends Controller {
             return util.Json.jsonResult(response(), badRequest(reset.errorsAsJson()));
         }
 
-        UserService.changePassword(reset.get().token, reset.get().password);
+        User user = UserService.changePassword(reset.get().token, reset.get().password);
+        if (user == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), "token", reset.get().token))));
+        } else if (mailer.sendChangedPassword(user) == null) {
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
+        }
 
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.change-password"))));
     }
@@ -193,9 +198,14 @@ public class AuthController extends Controller {
             return util.Json.jsonResult(response(), badRequest(active.errorsAsJson()));
         }
 
-        UserService.activeAccount(active.get().token);
+        User user = UserService.activeAccount(active.get().token);
+        if (user == null) {
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), "token", active.get().token))));
+        } else if (mailer.sendAccountActivated(user) == null) {
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
+        }
 
-        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.actived-account"))));
+        return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.account-activated"))));
     }
 
     /**

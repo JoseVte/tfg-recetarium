@@ -161,7 +161,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("username").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("username").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -177,7 +177,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("username").get(0).asText(), "This username is already registered");
+            assertEquals(responseJson.get("username").get(0).asText(), "this username is already registered");
 
             successTest();
         });
@@ -193,7 +193,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("password").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("password").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -209,7 +209,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("password_repeat").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("password_repeat").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -225,8 +225,8 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("password").get(0).asText(), "The passwords must be equals");
-            assertEquals(responseJson.get("password_repeat").get(0).asText(), "The passwords must be equals");
+            assertEquals(responseJson.get("password").get(0).asText(), "the passwords must be equals");
+            assertEquals(responseJson.get("password_repeat").get(0).asText(), "the passwords must be equals");
 
             successTest();
         });
@@ -242,7 +242,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("email").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -258,7 +258,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "Valid email required");
+            assertEquals(responseJson.get("email").get(0).asText(), "valid email required");
 
             successTest();
         });
@@ -274,7 +274,7 @@ public class AuthControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "This e-mail is already registered");
+            assertEquals(responseJson.get("email").get(0).asText(), "this email is already registered");
 
             successTest();
         });

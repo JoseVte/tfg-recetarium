@@ -451,23 +451,23 @@ public class RecipeController extends AbstractCrudController {
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
             if (id != null && dao.find(id) == null) {
-                errors.add(new ValidationError("id", Messages.get("error.no-existing", Messages.get("article.male-single"), "ID", id)));
+                errors.add(new ValidationError("id", Messages.get("error.field-no-existing", Messages.get("article.male-single"), "ID", id)));
             }
             if (!dao.check("slug", slug, id).isEmpty()) {
-                errors.add(new ValidationError("slug", Messages.get("error.existing", "slug")));
+                errors.add(new ValidationError("slug", Messages.get("error.field-existing", "slug")));
             }
             if (category_id != null && CategoryService.find(category_id) == null) {
-                errors.add(new ValidationError("category", Messages.get("error.no-existing", Messages.get("article.female-single"), Messages.get("field.category"), category_id)));
+                errors.add(new ValidationError("category", Messages.get("error.field-no-existing", Messages.get("article.female-single"), Messages.get("field.category"), category_id)));
             }
             List<Integer> list = TagService.containAll(new ArrayList<>(tags));
             if (!list.isEmpty()) {
-                errors.add(new ValidationError("tag", Messages.get("error.no-existing", Messages.get("article.female-plural"), Messages.get("field.tags"), list.toString())));
+                errors.add(new ValidationError("tag", Messages.get("error.field-no-existing", Messages.get("article.female-plural"), Messages.get("field.tags"), list.toString())));
             }
             // TODO Checkear tags e ingredientes
             try {
                 durationParsed = format.parse(duration);
             } catch (ParseException e) {
-                errors.add(new ValidationError("duration", Messages.get("error.invalid value", duration)));
+                errors.add(new ValidationError("duration", Messages.get("error.invalid-value", duration)));
             }
             return errors.isEmpty() ? null : errors;
         }

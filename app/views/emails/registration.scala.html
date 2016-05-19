@@ -1,3 +1,4 @@
+@import play.i18n._
 @(user:User)(url:String)
 <!DOCTYPE html>
 <html>
@@ -6,10 +7,7 @@
 </head>
 <body>
 <div style="width:550px">
-    <h3>Welcome to Recetarium: @user.firstName @user.lastName</h3>
-
-    <p>Click in the link below to active the account:</p>
-
+    @Html(Messages.get("email.registration.body", user.getFullName()))
     <p><a href="@url/active/@user.validationEmailToken">@url/active/@user.validationEmailToken</a></p>
 </div>
 </body>
