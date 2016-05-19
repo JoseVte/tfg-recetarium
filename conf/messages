@@ -1,0 +1,74 @@
+error.server=something went wrong!
+error.not-found=not found {0} {1} {2}
+error.delete=error deleting {0} {1} {2}
+
+error.required=this field is required
+error.email=valid email required
+error.invalid=invalid value
+
+error.field-required={0} {1} is required
+error.field-existing=this {0} is already registered
+error.field-no-existing={0} {1} doesn''t exist: {2}
+error.field-equals={0} {1} must be equals
+error.invalid-token=invalid token
+error.invalid-value=invalid value {0}
+
+article.male-single=the
+article.female-single=the
+article.male-plural=the
+article.female-plural=the
+
+action.delete=delete
+action.edit=edit
+
+field.password=password
+field.passwords=passwords
+field.tags=tags
+field.draft=draft
+field.ingredient=ingredient
+field.category=category
+field.comment=comment
+field.file=file
+field.user=user
+field.recipe=recipe
+
+error.upload-file=error uploading the file <strong>{0}</strong>
+error.no-files=no files have been included in the request
+error.file-used=the file <strong>{0}</strong> is used in other recipes as main image
+error.file-not-found=the file with ID {0} isn't in your files
+
+error.comment-owner=you can''t {0} the comment of other user
+
+info.reset-password=reset password email sent
+info.change-password=changed password successfully
+info.account-activated=account activated successfully
+info.file-upload=file <strong>{0}</strong> uploaded
+info.delete=deleted {0} {1} <strong>{2}</strong>
+
+pusher.favorite=the user <strong>{0}</strong> liked your recipe <em>{1}</em>
+pusher.comment=the user <strong>{0}</strong> has comment your recipe <em>{1}</em>
+pusher.reply=the user <strong>{0}</strong> has replied your comment in the recipe <em>{1}</em>
+
+email.new-user.title=New user registered
+email.new-user.body=<h3>New user registered</h3><p>Username: {0}</p><p>Email: {1}</p> <p>Name: {2}</p>
+email.nwe-user.body-text=New user created: {0}, {1}, {2}
+
+email.new-user-activated.title=New user activated
+email.new-user-activated.body=<h3>New user activated</h3><p>Username: {0}</p><p>Email: {1}</p> <p>Name: {2}</p>
+email.new-user-activated.body-text=New user activated: {0}, {1}, {2}
+
+email.registration.title=Thanks for signing in Recetarium
+email.registration.body=<h3>Thanks for signing in Recetarium: {0}</h3><p>Click in the link below to active the account:</p>
+email.registration.body-text=For active your account click here: {0}
+
+email.activation.title=Welcome to Recetarium
+email.activation.body=<h3>Welcome to Recetarium: {0}</h3><p>You now can create new recipes for all users</p>
+email.activation.body-text=Welcome to Recetarium. You now can create new recipes for all users
+
+email.reset-password.title=Reset password
+email.reset-password.body=<p>Don't remember your password?</p><p>No worries, this things happens...</p><p>Click in the link below to recover your password (it will expire in 10m):</p>
+email.reset-password.body-text=For reset your password click here: {0}
+
+email.changed-password.title=Password changed
+email.changed-password.body=<p>Password changed successfully. Now you can login: </p>
+email.changed-password.body-text=Password changed successfully. Now you can login: {0}

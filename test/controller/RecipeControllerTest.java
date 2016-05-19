@@ -185,7 +185,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found not-found");
+            assertEquals(responseJson.get("error").asText(), "not found the recipe not-found");
 
             successTest();
         });
@@ -418,7 +418,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("title").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("title").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -438,7 +438,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("slug").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("slug").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -458,7 +458,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("category").get(0).asText(), "The category doesn't exist");
+            assertEquals(responseJson.get("category").get(0).asText(), "the category doesn't exist: 0");
 
             successTest();
         });
@@ -478,7 +478,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("slug").get(0).asText(), "This slug is already used");
+            assertEquals(responseJson.get("slug").get(0).asText(), "this slug is already registered");
 
             successTest();
         });
@@ -498,7 +498,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("difficulty").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("difficulty").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -518,7 +518,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("duration").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("duration").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -538,7 +538,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("duration").get(0).asText(), "Invalid value");
+            assertEquals(responseJson.get("duration").get(0).asText(), "invalid value asdf");
 
             successTest();
         });
@@ -558,7 +558,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("difficulty").get(0).asText(), "Invalid value");
+            assertEquals(responseJson.get("difficulty").get(0).asText(), "invalid value");
 
             successTest();
         });
@@ -599,7 +599,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("name").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("name").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -650,7 +650,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found 1");
+            assertEquals(responseJson.get("error").asText(), "not found the ingredient 1");
 
             successTest();
         });
@@ -720,7 +720,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("title").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("title").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -740,7 +740,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("slug").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("slug").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -760,7 +760,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("category").get(0).asText(), "The category doesn't exist");
+            assertEquals(responseJson.get("category").get(0).asText(), "the category doesn't exist: 0");
 
             successTest();
         });
@@ -780,7 +780,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("slug").get(0).asText(), "This slug is already used");
+            assertEquals(responseJson.get("slug").get(0).asText(), "this slug is already registered");
 
             successTest();
         });
@@ -800,7 +800,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("difficulty").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("difficulty").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -820,7 +820,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("duration").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("duration").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -840,7 +840,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("duration").get(0).asText(), "Invalid value");
+            assertEquals(responseJson.get("duration").get(0).asText(), "invalid value asdf");
 
             successTest();
         });
@@ -860,7 +860,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("difficulty").get(0).asText(), "Invalid value");
+            assertEquals(responseJson.get("difficulty").get(0).asText(), "invalid value");
 
             successTest();
         });
@@ -880,7 +880,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "The IDs don't coincide");
+            assertEquals(responseJson.get("error").asText(), "the IDs must be equals");
 
             successTest();
         });
@@ -900,7 +900,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("id").get(0).asText(), "This recipe doesn't exist");
+            assertEquals(responseJson.get("id").get(0).asText(), "the ID doesn't exist: 5");
 
             successTest();
         });
@@ -920,7 +920,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("msg").asText(), "Deleted 1");
+            assertEquals(responseJson.get("msg").asText(), "deleted the recipe <strong>1</strong>");
 
             successTest();
         });
@@ -940,7 +940,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("msg").asText(), "Deleted 1");
+            assertEquals(responseJson.get("msg").asText(), "deleted the recipe <strong>1</strong>");
 
             successTest();
         });
@@ -960,7 +960,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found 5");
+            assertEquals(responseJson.get("error").asText(), "not found the recipe 5");
 
             successTest();
         });
@@ -1029,7 +1029,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("text").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("text").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -1048,7 +1048,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found recipe");
+            assertEquals(responseJson.get("error").asText(), "not found the recipe 0");
 
             successTest();
         });
@@ -1087,7 +1087,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("text").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("text").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -1106,7 +1106,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "You can't edit the comment of other user");
+            assertEquals(responseJson.get("error").asText(), "you can't edit the comment of other user");
 
             successTest();
         });
@@ -1125,11 +1125,12 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "The ID of recipe doesn't coincide");
+            assertEquals(responseJson.get("error").asText(), "the IDs must be equals");
 
             successTest();
         });
     }
+
     @Test
     public void testRecipeControllerUpdateCommentNotFound() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
@@ -1143,7 +1144,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found comment");
+            assertEquals(responseJson.get("error").asText(), "not found the comment 0");
 
             successTest();
         });
@@ -1162,7 +1163,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("msg").asText(), "Deleted 1");
+            assertEquals(responseJson.get("msg").asText(), "deleted the comment <strong>1</strong>");
 
             successTest();
         });
@@ -1181,7 +1182,7 @@ public class RecipeControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found comment");
+            assertEquals(responseJson.get("error").asText(), "not found the comment 0");
 
             successTest();
         });

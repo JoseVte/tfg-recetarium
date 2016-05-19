@@ -279,9 +279,11 @@ public class UserService {
      * Active the account
      *
      * @param token String
+     *
+     * @return User
      */
-    public static void activeAccount(String token) {
-        userDAO.activeAccount(token);
+    public static User activeAccount(String token) {
+        return userDAO.activeAccount(token);
     }
 
     /**
@@ -317,19 +319,43 @@ public class UserService {
      *
      * @param token    String
      * @param password String
+     *
+     * @return User
      */
-    public static void changePassword(String token, String password) {
+    public static User changePassword(String token, String password) {
         User user = userDAO.findBy("lost_pass_token", token);
-        user.password = Encryptation.createHash(password);
-        user.lostPassExpire = null;
-        user.lostPassToken = null;
-        userDAO.update(user);
+        if (user != null) {
+            user.password = Encryptation.createHash(password);
+            user.lostPassExpire = null;
+            user.lostPassToken = null;
+            user = userDAO.update(user);
+        }
+        return user;
     }
 
+    /**
+     * Get all friends by user paginate, searched and ordered
+     *
+     * @param userId Integr
+     * @param page   Integer
+     * @param size   Integer
+     * @param search String
+     * @param order  String
+     *
+     * @return List<User>
+     */
     public static List<User> getFriendsPaginate(Integer userId, Integer page, Integer size, String search, String order) {
         return userDAO.getFriendsPaginate(userId, page, size, search, order);
     }
 
+    /**
+     * Count all friend by user
+     *
+     * @param userId Integer
+     * @param search String
+     *
+     * @return Long
+     */
     public static Long countFriends(Integer userId, String search) {
         return userDAO.countFriends(userId, search);
     }
@@ -487,6 +513,11 @@ public class UserService {
         return false;
     }
 
+    /**
+     * Updates the count of recipes for an user
+     *
+     * @param user User
+     */
     public static void addRecipeCount(User user){
         userDAO.addRecipeCount(user);
     }

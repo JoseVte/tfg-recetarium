@@ -5,6 +5,7 @@ import com.pusher.rest.Pusher;
 import models.Recipe;
 import models.User;
 import play.Play;
+import play.i18n.Messages;
 
 import java.util.Collections;
 
@@ -43,7 +44,7 @@ public class PusherService {
      */
     public void notificateFavorite(Recipe recipe, User user) {
         if (!recipe.user.equals(user)) {
-            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"Al usuario " + user.getFullName() + " le ha gustado tu receta '" + recipe.title + "'\"}";
+            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"" + Messages.get("pusher.favorite", user.getFullName(), recipe.title) + "\"}";
             sendNotificationToUser(recipe.user, "recipe_favorite", data);
         }
     }
@@ -56,7 +57,7 @@ public class PusherService {
      */
     public void notificateComment(Recipe recipe, User user) {
         if (!recipe.user.equals(user)) {
-            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"El usuario " + user.getFullName() + " ha comentado tu receta '" + recipe.title + "'\"}";
+            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"" + Messages.get("pusher.comment", user.getFullName(), recipe.title) + "\"}";
             sendNotificationToUser(recipe.user, "recipe_comment", data);
         }
     }
@@ -70,7 +71,7 @@ public class PusherService {
      */
     public void notificateReply(Recipe recipe, User user, User owner) {
         if (!user.equals(owner)) {
-            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"El usuario " + user.getFullName() + " ha contestado un comentario tuyo en la receta '" + recipe.title + "'\"}";
+            String data = "{ \"redirect\": \"/recipes/" + recipe.slug + "\", \"msg\": \"" + Messages.get("pusher.reply", user.getFullName(), recipe.title) + "\"}";
             sendNotificationToUser(owner, "comment_reply", data);
         }
     }
