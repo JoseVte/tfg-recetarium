@@ -141,29 +141,34 @@ public class Recipe extends Model implements Serializable {
 
     @JsonIgnore
     public static String IsVisible(String user) {
-        String query = "(m.visibility = '" + RecipeVisibility.PUBLIC + "'";
+        String query = "(recipes.visibility = '" + RecipeVisibility.PUBLIC + "'";
         if (user != null && !user.equals("anonymous")) {
             User userParsed = Json.fromJson(Json.parse(user), User.class);
             if (!userParsed.isAdmin()) {
-                String subquery = "(SELECT u.friend FROM " + Friend.class.getName() + " u WHERE u.user = " + userParsed.id + ")";
-                query += " OR (m.visibility = '" + RecipeVisibility.PRIVATE + "' AND m.user = " + userParsed.id + ") OR (m.visibility = '" + RecipeVisibility.FRIENDS + "' AND m.user IN " + subquery + ")";
+                String subquery = "(SELECT friends.friend FROM " + Friend.class.getName() + " friends WHERE friends.user = " + userParsed.id + ")";
+                query += " OR (recipes.visibility = '" + RecipeVisibility.PRIVATE + "' AND recipes.user = " + userParsed.id + ") OR (recipes.visibility = '" + RecipeVisibility.FRIENDS + "' AND recipes.user IN " + subquery + ")";
             } else {
-                query += "OR m.visibility = '" + RecipeVisibility.PRIVATE + "' OR m.visibility = '" + RecipeVisibility.FRIENDS + "'";
+                query += "OR recipes.visibility = '" + RecipeVisibility.PRIVATE + "' OR recipes.visibility = '" + RecipeVisibility.FRIENDS + "'";
             }
         }
         return query + ")";
     }
 
     @JsonIgnore
+    public static String WithFavorite(Integer idUser) {
+        return "recipes.id IN (SELECT favorites.recipe FROM " + Favorite.class.getName() + " favorites WHERE favorites.user = " + idUser + ")";
+    }
+
+    @JsonIgnore
     public static String WithDrafts(Boolean with) {
-        return "(m.isDraft = " + with + ")";
+        return "(recipes.isDraft = " + with + ")";
     }
 
     @JsonIgnore
     public static String WithTags(List<Integer> tags) {
         String query = "";
         for (Integer id : tags) {
-            query += " AND ((SELECT count(*) FROM " + RecipeTags.class.getName() + " t WHERE m.id = t.recipe.id AND t.tag.id = " + id + ") > 0)";
+            query += " AND ((SELECT count(*) FROM " + RecipeTags.class.getName() + " recipe_tags WHERE recipes.id = recipe_tags.recipe.id AND recipe_tags.tag.id = " + id + ") > 0)";
         }
         return query;
     }

@@ -76,7 +76,19 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.10.3-hotfix](/doc/rocket-blue.png) 0.10.3-hotfix](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.3-hotfix)
+#### [![0.11.3](/doc/rocket-blue.png) 0.11.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.11.3)
+
+- Creados los mensajes en español e ingles para la internacionalización
+
+###### [![0.11.2](/doc/release.png) 0.11.2](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.11.2)
+
+- Añadido [pusher](https://github.com/pusher/pusher-http-java) para las notificaciones
+
+###### [![0.11.1](/doc/release.png) 0.11.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.11.1)
+
+- Ver las recetas favoritas en el perfil
+
+###### [![0.10.3-hotfix](/doc/release.png) 0.10.3-hotfix](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.10.3-hotfix)
 
 - Arreglos en los Serializer
 

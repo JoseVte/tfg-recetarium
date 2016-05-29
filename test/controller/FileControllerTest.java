@@ -73,7 +73,7 @@ public class FileControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1/files/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
             assertEquals(OK, response.getStatus());
 
@@ -86,7 +86,7 @@ public class FileControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1/files/test").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
             assertEquals(OK, response.getStatus());
 
@@ -99,7 +99,7 @@ public class FileControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginAdmin).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1/files/1").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
             assertEquals(OK, response.getStatus());
 
@@ -112,7 +112,7 @@ public class FileControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginAdmin).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1/files/test").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
             assertEquals(OK, response.getStatus());
 
@@ -125,7 +125,7 @@ public class FileControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1/files/2").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
             assertEquals(NOT_FOUND, response.getStatus());
             response = WS.url("http://localhost:3333/users/1/files/not-found").setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);

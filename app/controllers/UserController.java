@@ -4,26 +4,37 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import middleware.Admin;
 import middleware.Authenticated;
+import models.Recipe;
 import models.User;
 import models.dao.UserDAO;
 import models.enums.TypeUser;
+import models.service.RecipeService;
 import models.service.UserService;
 import play.Logger;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
 import play.db.jpa.Transactional;
+import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
+import providers.PusherService;
 import views.html.index;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class UserController extends AbstractCrudController {
     private Form<UserRequest> formModel = Form.form(UserRequest.class);
+    private final PusherService pusher;
+
+    @Inject
+    public UserController() {
+        this.pusher = new PusherService();
+    }
 
     /**
      * Get the index page
@@ -31,6 +42,7 @@ public class UserController extends AbstractCrudController {
      * @return Result
      */
     public Result index() {
+        pusher.sendTest();
         return ok(index.render("API REST for JAVA Play Framework"));
     }
 
@@ -55,7 +67,7 @@ public class UserController extends AbstractCrudController {
     public Result get(Integer id) {
         User user = UserService.find(id);
         if (user == null) {
-            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
+            return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.user"), id))));
         }
         return util.Json.jsonResult(response(), ok(Json.toJson(user)));
     }
@@ -72,7 +84,7 @@ public class UserController extends AbstractCrudController {
             return util.Json.jsonResult(response(), created(Json.toJson(newUser)));
         } catch (Exception e) {
             Logger.error(e.getMessage());
-            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
         }
     }
 
@@ -84,7 +96,7 @@ public class UserController extends AbstractCrudController {
             return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
         }
         if (!Objects.equals(user.get().id, id)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-equals", Messages.get("article.male-plural"), "IDs"))));
         }
         User userModel = UserService.update(user.get());
         return util.Json.jsonResult(response(), ok(Json.toJson(userModel)));
@@ -94,9 +106,39 @@ public class UserController extends AbstractCrudController {
     @Security.Authenticated(Admin.class)
     public Result delete(Integer id) {
         if (UserService.delete(id)) {
-            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages("Deleted " + id)));
+            return util.Json.jsonResult(response(), ok(util.Json.generateJsonInfoMessages(Messages.get("info.delete", Messages.get("article.male-single"), Messages.get("field.user"), id))));
         }
-        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages("Not found " + id)));
+        return util.Json.jsonResult(response(), notFound(util.Json.generateJsonErrorMessages(Messages.get("error.not-found", Messages.get("article.male-single"), Messages.get("field.user"), id))));
+    }
+
+    /**
+     * Toggle favorite the current user into a recipe
+     *
+     * @param id Integer
+     *
+     * @return Result
+     */
+    @Transactional
+    @Security.Authenticated(Authenticated.class)
+    public Result toggleFav(Integer id) {
+        ObjectNode data = Json.newObject();
+        User user = Json.fromJson(Json.parse(request().username()), User.class);
+        Recipe recipe = RecipeService.find(id);
+
+        boolean fav = RecipeService.addFavorite(user.id, id);
+        if (!fav) {
+            boolean noFav = RecipeService.deleteFavorite(user.id, id);
+            if (!noFav) {
+                return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
+            }
+            data.put("fav", false);
+        } else {
+            pusher.notificateFavorite(recipe, user);
+            data.put("fav", true);
+        }
+        data.put("favorites", RecipeService.countFavorites(id));
+
+        return util.Json.jsonResult(response(), ok(data));
     }
 
     public static class UserRequest {
@@ -127,16 +169,16 @@ public class UserController extends AbstractCrudController {
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
             if (id != null && dao.find(id) == null) {
-                errors.add(new ValidationError("id", "This user doesn't exist"));
+                errors.add(new ValidationError("id", Messages.get("error.field-no-existing", Messages.get("article.male-single"), "ID", id)));
             }
             if (!dao.where("email", email, id).isEmpty()) {
-                errors.add(new ValidationError("email", "This e-mail is already registered"));
+                errors.add(new ValidationError("email", Messages.get("error.field-existing", "email")));
             }
             if (!dao.where("username", username, id).isEmpty()) {
-                errors.add(new ValidationError("username", "This username is already registered"));
+                errors.add(new ValidationError("username", Messages.get("error.field-existing", "username")));
             }
             if ((id == null || dao.find(id) == null) && (password == null || password.isEmpty())) {
-                errors.add(new ValidationError("password", "This field is required"));
+                errors.add(new ValidationError("password", Messages.get("error.required")));
             }
             return errors.isEmpty() ? null : errors;
         }

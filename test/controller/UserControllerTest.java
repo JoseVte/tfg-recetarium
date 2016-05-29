@@ -110,7 +110,7 @@ public class UserControllerTest extends AbstractTest {
             comunUser.put("password", "password");
 
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(comunUser).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
 
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
@@ -131,7 +131,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
@@ -153,7 +153,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/5")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
@@ -162,7 +162,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found 5");
+            assertEquals(responseJson.get("error").asText(), "not found the user 5");
 
             successTest();
         });
@@ -173,7 +173,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users?page=1&size=1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
@@ -198,7 +198,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
 
@@ -219,7 +219,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError1).get(timeout);
 
@@ -228,7 +228,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("username").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("username").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -239,7 +239,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError2).get(timeout);
 
@@ -248,7 +248,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("email").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -259,7 +259,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError3).get(timeout);
 
@@ -268,7 +268,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("password").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("password").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -279,7 +279,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError4).get(timeout);
 
@@ -288,7 +288,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("type").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("type").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -299,7 +299,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError5).get(timeout);
 
@@ -308,7 +308,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("username").get(0).asText(), "This username is already registered");
+            assertEquals(responseJson.get("username").get(0).asText(), "this username is already registered");
 
             successTest();
         });
@@ -319,7 +319,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError6).get(timeout);
 
@@ -328,7 +328,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "This e-mail is already registered");
+            assertEquals(responseJson.get("email").get(0).asText(), "this email is already registered");
 
             successTest();
         });
@@ -339,7 +339,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataError7).get(timeout);
 
@@ -348,7 +348,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("type").get(0).asText(), "Invalid value");
+            assertEquals(responseJson.get("type").get(0).asText(), "invalid value");
 
             successTest();
         });
@@ -359,7 +359,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 1)).get(timeout);
 
@@ -380,7 +380,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError1.put("id", 1)).get(timeout);
 
@@ -389,7 +389,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("username").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("username").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -400,7 +400,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataError2.put("id", 1)).get(timeout);
 
@@ -409,7 +409,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("email").get(0).asText(), "This field is required");
+            assertEquals(responseJson.get("email").get(0).asText(), "this field is required");
 
             successTest();
         });
@@ -420,7 +420,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 2)).get(timeout);
 
@@ -429,7 +429,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "The IDs don't coincide");
+            assertEquals(responseJson.get("error").asText(), "the IDs must be equals");
 
             successTest();
         });
@@ -440,7 +440,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/5")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).put(dataOk.put("id", 5)).get(timeout);
 
@@ -449,7 +449,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("id").get(0).asText(), "This user doesn't exist");
+            assertEquals(responseJson.get("id").get(0).asText(), "the ID doesn't exist: 5");
 
             successTest();
         });
@@ -460,7 +460,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/1")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
 
@@ -469,7 +469,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("msg").asText(), "Deleted 1");
+            assertEquals(responseJson.get("msg").asText(), "deleted the user <strong>1</strong>");
 
             successTest();
         });
@@ -480,7 +480,7 @@ public class UserControllerTest extends AbstractTest {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
-            token = login.asJson().get(AuthController.AUTH_TOKEN).asText();
+            token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
             WSResponse response = WS.url("http://localhost:3333/users/5")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).delete().get(timeout);
 
@@ -489,7 +489,7 @@ public class UserControllerTest extends AbstractTest {
 
             JsonNode responseJson = response.asJson();
             assertTrue(responseJson.isObject());
-            assertEquals(responseJson.get("error").asText(), "Not found 5");
+            assertEquals(responseJson.get("error").asText(), "not found the user 5");
 
             successTest();
         });

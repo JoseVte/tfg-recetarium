@@ -26,7 +26,7 @@ public class FileDAO extends CrudDAO<File> {
      * @return List<File>
      */
     public List<File> all(Integer idUser) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.user = '" + idUser + "'", File.class).getResultList();
+        return JPA.em().createQuery("SELECT files FROM " + TABLE + " files WHERE files.user = '" + idUser + "'", File.class).getResultList();
     }
 
     /**
@@ -39,7 +39,7 @@ public class FileDAO extends CrudDAO<File> {
      */
     public File find(Integer idUser, Integer idFile) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = " + idFile + " AND m.user = '" + idUser + "'", File.class).getSingleResult();
+            return JPA.em().createQuery("SELECT files FROM " + TABLE + " files WHERE files.id = " + idFile + " AND files.user = '" + idUser + "'", File.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -55,7 +55,7 @@ public class FileDAO extends CrudDAO<File> {
      */
     public File find(Integer idUser, String filename) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.newTitle = '" + filename + "' AND m.user = '" + idUser + "'", File.class).getSingleResult();
+            return JPA.em().createQuery("SELECT files FROM " + TABLE + " files WHERE files.newTitle = '" + filename + "' AND files.user = '" + idUser + "'", File.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -73,7 +73,7 @@ public class FileDAO extends CrudDAO<File> {
         try {
             if (user != null) {
                 if (user.isAdmin()) return this.find(idFile);
-                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = '" + idFile + "' AND m.user = " + user.id, File.class).getSingleResult();
+                return JPA.em().createQuery("SELECT files FROM " + TABLE + " files WHERE files.id = '" + idFile + "' AND files.user = " + user.id, File.class).getSingleResult();
             }
             return null;
         } catch (NoResultException e) {
@@ -91,7 +91,7 @@ public class FileDAO extends CrudDAO<File> {
     public List<File> findByOwner(String email) {
         User logged = UserService.findByEmailAddress(email);
         if (logged != null) {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.user = '" + logged.id + "'", File.class).getResultList();
+            return JPA.em().createQuery("SELECT files FROM " + TABLE + " files WHERE files.user = '" + logged.id + "'", File.class).getResultList();
         }
         return new ArrayList<File>();
     }
@@ -111,7 +111,7 @@ public class FileDAO extends CrudDAO<File> {
                 if (logged.isAdmin()) {
                     return find(idFile);
                 }
-                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = '" + idFile + "' AND m.user = '" + logged.id + "'", File.class).getSingleResult();
+                return JPA.em().createQuery("SELECT files FROM " + TABLE + " files WHERE files.id = '" + idFile + "' AND files.user = '" + logged.id + "'", File.class).getSingleResult();
             }
             return null;
         } catch (NoResultException e) {
@@ -120,7 +120,7 @@ public class FileDAO extends CrudDAO<File> {
     }
 
     public boolean canDelete(File file, User user) {
-        String query = "SELECT m FROM " + Recipe.class.getName() + " m WHERE image_main_id = " + file.id;
+        String query = "SELECT files FROM " + Recipe.class.getName() + " files WHERE image_main_id = " + file.id;
         if (user.isAdmin()) {
             return JPA.em().createQuery(query).getResultList().size() == 0;
         }
@@ -133,11 +133,11 @@ public class FileDAO extends CrudDAO<File> {
      * @param model Model
      */
     @Override
-    public void delete(Model model) {
-        JPA.em().createQuery("DELETE FROM " + RecipeFiles.class.getName() + " WHERE file_id = " + model.id).executeUpdate();
+    public void delete(Model file) {
+        JPA.em().createQuery("DELETE FROM " + RecipeFiles.class.getName() + " WHERE file_id = " + file.id).executeUpdate();
         // Reload entities
         JPA.em().flush();
-        JPA.em().refresh(model);
-        JPA.em().remove(model);
+        JPA.em().refresh(file);
+        JPA.em().remove(file);
     }
 }

@@ -36,7 +36,7 @@ public class TagDAO extends CrudDAO<Tag> {
      * @param recipe Recipe
      */
     public static void deleteRecipe(Tag tag, Recipe recipe) {
-        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName() + " m WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
+        RecipeTags tagged = JPA.em().createQuery("SELECT tags FROM " + RecipeTags.class.getName() + " tags WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
         JPA.em().remove(tagged);
         // Reload entities
         JPA.em().flush();
@@ -78,7 +78,7 @@ public class TagDAO extends CrudDAO<Tag> {
      * @return List<Tag>
      */
     public List<Tag> check(String field, Object value, Integer id, String comparison) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", Tag.class).getResultList();
+        return JPA.em().createQuery("SELECT tags FROM " + TABLE + " tags WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", Tag.class).getResultList();
     }
 
     /**
@@ -102,12 +102,12 @@ public class TagDAO extends CrudDAO<Tag> {
      * @return List<Tag>
      */
     public List<Tag> search(String search) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE text like '%" + search + "%'", Tag.class).getResultList();
+        return JPA.em().createQuery("SELECT tags FROM " + TABLE + " tags WHERE text like '%" + search + "%'", Tag.class).getResultList();
     }
 
     public List<Integer> containAll(List<Integer> tagIds) {
         if (!tagIds.isEmpty()) {
-            List<Integer> aux = JPA.em().createQuery("SELECT m.id FROM " + TABLE + " m WHERE m.id IN :list", Integer.class).setParameter("list", tagIds).getResultList();
+            List<Integer> aux = JPA.em().createQuery("SELECT tags.id FROM " + TABLE + " tags WHERE tags.id IN :list", Integer.class).setParameter("list", tagIds).getResultList();
             tagIds.removeAll(aux);
         }
         return tagIds;

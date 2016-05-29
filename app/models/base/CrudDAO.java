@@ -56,7 +56,7 @@ public class CrudDAO<T extends Model> {
     @SuppressWarnings("unchecked")
     public T findBy(String field, String value) {
         try {
-            return (T) JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + field + " = '" + value + "'").getSingleResult();
+            return (T) JPA.em().createQuery("SELECT model FROM " + TABLE + " model WHERE " + field + " = '" + value + "'").getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -96,7 +96,7 @@ public class CrudDAO<T extends Model> {
      */
     @SuppressWarnings("unchecked")
     public List<T> all() {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").getResultList();
+        return JPA.em().createQuery("SELECT model FROM " + TABLE + " model ORDER BY id").getResultList();
     }
 
     /**
@@ -109,7 +109,7 @@ public class CrudDAO<T extends Model> {
      */
     @SuppressWarnings("unchecked")
     public List<T> paginate(Integer page, Integer size) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY id").setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT model FROM " + TABLE + " model ORDER BY id").setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
@@ -123,7 +123,7 @@ public class CrudDAO<T extends Model> {
      */
     @SuppressWarnings("unchecked")
     public List<T> paginate(Integer page, Integer size, String order) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m ORDER BY " + order).setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT model FROM " + TABLE + " model ORDER BY " + order).setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**
@@ -132,6 +132,6 @@ public class CrudDAO<T extends Model> {
      * @return Long
      */
     public Long count() {
-        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m", Long.class).getSingleResult();
+        return JPA.em().createQuery("SELECT count(model) FROM " + TABLE + " model", Long.class).getSingleResult();
     }
 }

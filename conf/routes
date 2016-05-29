@@ -21,7 +21,7 @@ PUT     /profile                    controllers.AuthController.updateProfile()
 PATCH   /profile                    controllers.AuthController.updateProfile()
 
 ## Users
-GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "id")
+GET     /users                  controllers.UserController.list(page: Integer ?= 1, size: Integer ?= 10, search: String ?= "", order: String ?= "id")
 GET     /users/$id<[0-9]+>      controllers.UserController.get(id: Integer)
 POST    /users                  controllers.UserController.create()
 PUT     /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
@@ -29,12 +29,12 @@ PATCH   /users/$id<[0-9]+>      controllers.UserController.update(id: Integer)
 DELETE  /users/$id<[0-9]+>      controllers.UserController.delete(id: Integer)
 
 ## Friends
-GET     /users/$id<[0-9]+>/friends                      controllers.FriendController.list(id: Integer, page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "id")
+GET     /users/$id<[0-9]+>/friends                      controllers.FriendController.list(id: Integer, page: Integer ?= 1, size: Integer ?= 10, search: String ?= "", order: String ?= "id")
 POST    /users/$id<[0-9]+>/friends                      controllers.FriendController.create(id: Integer)
 DELETE  /users/$id<[0-9]+>/friends/$friendId<[0-9]+>    controllers.FriendController.delete(id: Integer, friendId: Integer)
 
 ## Recipes
-GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 3, search: String ?= "", order: String ?= "created_at+desc", tags: Seq[Integer])
+GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 10, search: String ?= "", order: String ?= "created_at+desc", tags: Seq[Integer])
 # This URI is not necessary, the recipes are identified by a slug
 #GET    /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
 GET     /recipes/:slug                          controllers.RecipeController.get(slug: String)
@@ -47,7 +47,8 @@ DELETE  /recipes/$id<[0-9]+>                    controllers.RecipeController.del
 HEAD    /recipes/:slug/check                    controllers.RecipeController.checkSlug(slug: String, id: Integer = null)
 HEAD    /recipes/:slug/check/$id<[0-9]+>        controllers.RecipeController.checkSlug(slug: String, id: Integer)
 HEAD    /recipes/:slug/mine                     controllers.RecipeController.isMine(slug: String)
-GET     /users/$id<[0-9]+>/recipes              controllers.RecipeController.getAllByUser(id : Integer)
+GET     /users/$id<[0-9]+>/recipes              controllers.RecipeController.listByUser(id : Integer, page: Integer ?= 1, size: Integer ?= 10)
+GET     /users/$id<[0-9]+>/favorites            controllers.RecipeController.listFavByUser(id : Integer, page: Integer ?= 1, size: Integer ?= 10)
 
 ## Ingredients
 POST    /recipes/$id<[0-9]+>/ingredient                               controllers.RecipeController.addIngredient(id: Integer)
@@ -60,7 +61,7 @@ GET      /categories             controllers.CategoryController.list()
 GET     /tags                    controllers.TagController.list(search: String ?= "")
 
 ## Favorite
-PATCH   /recipes/$id<[0-9]+>/fav    controllers.RecipeController.toggleFav(id: Integer)
+PATCH   /recipes/$id<[0-9]+>/fav    controllers.UserController.toggleFav(id: Integer)
 
 ## Rating
 PUT     /recipes/$id<[0-9]+>/rating     controllers.RecipeController.rating(id: Integer)

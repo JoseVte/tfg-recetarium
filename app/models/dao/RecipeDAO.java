@@ -57,7 +57,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public static void deleteTag(Tag tag, Recipe recipe) {
-        RecipeTags tagged = JPA.em().createQuery("SELECT m FROM " + RecipeTags.class.getName() + " m WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
+        RecipeTags tagged = JPA.em().createQuery("SELECT recipe_tags FROM " + RecipeTags.class.getName() + " recipe_tags WHERE tag_id = " + tag.id + " AND recipe_id = " + recipe.id, RecipeTags.class).getSingleResult();
         JPA.em().remove(tagged);
         // Reload entities
         JPA.em().flush();
@@ -99,7 +99,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public static void deleteFavorite(User user, Recipe recipe) {
-        Favorite fav = JPA.em().createQuery("SELECT m FROM " + Favorite.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
+        Favorite fav = JPA.em().createQuery("SELECT favorites FROM " + Favorite.class.getName() + " favorites WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Favorite.class).getSingleResult();
         JPA.em().remove(fav);
         // Reload entities
         JPA.em().flush();
@@ -115,7 +115,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return Long
      */
     public static Long countFavorites(Recipe recipe) {
-        return JPA.em().createQuery("SELECT count(m) FROM " + Favorite.class.getName() + " m WHERE recipe_id = " + recipe.id, Long.class).getSingleResult();
+        return JPA.em().createQuery("SELECT count(favorites) FROM " + Favorite.class.getName() + " favorites WHERE recipe_id = " + recipe.id, Long.class).getSingleResult();
     }
 
     /**
@@ -140,7 +140,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public static void updateRating(User user, Recipe recipe, double value) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT ratings FROM " + Rating.class.getName() + " ratings WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         rating.rating = value;
         JPA.em().merge(rating);
         // Reload entities
@@ -156,7 +156,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @param recipe Recipe
      */
     public static void deleteRating(User user, Recipe recipe) {
-        Rating rating = JPA.em().createQuery("SELECT m FROM " + Rating.class.getName() + " m WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
+        Rating rating = JPA.em().createQuery("SELECT ratings FROM " + Rating.class.getName() + " ratings WHERE user_id = " + user.id + " AND recipe_id = " + recipe.id, Rating.class).getSingleResult();
         JPA.em().remove(rating);
         // Reload entities
         JPA.em().flush();
@@ -240,9 +240,9 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     public List<Recipe> paginate(Integer page, Integer size, String search, String user, String order, List<Integer> tags) {
         TypedQuery<Recipe> queryObject;
         if (!tags.isEmpty()) {
-            queryObject = JPA.em().createQuery("SELECT DISTINCT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + Recipe.WithTags(tags) + " ORDER BY " + order, Recipe.class);
+            queryObject = JPA.em().createQuery("SELECT DISTINCT recipes FROM " + TABLE + " recipes WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + Recipe.WithTags(tags) + " ORDER BY " + order, Recipe.class);
         } else {
-            queryObject = JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " ORDER BY " + order, Recipe.class);
+            queryObject = JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + " ORDER BY " + order, Recipe.class);
         }
         return queryObject.setFirstResult(page * size).setMaxResults(size).getResultList();
     }
@@ -271,9 +271,9 @@ public class RecipeDAO extends CrudDAO<Recipe> {
     public Long count(String search, String user, List<Integer> tags) {
         TypedQuery<Long> queryObject;
         if (!tags.isEmpty()) {
-            queryObject = JPA.em().createQuery("SELECT count(DISTINCT m) FROM " + TABLE + " m JOIN m.tags t WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + Recipe.WithTags(tags), Long.class);
+            queryObject = JPA.em().createQuery("SELECT count(DISTINCT recipes) FROM " + TABLE + " recipes JOIN recipes.tags recipe_tags WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false) + Recipe.WithTags(tags), Long.class);
         } else {
-            queryObject = JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false), Long.class);
+            queryObject = JPA.em().createQuery("SELECT count(recipes) FROM " + TABLE + " recipes WHERE " + Recipe.Search(search) + " AND " + Recipe.IsVisible(user) + " AND " + Recipe.WithDrafts(false), Long.class);
         }
         return queryObject.getSingleResult();
     }
@@ -287,7 +287,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe findBySlug(String slug) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "'", Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE slug = '" + slug + "'", Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -303,7 +303,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe findBySlug(String slug, String user) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND " + Recipe.IsVisible(user), Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE slug = '" + slug + "' AND " + Recipe.IsVisible(user), Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -318,7 +318,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe findBySlugAndId(String slug, Integer id) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE slug = '" + slug + "' AND id != " + id, Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE slug = '" + slug + "' AND id != " + id, Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }
@@ -339,7 +339,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
                 if (logged.isAdmin()) {
                     return find(idRecipe);
                 }
-                return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.id = '" + idRecipe + "' AND m.user = '" + logged.id + "'", Recipe.class).getSingleResult();
+                return JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE recipes.id = '" + idRecipe + "' AND recipes.user = '" + logged.id + "'", Recipe.class).getSingleResult();
             }
             return null;
         } catch (NoResultException e) {
@@ -358,7 +358,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return List<Recipe>
      */
     public List<Recipe> check(String field, Object value, Integer id, String comparison) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", Recipe.class).getResultList();
+        return JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE id != " + id + " AND " + field + " " + comparison + " '" + value + "' ORDER BY id", Recipe.class).getResultList();
     }
 
     /**
@@ -382,11 +382,45 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      * @return Long
      */
     public Long countNumberByUser(User user) {
-        return JPA.em().createQuery("SELECT count(m) FROM " + TABLE + " m WHERE user = '" + user.id + "'", Long.class).getSingleResult();
+        return JPA.em().createQuery("SELECT count(recipes) FROM " + TABLE + " recipes WHERE user = '" + user.id + "'", Long.class).getSingleResult();
     }
 
-    public List<Recipe> getAllByUser(Integer idUser) {
-        return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE m.user = " + idUser, Recipe.class).getResultList();
+    /**
+     * Get all recipes by user paginated
+     *
+     * @param idUser Integer
+     * @param user   String
+     * @param page   Integer
+     * @param size   Integer
+     *
+     * @return List<Recipe>
+     */
+    public List<Recipe> listByUser(Integer idUser, String user, Integer page, Integer size, boolean favorites) {
+        String query = "SELECT recipes FROM " + TABLE + " recipes WHERE " + Recipe.IsVisible(user);
+        if (favorites) {
+            query += " AND " + Recipe.WithFavorite(idUser);
+        } else {
+            query += "AND recipes.user = '" + idUser + "'";
+        }
+        return JPA.em().createQuery(query + " ORDER BY created_at DESC", Recipe.class).setFirstResult(page * size).setMaxResults(size).getResultList();
+    }
+
+    /**
+     * Get the number of total of user's recipes
+     *
+     * @param idUser Integer
+     * @param user   String
+     *
+     * @return Long
+     */
+    public Long countByUser(Integer idUser, String user, boolean favorites) {
+        String query = "SELECT count(recipes) FROM " + TABLE + " recipes WHERE " + Recipe.IsVisible(user);
+        if (favorites) {
+            query += " AND " + Recipe.WithFavorite(idUser);
+        } else {
+            query += "AND recipes.user = '" + idUser + "'";
+        }
+        return JPA.em().createQuery(query, Long.class).getSingleResult();
     }
 
     /**
@@ -398,7 +432,7 @@ public class RecipeDAO extends CrudDAO<Recipe> {
      */
     public Recipe getDraft(User user) {
         try {
-            return JPA.em().createQuery("SELECT m FROM " + TABLE + " m WHERE user = '" + user.id + "' AND is_draft = true", Recipe.class).getSingleResult();
+            return JPA.em().createQuery("SELECT recipes FROM " + TABLE + " recipes WHERE user = '" + user.id + "' AND is_draft = true", Recipe.class).getSingleResult();
         } catch (NoResultException e) {
             return null;
         }

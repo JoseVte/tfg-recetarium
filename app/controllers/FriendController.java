@@ -7,6 +7,7 @@ import models.service.UserService;
 import play.data.Form;
 import play.data.validation.Constraints;
 import play.db.jpa.Transactional;
+import play.i18n.Messages;
 import play.libs.Json;
 import play.mvc.Result;
 import play.mvc.Security;
@@ -38,10 +39,10 @@ public class FriendController extends AbstractController {
     public Result create(Integer id) {
         Form<FriendRequest> friend = friendForm.bindFromRequest();
         if (!Objects.equals(Json.fromJson(Json.parse(request().username()), User.class).id, id)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-equals", Messages.get("article.male-plural"), "IDs"))));
         }
         if (!UserService.addFriend(id, friend.get().id)) {
-            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
         }
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonBooleanInfoMessages("added", true)));
     }
@@ -50,10 +51,10 @@ public class FriendController extends AbstractController {
     @Security.Authenticated(Authenticated.class)
     public Result delete(Integer id, Integer friendId) {
         if (!Objects.equals(Json.fromJson(Json.parse(request().username()), User.class).id, id)) {
-            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages("The IDs don't coincide")));
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-equals", Messages.get("article.male-plural"), "IDs"))));
         }
         if (!UserService.deleteFriend(id, friendId)) {
-            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages("Something went wrong")));
+            return util.Json.jsonResult(response(), internalServerError(util.Json.generateJsonErrorMessages(Messages.get("error.server"))));
         }
         return util.Json.jsonResult(response(), ok(util.Json.generateJsonBooleanInfoMessages("deleted", true)));
     }
