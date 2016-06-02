@@ -8,6 +8,7 @@ import models.Recipe;
 import models.User;
 import models.dao.UserDAO;
 import models.enums.TypeUser;
+import models.service.FileService;
 import models.service.RecipeService;
 import models.service.UserService;
 import play.Logger;
@@ -80,7 +81,11 @@ public class UserController extends AbstractCrudController {
             return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
         }
         try {
-            User newUser = UserService.create(user.get());
+            UserRequest userRequest = user.get();
+            if (userRequest.language == null && !request().acceptLanguages().isEmpty()) {
+                userRequest.language = request().acceptLanguages().get(0).language();
+            }
+            User newUser = UserService.create(userRequest);
             return util.Json.jsonResult(response(), created(Json.toJson(newUser)));
         } catch (Exception e) {
             Logger.error(e.getMessage());
@@ -98,7 +103,11 @@ public class UserController extends AbstractCrudController {
         if (!Objects.equals(user.get().id, id)) {
             return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-equals", Messages.get("article.male-plural"), "IDs"))));
         }
-        User userModel = UserService.update(user.get());
+        UserRequest userRequest = user.get();
+        if (userRequest.language == null && !request().acceptLanguages().isEmpty()) {
+            userRequest.language = request().acceptLanguages().get(0).language();
+        }
+        User userModel = UserService.update(userRequest);
         return util.Json.jsonResult(response(), ok(Json.toJson(userModel)));
     }
 
@@ -155,6 +164,7 @@ public class UserController extends AbstractCrudController {
         public String first_name;
         public String last_name;
         public Integer avatar = null;
+        public String language = null;
 
         @Constraints.Required
         public TypeUser type;
@@ -179,6 +189,9 @@ public class UserController extends AbstractCrudController {
             }
             if ((id == null || dao.find(id) == null) && (password == null || password.isEmpty())) {
                 errors.add(new ValidationError("password", Messages.get("error.required")));
+            }
+            if (id != null && avatar != null && FileService.find(id, avatar) == null) {
+                errors.add(new ValidationError("avatar", Messages.get("error.field-no-existing", Messages.get("article.male-single"), "avatar", avatar)));
             }
             return errors.isEmpty() ? null : errors;
         }

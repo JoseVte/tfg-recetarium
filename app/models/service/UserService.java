@@ -86,8 +86,10 @@ public class UserService {
     public static User update(User user, Map<String, String> data) {
         user.firstName = data.get("first_name");
         user.lastName = data.get("last_name");
+        user.language = data.get("language");
+        user.avatar = null;
         if (data.get("avatar") != null) user.avatar = FileService.find(user, Integer.valueOf(data.get("avatar")));
-        if (data.get("password") != null && !data.get("password").isEmpty())
+        if (data.get("password") != null && data.get("password_repeat") != null && !data.get("password").isEmpty())
             user.password = Encryptation.createHash(data.get("password"));
         return userDAO.update(user);
     }

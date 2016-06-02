@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import middleware.Anonymous;
 import middleware.Authenticated;
 import models.User;
+import models.service.FileService;
 import play.Play;
 import play.i18n.Messages;
 import providers.EmailService;
@@ -29,6 +30,7 @@ public class AuthController extends Controller {
     public final static String AUTH_TOKEN_HEADER = "X-AUTH-TOKEN";
     public static final String AUTH_TOKEN_FIELD = "auth_token";
     public static final String PUSHER_KEY = "pusher_key";
+    public static final String LANGUAGE_FIELD = "language";
     public static final String REDIRECT_PATH = "/";
 
     private final EmailService mailer;
@@ -38,10 +40,11 @@ public class AuthController extends Controller {
         this.mailer = new EmailService(mailer);
     }
 
-    private ObjectNode generateAuthJson(String token) {
+    private ObjectNode generateAuthJson(String token, String language) {
         ObjectNode json = Json.newObject();
         json.put(AUTH_TOKEN_FIELD, token);
         json.put(PUSHER_KEY, Play.application().configuration().getString("pusher.key"));
+        json.put(LANGUAGE_FIELD, language);
         return json;
     }
 
@@ -59,10 +62,12 @@ public class AuthController extends Controller {
             return util.Json.jsonResult(response(), badRequest(registerForm.errorsAsJson()));
         }
 
-        Register register = registerForm.get();
-        User user;
         try {
-            user = UserService.register(register);
+            Register register = registerForm.get();
+            if (register.language == null && !request().acceptLanguages().isEmpty()) {
+                register.language = request().acceptLanguages().get(0).language();
+            }
+            User user = UserService.register(register);
             if (user == null) {
                 return util.Json.jsonResult(response(), unauthorized());
             } else {
@@ -99,7 +104,7 @@ public class AuthController extends Controller {
             return util.Json.jsonResult(response(), unauthorized());
         } else {
             String authToken = UserService.createJWT(user, login.setExpiration);
-            return util.Json.jsonResult(response(), ok(generateAuthJson(authToken)));
+            return util.Json.jsonResult(response(), ok(generateAuthJson(authToken, user.language)));
         }
     }
 
@@ -179,7 +184,7 @@ public class AuthController extends Controller {
         User user = UserService.findByEmailAddress(check.email);
         if (user.equals(Json.fromJson(Json.parse(request().username()), User.class))) {
             String authToken = UserService.createJWT(user, check.setExpiration);
-            return util.Json.jsonResult(response(), ok(generateAuthJson(authToken)));
+            return util.Json.jsonResult(response(), ok(generateAuthJson(authToken, user.language)));
         }
         return unauthorized();
     }
@@ -228,11 +233,15 @@ public class AuthController extends Controller {
     @Transactional
     @Security.Authenticated(Authenticated.class)
     public Result updateProfile() {
-        Form<Profile> user = Form.form(Profile.class).bindFromRequest();
-        if (user.hasErrors()) {
-            return util.Json.jsonResult(response(), badRequest(user.errorsAsJson()));
+        Form<Profile> profile = Form.form(Profile.class).bindFromRequest();
+        if (profile.hasErrors()) {
+            return util.Json.jsonResult(response(), badRequest(profile.errorsAsJson()));
         }
-        User userModel = UserService.update(Json.fromJson(Json.parse(request().username()), User.class), user.data());
+        User user = Json.fromJson(Json.parse(request().username()), User.class);
+        if (profile.get().avatar != null && FileService.find(user.id, profile.get().avatar) == null) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.field-no-existing", Messages.get("article.male-single"), "avatar", profile.get().avatar))));
+        }
+        User userModel = UserService.update(user, profile.data());
         return util.Json.jsonResult(response(), ok(Json.toJson(userModel)));
     }
 
@@ -267,6 +276,7 @@ public class AuthController extends Controller {
 
         public String first_name;
         public String last_name;
+        public String language = null;
 
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
@@ -296,13 +306,14 @@ public class AuthController extends Controller {
 
         public String first_name;
         public String last_name;
-        public Integer image_main = null;
+        public Integer avatar = null;
+        public String language = null;
 
         public Profile() { }
 
         public List<ValidationError> validate() {
             List<ValidationError> errors = new ArrayList<ValidationError>();
-            if (password != null && password_repeat != null && !password.equals(password_repeat)) {
+            if ((password == null ^ password_repeat == null) || (password != null && password_repeat != null && !password.equals(password_repeat))) {
                 errors.add(new ValidationError("password", Messages.get("error.field-equals", Messages.get("article.female-plural"), Messages.get("field.passwords"))));
                 errors.add(new ValidationError("password_repeat", Messages.get("error.field-equals", Messages.get("article.female-plural"), Messages.get("field.passwords"))));
             }
