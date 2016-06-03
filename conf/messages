@@ -23,6 +23,7 @@ action.edit=edit
 
 field.password=password
 field.passwords=passwords
+field.tag=tag
 field.tags=tags
 field.draft=draft
 field.ingredient=ingredient

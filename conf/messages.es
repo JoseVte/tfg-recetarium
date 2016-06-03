@@ -23,6 +23,7 @@ action.edit=editar
 
 field.password=contraseña
 field.passwords=contraseñas
+field.tag=etiqueta
 field.tags=etiquetas
 field.draft=borrador
 field.ingredient=ingrediente

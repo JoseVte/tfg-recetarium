@@ -58,7 +58,8 @@ DELETE  /recipes/$id<[0-9]+>/ingredient/$ingredientId<[0-9]+>         controller
 GET      /categories             controllers.CategoryController.list()
 
 ## Tags
-GET     /tags                    controllers.TagController.list(search: String ?= "")
+GET     /tags                               controllers.TagController.list(search: String ?= "")
+GET    /tags/$id<[0-9]+>          controllers.TagController.get(id: Integer)
 
 ## Favorite
 PATCH   /recipes/$id<[0-9]+>/fav    controllers.UserController.toggleFav(id: Integer)
