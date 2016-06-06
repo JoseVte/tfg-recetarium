@@ -2,10 +2,14 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import models.base.Model;
 import models.dao.CategoryDAO;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import play.data.validation.Constraints;
 import play.data.validation.ValidationError;
+import util.serializer.CountRecipesSerializer;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -14,7 +18,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "categories")
-@JsonPropertyOrder({"id", "text", "created_at", "updated_at"})
+@JsonPropertyOrder({"id", "text", "recipes", "created_at", "updated_at"})
 public class Category extends Model implements Serializable {
     private static final long serialVersionUID = 1L;
 
@@ -22,7 +26,8 @@ public class Category extends Model implements Serializable {
     @Column(unique = true, nullable = false)
     public String text;
 
-    @JsonIgnore
+    @Fetch(value = FetchMode.SUBSELECT)
+    @JsonSerialize(using = CountRecipesSerializer.class)
     @OneToMany(mappedBy = "category", fetch = FetchType.LAZY)
     public List<Recipe> recipes = new ArrayList<Recipe>();
 
@@ -79,5 +84,10 @@ public class Category extends Model implements Serializable {
         for (Recipe recipe : recipes) {
             recipe.category = null;
         }
+    }
+
+    @JsonIgnore
+    public static String Search(String search) {
+        return "(categories.text LIKE '%" + search + "%')";
     }
 }
