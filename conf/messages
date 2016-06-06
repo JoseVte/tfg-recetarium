@@ -28,6 +28,7 @@ field.tags=tags
 field.draft=draft
 field.ingredient=ingredient
 field.category=category
+field.categories=categories
 field.comment=comment
 field.file=file
 field.user=user
@@ -45,6 +46,7 @@ info.change-password=changed password successfully
 info.account-activated=account activated successfully
 info.file-upload=file <strong>{0}</strong> uploaded
 info.delete=deleted {0} {1} <strong>{2}</strong>
+info.delete-multiple=deleted {0} {1}
 
 pusher.favorite=the user <strong>{0}</strong> liked your recipe <em>{1}</em>
 pusher.comment=the user <strong>{0}</strong> has comment your recipe <em>{1}</em>

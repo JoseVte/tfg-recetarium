@@ -13,47 +13,47 @@ public class CategoryService {
     }
 
     /**
-     * Create a section
+     * Create a category
      *
      * @param data Category
      *
-     * @return Section
+     * @return Category
      */
     public static Category create(Category data) {
         return dao.create(data);
     }
 
     /**
-     * Update a section
+     * Update a category
      *
      * @param data Category
      *
-     * @return Section
+     * @return Category
      */
     public static Category update(Category data) {
         return dao.update(data);
     }
 
     /**
-     * Find a section by id
+     * Find a category by id
      *
      * @param id Integer
      *
-     * @return Section
+     * @return Category
      */
     public static Category find(Integer id) {
         return dao.find(id);
     }
 
     /**
-     * Delete a section by id
+     * Delete a category by id
      *
      * @param id Integer
      */
     public static Boolean delete(Integer id) {
-        Category section = dao.find(id);
-        if (section != null) {
-            dao.delete(section);
+        Category category = dao.find(id);
+        if (category != null) {
+            dao.delete(category);
             return true;
         } else {
             return false;
@@ -61,32 +61,66 @@ public class CategoryService {
     }
 
     /**
-     * Get all sections
+     * Delete categories by id
      *
-     * @return List<Section>
+     * @param ids List<Integer>
+     */
+    public static Integer delete(List<Integer> ids) {
+        return dao.delete(ids);
+    }
+
+    /**
+     * Get all categories
+     *
+     * @return List<Category>
      */
     public static List<Category> all() {
         return dao.all();
     }
 
     /**
-     * Get the page of sections
+     * Get the page of categories
      *
      * @param page Integer
      * @param size Integer
      *
-     * @return List<Section>
+     * @return List<Category>
      */
     public static List<Category> paginate(Integer page, Integer size) {
         return dao.paginate(page, size);
     }
 
     /**
-     * Get the number of total of sections
+     * Get the page of categories
+     *
+     * @param page Integer
+     * @param size Integer
+     * @param search String
+     * @param order String
+     *
+     * @return List<Category>
+     */
+    public static List<Category> paginate(Integer page, Integer size, String search, String order) {
+        return dao.paginate(page, size, search, order);
+    }
+
+    /**
+     * Get the number of total of categories
      *
      * @return Long
      */
     public static Long count() {
         return dao.count();
+    }
+
+    /**
+     * Get the number of total of categories
+     *
+     * @param search String
+     *
+     * @return Long
+     */
+    public static Long count(String search) {
+        return dao.count(search);
     }
 }

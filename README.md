@@ -76,7 +76,19 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.11.3](/doc/rocket-blue.png) 0.11.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.11.3)
+#### [![0.12.3](/doc/rocket-blue.png) 0.12.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.12.3)
+
+- CRUD de las categorias
+
+###### [![0.12.2](/doc/release.png) 0.12.2](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.12.2)
+
+- Nueva ruta: obtener tag por ID
+
+###### [![0.12.1](/doc/release.png) 0.12.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.12.1)
+
+- Añadido idioma al perfil del usuario
+
+###### [![0.11.3](/doc/release.png) 0.11.3](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.11.3)
 
 - Creados los mensajes en español e ingles para la internacionalización
 

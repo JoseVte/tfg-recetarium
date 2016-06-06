@@ -55,10 +55,16 @@ POST    /recipes/$id<[0-9]+>/ingredient                               controller
 DELETE  /recipes/$id<[0-9]+>/ingredient/$ingredientId<[0-9]+>         controllers.RecipeController.deleteIngredient(id: Integer, ingredientId: Integer)
 
 ## Categories
-GET      /categories             controllers.CategoryController.list()
+GET      /categories                  controllers.CategoryController.list(page: Integer ?= 1, size: Integer ?= 10, search: String ?= "", order: String ?= "id")
+GET      /categories/$id<[0-9]+>      controllers.CategoryController.get(id: Integer)
+POST     /categories                  controllers.CategoryController.create()
+PUT      /categories/$id<[0-9]+>      controllers.CategoryController.update(id: Integer)
+PATCH    /categories/$id<[0-9]+>      controllers.CategoryController.update(id: Integer)
+DELETE   /categories                  controllers.CategoryController.deleteMultiple(ids: Seq[Integer])
+DELETE   /categories/$id<[0-9]+>      controllers.CategoryController.delete(id: Integer)
 
 ## Tags
-GET     /tags                               controllers.TagController.list(search: String ?= "")
+GET     /tags                     controllers.TagController.list(search: String ?= "")
 GET    /tags/$id<[0-9]+>          controllers.TagController.get(id: Integer)
 
 ## Favorite
