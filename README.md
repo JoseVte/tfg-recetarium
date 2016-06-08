@@ -27,6 +27,11 @@ API Recetarium
 | Acción | URI | Login |
 | ------ | --- | :----: |
 | [Todas las categorias](/doc/categorias-doc.md#todas-las-categorias) | **GET**  /categories | --- |
+| [Todas las categorias con paginacion](/doc/categorias-doc.md#todas-las-categorias-con-paginacion) | **GET**  /categories | --- |
+| [Crear](/doc/categorias-doc.md#crear-una-categoria) | **POST** /categories | ADMIN |
+| [Actualizar](/doc/categorias-doc.md#actualizar-una-categoria) |  **PUT**    /categories/{id} <br> **PATCH**  /categories/{id} | ADMIN |
+| [Borrar](/doc/categorias-doc.md#borrar-una-categoria) |  **DELETE** /categories/{id} | ADMIN |
+| [Borrar multiple](/doc/categorias-doc.md#borrar-multiples-categorias) |  **DELETE** /categories?ids=*&ids=* | ADMIN |
 
 #### Tags
 
