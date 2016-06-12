@@ -23,3 +23,8 @@ build:
     - script:
         name: tests
         code: sbt test
+  after-steps:
+    - sherzberg/slack-notify:
+        subdomain: tfg-josevte
+        token: $SLACK_TOKEN
+        channel: "#continuous-integratio"

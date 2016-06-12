@@ -23,10 +23,12 @@ action.edit=editar
 
 field.password=contraseña
 field.passwords=contraseñas
+field.tag=etiqueta
 field.tags=etiquetas
 field.draft=borrador
 field.ingredient=ingrediente
 field.category=categoria
+field.categories=categorias
 field.comment=comentario
 field.file=fichero
 field.user=usuario
@@ -44,6 +46,7 @@ info.change-password=contraseña cambiada correctamente
 info.account-activated=cuenta activada correctamente
 info.file-upload=fichero <em>{0}</em> subido
 info.delete=se ha borrado {0} {1} {2}
+info.delete-multiple=se han borrado {0} {1}
 
 pusher.favorite=al usuario <strong>{0}</strong> le ha gustado tu receta <em>{1}</em>
 pusher.comment=el usuario <strong>{0}</strong> ha comentado en tu receta <em>{1}</em>

@@ -72,6 +72,8 @@ public class User extends Model implements Serializable {
     @JoinColumn(name = "avatar_id", nullable = true)
     public File avatar;
 
+    public String language = "es";
+
     @JsonIgnore
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public List<Recipe> recipes = new ArrayList<Recipe>();
@@ -122,6 +124,7 @@ public class User extends Model implements Serializable {
         this.firstName = user.first_name;
         this.lastName = user.last_name;
         this.type = user.type;
+        this.language = user.language;
         if (user.avatar != null) this.avatar = FileService.find(this, user.avatar);
     }
 
@@ -132,6 +135,7 @@ public class User extends Model implements Serializable {
 
         if (map.get("first_name") != null) this.firstName = map.get("first_name").toString();
         if (map.get("last_name") != null) this.lastName = map.get("last_name").toString();
+        if (map.get("language") != null) this.language = map.get("language").toString();
         this.type = TypeUser.valueOf(map.get("type").toString());
         this.numRecipes = Integer.valueOf(map.get("num_recipes").toString());
 
@@ -148,6 +152,7 @@ public class User extends Model implements Serializable {
     public void prePersistData() {
         if (firstName != null && firstName.isEmpty()) firstName = null;
         if (lastName != null && lastName.isEmpty()) lastName = null;
+        if (language != null && language.isEmpty()) language = null;
     }
 
     /*

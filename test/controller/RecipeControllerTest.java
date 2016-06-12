@@ -131,7 +131,7 @@ public class RecipeControllerTest extends AbstractTest {
     }
 
     @Test
-    public void testUserControllerUnauthorized() {
+    public void testRecipeControllerUnauthorized() {
         running(testServer(3333, fakeApplication(inMemoryDatabase())), () -> {
             initializeDataController();
             WSResponse response = WS.url("http://localhost:3333/recipes").post(dataOk).get(timeout);

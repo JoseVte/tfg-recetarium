@@ -27,6 +27,11 @@ API Recetarium
 | Acción | URI | Login |
 | ------ | --- | :----: |
 | [Todas las categorias](/doc/categorias-doc.md#todas-las-categorias) | **GET**  /categories | --- |
+| [Todas las categorias con paginacion](/doc/categorias-doc.md#todas-las-categorias-con-paginacion) | **GET**  /categories | --- |
+| [Crear](/doc/categorias-doc.md#crear-una-categoria) | **POST** /categories | ADMIN |
+| [Actualizar](/doc/categorias-doc.md#actualizar-una-categoria) |  **PUT**    /categories/{id} <br> **PATCH**  /categories/{id} | ADMIN |
+| [Borrar](/doc/categorias-doc.md#borrar-una-categoria) |  **DELETE** /categories/{id} | ADMIN |
+| [Borrar multiple](/doc/categorias-doc.md#borrar-multiples-categorias) |  **DELETE** /categories?ids=*&ids=* | ADMIN |
 
 #### Tags
 
@@ -76,7 +81,19 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.11.3](/doc/rocket-blue.png) 0.11.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.11.3)
+#### [![0.12.3](/doc/rocket-blue.png) 0.12.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.12.3)
+
+- CRUD de las categorias
+
+###### [![0.12.2](/doc/release.png) 0.12.2](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.12.2)
+
+- Nueva ruta: obtener tag por ID
+
+###### [![0.12.1](/doc/release.png) 0.12.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.12.1)
+
+- Añadido idioma al perfil del usuario
+
+###### [![0.11.3](/doc/release.png) 0.11.3](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.11.3)
 
 - Creados los mensajes en español e ingles para la internacionalización
 
