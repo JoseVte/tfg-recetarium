@@ -38,8 +38,16 @@ public class CategoryController extends Controller {
             if (order.startsWith("-")) {
                 orderBy = "-categories.recipes.size";
             }
+            order = orderBy;
+        } else {
+            if (order.startsWith("-")) {
+                orderBy = order.substring(1);
+            }
+            if (!CategoryService.columns().contains(orderBy)) {
+                return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.invalid-value", order))));
+            }
         }
-        order = orderBy;
+
         List<Category> models = CategoryService.paginate(page - 1, size, search, order);
         Long count = CategoryService.count(search);
         String[] routesString = new String[3];

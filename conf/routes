@@ -34,7 +34,7 @@ POST    /users/$id<[0-9]+>/friends                      controllers.FriendContro
 DELETE  /users/$id<[0-9]+>/friends/$friendId<[0-9]+>    controllers.FriendController.delete(id: Integer, friendId: Integer)
 
 ## Recipes
-GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 10, search: String ?= "", order: String ?= "created_at+desc", tags: Seq[Integer])
+GET     /recipes                                controllers.RecipeController.list(page: Integer ?= 1, size: Integer ?= 10, search: String ?= "", order: String ?= "-createdAt", tags: Seq[Integer])
 # This URI is not necessary, the recipes are identified by a slug
 #GET    /recipes/$id<[0-9]+>                   controllers.RecipeController.get(id: Integer)
 GET     /recipes/:slug                          controllers.RecipeController.get(slug: String)

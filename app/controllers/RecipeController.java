@@ -50,7 +50,13 @@ public class RecipeController extends AbstractCrudController {
 
     @Transactional(readOnly = true)
     public Result list(Integer page, Integer size, String search, String order, scala.collection.Seq<Integer> tags) {
-        order = order.replace('+', ' ');
+        String orderBy = order;
+        if (order.startsWith("-")) {
+            orderBy = order.substring(1);
+        }
+        if (!RecipeService.columns().contains(orderBy)) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.invalid-value", order))));
+        }
         List<Recipe> models = RecipeService.paginate(page - 1, size, search, request().username(), order, scala.collection.JavaConversions.seqAsJavaList(tags));
         Long count = RecipeService.count(search, request().username(), scala.collection.JavaConversions.seqAsJavaList(tags));
         String[] routesString = new String[3];

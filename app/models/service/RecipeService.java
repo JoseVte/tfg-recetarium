@@ -23,6 +23,15 @@ public class RecipeService {
     }
 
     /**
+     * Get all columns availables for this model
+     *
+     * @return List<String>
+     */
+    public static List<String> columns() {
+        return recipeDAO.columns();
+    }
+
+    /**
      * Create a recipe
      *
      * @param data Recipe
@@ -45,7 +54,7 @@ public class RecipeService {
     }
 
     public static Recipe createDraft(User user) {
-        Integer lastId = user.numRecipes + 1;
+        Integer lastId = 1 + user.numRecipes;
         Recipe recipe = new Recipe("recipe-" + user.username + "-" + lastId, "Recipe " + user.username + " " + lastId, null, new Date(0), 0, RecipeDifficulty.EASY, RecipeVisibility.PUBLIC, user, null, null);
         recipe.isDraft = true;
         return recipeDAO.create(recipe);
