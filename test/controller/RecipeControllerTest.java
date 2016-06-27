@@ -197,7 +197,7 @@ public class RecipeControllerTest extends AbstractTest {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
-            WSResponse response = WS.url("http://localhost:3333/recipes?page=1&size=1")
+            WSResponse response = WS.url("http://localhost:3333/recipes?page=1&size=1&order=id")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
             assertEquals(OK, response.getStatus());
@@ -222,7 +222,7 @@ public class RecipeControllerTest extends AbstractTest {
             initializeDataController();
             WSResponse login = WS.url("http://localhost:3333/auth/login").post(loginJson).get(timeout);
             token = login.asJson().get(AuthController.AUTH_TOKEN_FIELD).asText();
-            WSResponse response = WS.url("http://localhost:3333/recipes?page=1&size=1&search=test2")
+            WSResponse response = WS.url("http://localhost:3333/recipes?page=1&size=1&search=test2&order=id")
                     .setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
 
             assertEquals(OK, response.getStatus());
@@ -359,7 +359,7 @@ public class RecipeControllerTest extends AbstractTest {
             WSResponse response = WS.url("http://localhost:3333/recipes").setHeader(AuthController.AUTH_TOKEN_HEADER, token).post(dataOk).get(timeout);
             assertEquals(CREATED, response.getStatus());
 
-            response = WS.url("http://localhost:3333/recipes?page=1&size=5").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
+            response = WS.url("http://localhost:3333/recipes?page=1&size=5&order=id").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
             JsonNode responseJson = response.asJson();
             assertEquals(responseJson.get("data").size(), 3);
             assertEquals(responseJson.get("total").intValue(), 3);
@@ -367,7 +367,7 @@ public class RecipeControllerTest extends AbstractTest {
             response = WS.url("http://localhost:3333/recipes/new-recipe").setHeader(AuthController.AUTH_TOKEN_HEADER, token).get().get(timeout);
             assertEquals(OK, response.getStatus());
 
-            response = WS.url("http://localhost:3333/recipes?page=1&size=5").get().get(timeout);
+            response = WS.url("http://localhost:3333/recipes?page=1&size=5&order=id").get().get(timeout);
             responseJson = response.asJson();
             assertEquals(responseJson.get("data").size(), 2);
             assertEquals(responseJson.get("total").intValue(), 2);
