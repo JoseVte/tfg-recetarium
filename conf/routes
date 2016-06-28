@@ -54,6 +54,22 @@ GET     /users/$id<[0-9]+>/favorites            controllers.RecipeController.lis
 POST    /recipes/$id<[0-9]+>/ingredient                               controllers.RecipeController.addIngredient(id: Integer)
 DELETE  /recipes/$id<[0-9]+>/ingredient/$ingredientId<[0-9]+>         controllers.RecipeController.deleteIngredient(id: Integer, ingredientId: Integer)
 
+## Favorite
+PATCH   /recipes/$id<[0-9]+>/fav    controllers.UserController.toggleFav(id: Integer)
+PUT   /recipes/$id<[0-9]+>/fav    controllers.UserController.toggleFav(id: Integer)
+
+## Rating
+PATCH     /recipes/$id<[0-9]+>/rating     controllers.RecipeController.rating(id: Integer)
+PUT     /recipes/$id<[0-9]+>/rating     controllers.RecipeController.rating(id: Integer)
+
+## Comments
+GET     /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.getReplies(id: Integer, commentId: Integer)
+POST    /recipes/$id<[0-9]+>/comments                       controllers.RecipeController.createComment(id: Integer, commentId: Integer = null)
+POST    /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.createComment(id: Integer, commentId: Integer)
+PUT     /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.updateComment(id: Integer, commentId: Integer)
+PATCH   /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.updateComment(id: Integer, commentId: Integer)
+DELETE  /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.deleteComment(id: Integer, commentId: Integer)
+
 ## Categories
 GET      /categories                  controllers.CategoryController.list(page: Integer ?= 1, size: Integer ?= 10, search: String ?= "", order: String ?= "id")
 GET      /categories/$id<[0-9]+>      controllers.CategoryController.get(id: Integer)
@@ -66,20 +82,6 @@ DELETE   /categories/$id<[0-9]+>      controllers.CategoryController.delete(id: 
 ## Tags
 GET     /tags                     controllers.TagController.list(search: String ?= "")
 GET    /tags/$id<[0-9]+>          controllers.TagController.get(id: Integer)
-
-## Favorite
-PATCH   /recipes/$id<[0-9]+>/fav    controllers.UserController.toggleFav(id: Integer)
-
-## Rating
-PUT     /recipes/$id<[0-9]+>/rating     controllers.RecipeController.rating(id: Integer)
-
-## Comments
-GET     /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.getReplies(id: Integer, commentId: Integer)
-POST    /recipes/$id<[0-9]+>/comments                       controllers.RecipeController.createComment(id: Integer, commentId: Integer = null)
-POST    /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.createComment(id: Integer, commentId: Integer)
-PUT     /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.updateComment(id: Integer, commentId: Integer)
-PATCH   /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.updateComment(id: Integer, commentId: Integer)
-DELETE  /recipes/$id<[0-9]+>/comments/$commentId<[0-9]+>    controllers.RecipeController.deleteComment(id: Integer, commentId: Integer)
 
 ## User files
 GET     /users/$idUser<[0-9]+>/files                  controllers.FileController.getUserFiles(idUser: Integer)
