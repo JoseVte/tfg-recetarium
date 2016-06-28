@@ -43,7 +43,6 @@ public class UserController extends AbstractCrudController {
      * @return Result
      */
     public Result index() {
-        pusher.sendTest();
         return ok(index.render("API REST for JAVA Play Framework"));
     }
 
