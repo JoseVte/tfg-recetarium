@@ -22,6 +22,14 @@ public class FriendController extends AbstractController {
     @Security.Authenticated(Authenticated.class)
     @SuppressWarnings("deprecation")
     public Result list(Integer id, Integer page, Integer size, String search, String order) {
+        String orderBy = order;
+        if (order.startsWith("-")) {
+            orderBy = order.substring(1);
+        }
+        if (!UserService.columns().contains(orderBy)) {
+            return util.Json.jsonResult(response(), badRequest(util.Json.generateJsonErrorMessages(Messages.get("error.invalid-value", order))));
+        }
+
         List<User> models = UserService.getFriendsPaginate(id, page - 1, size, search, order);
         Long count = UserService.countFriends(id, search);
         String[] routesString = new String[3];

@@ -12,32 +12,47 @@ API Recetarium
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
-| [Listado y busqueda por páginas](/doc/recetas-doc.md#paginación) | **GET** /recipes(?page=*&size=*&search=*) | --- |
+| [Listado y busqueda por páginas](/doc/recetas-doc.md#paginación) | **GET** /recipes(?page=&size=&search=&order=&tags=) | --- |
 | [Obtener por slug](/doc/recetas-doc.md#obtener-una-receta-por-slug) | **GET** /recipes/{slug} | --- |
-| [Crear](/doc/recetas-doc.md#crear-una-receta-nueva) | **POST** /recipes | OWNER / ADMIN |
+| [Crear](/doc/recetas-doc.md#crear-una-receta-nueva) | **POST** /recipes | OWNER |
+| [Crear borrador](/doc/recetas-doc.md#crear-un-nuevo-borrador) | **POST** /recipes/draft | OWNER |
+| [Crear receta desde el borrador](/doc/recetas-doc.md#crear-una-receta-desde-el-borrador) | **POST** /recipes/create-from-draft | OWNER |
 | [Actualizar](/doc/recetas-doc.md#actualizar-una-receta-ya-existente) |  **PUT**    /recipes/{id} <br> **PATCH**  /recipes/{id} | OWNER / ADMIN |
 | [Borrar](/doc/recetas-doc.md#borrar-una-receta) |  **DELETE** /recipes/{id} | OWNER / ADMIN |
 | [Comprobar slug](/doc/recetas-doc.md#comprobar-slug-de-una-receta) |  **HEAD** /recipes/{slug}/check <br> **HEAD** /recipes/{slug}/check/{id} | COMUN |
 | [Comprobar propietario](/doc/recetas-doc.md#comprobar-si-una-receta-es-del-usuario-logueado) |  **HEAD** /recipes/{slug}/mine | COMUN |
 | [Añadir un ingrediente](/doc/recetas-doc.md#añadir-un-nuevo-ingrediente-a-una-receta) | **POST** /recipes/{id-receta}/ingredient | OWNER / ADMIN |
 | [Borrar un ingrediente](/doc/recetas-doc.md#borrar-un-ingrediente-de-una-receta) | **DELETE** /recipes/{id-receta}/ingredient/{id} | OWNER / ADMIN |
+| [Añadir/Borrar a favoritos](/doc/recetas-doc.md#añadir-o-quitar-de-favoritos) | **PUT** /recipes/{id}/fav | COMUN |
+| [Puntuar la receta](/doc/recetas-doc.md#puntuar-la-receta) | **PUT** /recipes/{id}/rating | COMUN |
+
+#### Comentarios
+
+| Acción | URI | Login |
+| ------ | --- | :----: |
+| [Todas las respuestas](/doc/comentarios-doc.md#todas-las-respuestas) | **GET**  /recipes{recipe-id}/comments/{comentario-id} | --- |
+| [Crear](/doc/comentarios-doc.md#crear-un-comentario) | **POST** /recipes{id}/comments <br> **POST** /recipes{recipe-id}/comments/{comentario-id} | COMUN |
+| [Actualizar](/doc/comentarios-doc.md#actualizar-un-comentario) |  **PUT**    /recipes{recipe-id}/comments/{comentario-id} <br> **PATCH**  /recipes{recipe-id}/comments/{comentario-id} | OWNER / ADMIN |
+| [Borrar](/doc/comentarios-doc.md#borrar-un-comentario) |  **DELETE** /recipes{recipe-id}/comments/{comentario-id} | OWNER / ADMIN |
 
 #### Categorias
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
 | [Todas las categorias](/doc/categorias-doc.md#todas-las-categorias) | **GET**  /categories | --- |
-| [Todas las categorias con paginacion](/doc/categorias-doc.md#todas-las-categorias-con-paginacion) | **GET**  /categories | --- |
+| [Todas las categorias con paginacion](/doc/categorias-doc.md#todas-las-categorias-con-paginacion) | **GET**  /categories(?page=&size=&search=&order=) | --- |
+| [Obtener por id](/doc/categorias-doc.md#obtener-una-categoria-por-id) | **GET**    /categories/{id} | --- |
 | [Crear](/doc/categorias-doc.md#crear-una-categoria) | **POST** /categories | ADMIN |
 | [Actualizar](/doc/categorias-doc.md#actualizar-una-categoria) |  **PUT**    /categories/{id} <br> **PATCH**  /categories/{id} | ADMIN |
 | [Borrar](/doc/categorias-doc.md#borrar-una-categoria) |  **DELETE** /categories/{id} | ADMIN |
-| [Borrar multiple](/doc/categorias-doc.md#borrar-multiples-categorias) |  **DELETE** /categories?ids=*&ids=* | ADMIN |
+| [Borrar multiple](/doc/categorias-doc.md#borrar-multiples-categorias) |  **DELETE** /categories?ids=&ids= | ADMIN |
 
 #### Tags
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
-| [Buscar tags](/doc/tag-doc.md#buscar-tags-por-cadena) | **GET**  /tags(?search=*) | --- |
+| [Buscar tags](/doc/tag-doc.md#buscar-etiquetas-por-cadena) | **GET**  /tags(?search=) | --- |
+| [Obtener por id](/doc/tag-doc.md#obtener-una-etiqueta-por-id) | **GET**    /tags/{id} | --- |
 
 #### Autentificación
 
@@ -47,31 +62,45 @@ API Recetarium
 | [Registrar un usuario](/doc/auth-doc.md#registrar-un-usuario) | **POST**    /auth/register | --- |
 | [Enviar email para reiniciar la password](/doc/auth-doc.md#enviar-email-para-reiniciar-la-password) | **POST**    /auth/reset/password | --- |
 | [Cambia la password](/doc/auth-doc.md#cambiar-la-password) | **PUT**     /auth/reset/password <br> **PATCH**   /auth/reset/password | --- |
+| [Comprobar el token](/doc/auth-doc.md#comprobar-token) | **POST**    /auth/check | --- |
+| [Activar cuenta](/doc/auth-doc.md#activar-la-cuenta-del-usuario) | **PUT**     /auth/active <br> **PATCH**   /auth/active | --- |
+| [Obtener los detalles del perfil](/doc/auth-doc.md#obtener-los-detalles-del-perfil) | **GET**    /auth/profile | COMUN |
+| [Guardar los cambios del perfil](/doc/auth-doc.md#guardar-los-cambios-del-perfil) | **PUT**     /auth/profile <br> **PATCH**   /auth/profile | COMUN |
 
 #### Usuarios
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
-| [Listado por páginas](/doc/user-doc.md#paginación) | **GET**    /users(?page=*&size=*&search=*) | COMUN |
+| [Listado por páginas](/doc/user-doc.md#paginación) | **GET**    /users(?page=&size=&search=&order=) | COMUN |
 | [Obtener por id](/doc/user-doc.md#obtener-un-usuario-por-id) | **GET**    /users/{id} | COMUN |
 | [Crear](/doc/user-doc.md#crear-un-usuario-nuevo) | **POST**   /users | ADMIN |
 | [Actualizar](/doc/user-doc.md#actualizar-un-usuario-ya-existente) |  **PUT**    /users/{id} <br> **PATCH**  /users/{id} | ADMIN |
 | [Borrar](/doc/user-doc.md#borrar-un-usuario) |  **DELETE** /users/{id} | ADMIN |
 
+#### Amigos
+
+| Acción | URI | Login |
+| ------ | --- | :----: |
+| [Listado por páginas](/doc/user-doc.md#paginación) | **GET**    /users/{id}/friends(?page=&size=&search=&order=) | COMUN |
+| [Crear](/doc/user-doc.md#crear-un-usuario-nuevo) | **POST**   /users/{id}/friends | COMUN |
+| [Borrar](/doc/user-doc.md#borrar-un-usuario) |  **DELETE** /users/{user-id}/friends/{amigo-id} | COMUN |
+
 #### Archivos
 
 | Acción | URI | Login |
 | ------ | --- | :----: |
-| [Obtener por nombre del archivo](/doc/archivos-doc.md#obtener-por-nombre-del-archivo) | **GET**    /recipes/{idReceta}/media/{id} <br> **GET**    /recipes/{idReceta}/media/{nombreFichero} | --- |
-| [Subida del archivo](/doc/archivos-doc.md#subida-del-archivo) | **POST**   /recipes/{idReceta}/media | OWNER / ADMIN |
-| [Borrar archivo](/doc/archivos-doc.md#borrar-archivo) |  **DELETE** /recipes/{idReceta}/media/{id} <br> **DELETE** /recipes/{idReceta}/media/{nombre} | OWNER / ADMIN |
+| [Todas las imagenes](/doc/archivos-doc.md#todas-las-imagenes) | **GET**  /users/{user-id}/files | COMUN |
+| [Obtener por nombre del archivo](/doc/archivos-doc.md#obtener-por-nombre-del-archivo) | **GET**    /users/{user-id}/files/{id} <br> **GET**    /users/{user-id}/files/{nombre} | --- |
+| [Subida del archivo](/doc/archivos-doc.md#subida-del-archivo) | **POST**   /users/{user-id}/files | OWNER / ADMIN |
+| [Borrar archivo](/doc/archivos-doc.md#borrar-archivo) |  **DELETE** /users/{user-id}/files/{id} <br> **DELETE** /users/{user-id}/files/{nombre} | OWNER / ADMIN |
 
 -----
 
-## DOCUMENTACIÓN EXPANDIDA
+## DOCUMENTACIÓN EXTENDIDA
 
 - [Autentificación](/doc/auth-doc.md)
 - [Recetas](/doc/recetas-doc.md)
+- [Comentarios](/doc/comentarios-doc.md)
 - [Usuarios](/doc/user-doc.md)
 - [Archivos](/doc/archivos-doc.md)
 - [Categorias](/doc/categorias-deoc.md)
@@ -81,7 +110,16 @@ API Recetarium
 
 ### CHANGELOG
 
-#### [![0.12.3](/doc/rocket-blue.png) 0.12.3](https://github.com/JoseVte/tfg-recetarium/releases/tag/0.12.3)
+#### [![1.0.0](/doc/rocket-blue.png) 1.0.0](https://github.com/JoseVte/tfg-recetarium/releases/tag/1.0.0)
+
+- Primera release de la aplicación
+
+###### [![0.13.1](/doc/release.png) 0.13.1](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.13.1)
+
+- Comprobar el parametro `order` en la paginación
+- Arreglado problema con el autoincremento de las recetas del usuario
+
+###### [![0.12.3](/doc/release.png) 0.12.3](https://github.com/JoseVte/tfg-recetarium-angularjs/releases/tag/0.12.3)
 
 - CRUD de las categorias
 

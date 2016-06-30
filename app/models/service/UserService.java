@@ -25,6 +25,15 @@ public class UserService {
     }
 
     /**
+     * Get all columns availables for this model
+     *
+     * @return List<String>
+     */
+    public static List<String> columns() {
+        return userDAO.columns();
+    }
+
+    /**
      * Create an user
      *
      * @param data User

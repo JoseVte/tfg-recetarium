@@ -13,6 +13,15 @@ public class CategoryService {
     }
 
     /**
+     * Get all columns availables for this model
+     *
+     * @return List<String>
+     */
+    public static List<String> columns() {
+        return dao.columns();
+    }
+
+    /**
      * Create a category
      *
      * @param data Category

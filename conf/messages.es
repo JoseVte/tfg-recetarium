@@ -38,7 +38,6 @@ error.upload-file=error subiendo el fichero <strong>{0}</strong>
 error.no-files=no se han incluido nigun fichero en la petición
 error.file-used=el fichero <strong>{0}</strong> se esta usando en alguna receta como imagen principal
 error.file-not-found=el fichero con ID {0} no esta en tus ficheros
-
 error.comment-owner=no puedes {0} el comentario de otro usuario
 
 info.reset-password=email para resetear la contraseña enviado
