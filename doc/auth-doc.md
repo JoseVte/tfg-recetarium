@@ -23,6 +23,20 @@
   "last_name": "string nullable"
 }
 ```
+
+##### Guardar perfil
+
+```json
+{
+  "password": "string",
+  "passwordRepeat": "string",
+  "first_name": "string nullable",
+  "last_name": "string nullable",
+  "avatar": "int nullable",
+  "language": "string nullable"
+}
+```
+
 ##### Reinicio password
 
 ```json
@@ -35,8 +49,24 @@
 
 ```json
 {
-  "email": "string",
   "password": "string",
+  "token": "string"
+}
+```
+
+##### Comprobar JWT
+
+```json
+{
+  "email": "string",
+  "setExpiration": "bool"
+}
+```
+
+##### Activar cuenta
+
+```json
+{
   "token": "string"
 }
 ```
@@ -49,11 +79,13 @@ Para loguear un usuario es necesario un [email y password](#login) y enviarlos a
 POST /auth/login
 ```
 
-Si el login es correcto devuelve un JWT y lo añade a las cookies:
+Si el login es correcto devuelve un JWT junto al lenguaje del usuario y la clave de pusher:
 
 ```json
 {
-    "token": "{token}"
+    "token": "{token}",
+    "language": "{language}",
+    "pusher_key": "{pusher_key}"
 }
 ```
 
@@ -81,11 +113,36 @@ Para registrar un usuario se han de introducir [estos datos](#registro) en esta 
 POST /auth/register
 ```
 
-Si el registro es correcto, se autologuea al usuario y se devuelve un JWT y lo añade a las cookies:
+Si el registro es correcto, se crea la cuenta y se envia un email para que el usuario active la cuenta.
+
+Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
 
 ```json
 {
-    "token": "{token}"
+    "campo-1": [
+        "Error 1",
+        "Error 2"
+    ],
+    "campo-2": [
+        "Error 3"
+    ]
+}
+```
+
+#### Activar la cuenta del usuario
+
+Una vez un usuario esta registrado, se le enviara un email con la url para activar la cuenta. En esta url se encuentra el token para activarlo manualmente usando la siguiente URI y [este formulario](#activar-cuenta):
+
+```
+PUT   /auth/active
+PATCH /auth/active
+```
+
+Si el usuario al que le perteneceel token no existe, ya sea porque el token es incorrecto como si ese usuario ya esta activado, se devuelve un `404`:
+
+```json
+{
+    "error": "no encontrado email {email}"
 }
 ```
 
@@ -115,7 +172,7 @@ Cuando el email se haya enviado correctamente se recebirá este mensaje:
 
 ```json
 {
-    "msg": "Reset password email sent"
+    "msg": "email para resetear la contraseña enviado"
 }
 ```
 
@@ -123,7 +180,7 @@ Si el email no existe se devuelve un `404`:
 
 ```json
 {
-    "error": "Not found email {email}"
+    "error": "no encontrado email {email}"
 }
 ```
 
@@ -154,8 +211,59 @@ Si se cambia la password correctamente se recibirá este mensaje:
 
 ```json
 {
-    "msg": "Changed password successfully"
+    "msg": "contraseña cambiada correctamente"
 }
+```
+
+Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
+
+```json
+{
+    "campo-1": [
+        "Error 1",
+        "Error 2"
+    ],
+    "campo-2": [
+        "Error 3"
+    ]
+}
+```
+
+#### Comprobar JWT
+
+Esta URI permite regenerar un JWT partiendo de uno preexistente en la cabecera **X-Auth-Token** y [este formulario](#comprobar-jwt):
+
+```
+POST /auth/check
+```
+
+Si todo es correcto devuelve los mismos datos que el login:
+
+```json
+{
+    "token": "{token}",
+    "language": "{language}",
+    "pusher_key": "{pusher_key}"
+}
+```
+
+Si los datos son incorrectos se devuelve un **401**.
+
+#### Obtener los detalles del perfil
+
+Para poder acceder al perfil se debe pasa el `JWT` en la cabecera **X-Auth-Token** usando la siguiente URI:
+
+```
+GET /auth/profile
+```
+
+#### Guardar los cambios del perfil
+
+Para guardar los datos en el perfil, se debe estar autentificado.
+
+```
+PUT   /auth/profile
+PATCH /auth/profile
 ```
 
 Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
