@@ -45,7 +45,9 @@ El formato de salida de una receta tiene la siguiente estructura:
 
 #### Paginación
 
-Acepta tanto la página como el tamaño de las lista:
+Acepta varios parametros:
+-  page: página
+- size: tamaño por página
 
 ```
 GET /recipes(?page=*&size=*)
@@ -96,7 +98,7 @@ GET /recipes/{slug}
 GET /recipes/slug-de-la-receta
 ```
 
-Devuelve un error `404` si no se encuentra la receta:
+Devuelve un error **404** si no se encuentra la receta:
 
 ```json
 {
@@ -111,9 +113,9 @@ Para crear una receta se necesita enviar el `JWT` en la cabecera **X-Auth-Token*
 ```
 POST /recipes
 ```
-Si el `JWT` es incorrecto se devuelve el código `401`.
+Si el `JWT` es incorrecto se devuelve el código **401**.
 
-Si se crea correctamente devuelve la nueva receta con un código `201`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
+Si se crea correctamente devuelve la nueva receta con un código **201**, pero si ocurre algún error en el input se recibe un **400** con todos los errores:
 
 ```json
 {
@@ -140,9 +142,9 @@ PUT   /recipes/1
 PATCH /recipes/1
 ```
 
-Si el `JWT` es incorrecto o la receta no pertenece al usuario actual (salvo que se trate de un **ADMIN**) se devuelve el código `401`.
+Si el `JWT` es incorrecto o la receta no pertenece al usuario actual (salvo que se trate de un **ADMIN**) se devuelve el código **401**.
 
-Si se actualiza correctamente devuelve la receta con los nuevos datos con un código `200`, pero si ocurre algún error en el input se recibe un `400` con todos los errores:
+Si se actualiza correctamente devuelve la receta con los nuevos datos con un código **200**, pero si ocurre algún error en el input se recibe un **400** con todos los errores:
 
 ```json
 {
@@ -175,9 +177,9 @@ Si se borra correctamente devuelve un mensaje advirtiendo de que se ha completad
 }
 ```
 
-Si el `JWT` es incorrecto se devuelve el código `401`.
+Si el `JWT` es incorrecto se devuelve el código **401**.
 
-Devuelve un error `404` si no se encuentra la receta:
+Devuelve un error **404** si no se encuentra la receta:
 
 ```json
 {
@@ -188,7 +190,7 @@ Devuelve un error `404` si no se encuentra la receta:
 #### Comprobar slug de una receta
 
 Se comprueba si el slug de una receta existe previamente o no. Para ello tambien se debe enviar el `JWT` en la cabecera **X-Auth-Token**.
-Si ademas se le pasa el `ID` de una receta excluye a esta receta de la comprobación. Si ya existe se devuelve un código `400`, sino un código `200`.:
+Si ademas se le pasa el `ID` de una receta excluye a esta receta de la comprobación. Si ya existe se devuelve un código **400**, sino un código **200**.:
 
 ```
 HEAD /recipes/{slug}/check
@@ -201,7 +203,7 @@ HEAD /recipes/slug-de-la-receta/check/1
 #### Comprobar si una receta es del usuario logueado
 
 Se comprueba si, a partir del slug, una receta pertence al usuario logueado. Para ello tambien se debe enviar el `JWT` en la cabecera **X-Auth-Token**.
-Si la receta no existe se devuelve un código `404`, si no pertence al usuario actual un código `401`, y sino se devuelve un código `200`. Si el usuario es **ADMIN** también devuelve como suyas las recetas de otros usuarios:
+Si la receta no existe se devuelve un código **404**, si no pertence al usuario actual un código **401**, y sino se devuelve un código **200**. Si el usuario es **ADMIN** también devuelve como suyas las recetas de otros usuarios:
 
 ```
 HEAD /recipes/{slug}/mine
@@ -238,7 +240,7 @@ El formato de salida de una receta tiene la siguiente estructura:
 #### Añadir un nuevo ingrediente a una receta
 
 Se añade un nuevo ingrediente a una receta existente. Para ello tambien se debe enviar el `JWT` en la cabecera **X-Auth-Token**, el `ID` de la receta y el [formato de entrada de un ingrediente](#estructura-json-de-los-ingredientes).
-Si la receta no existe se devuelve un código `404`, si no pertence al usuario actual un código `401`, y sino se devuelve un código `200`. Si el usuario es **ADMIN** se le permite añadir el ingrediente aunque la receta no sea suya:
+Si la receta no existe se devuelve un código **404**, si no pertence al usuario actual un código **401**, y sino se devuelve un código **200**. Si el usuario es **ADMIN** se le permite añadir el ingrediente aunque la receta no sea suya:
 
 ```
 POST /recipes/{id-receta}/ingredient
@@ -246,7 +248,7 @@ POST /recipes/{id-receta}/ingredient
 POST /recipes/1/ingredient
 ```
 
-También, si ocurre algun error con el formato de los datos se devuelve un error `400`:
+También, si ocurre algun error con el formato de los datos se devuelve un error **400**:
 
 ```json
 {
@@ -264,11 +266,10 @@ También, si ocurre algun error con el formato de los datos se devuelve un error
 #### Borrar un ingrediente de una receta
 
 Se borra un ingrediente de una receta existente. Para ello tambien se debe enviar el `JWT` en la cabecera **X-Auth-Token** y el `ID` de la receta y el ingrediente.
-Si la receta no existe se devuelve un código `404`, si no pertence al usuario actual un código `401`, y sino se devuelve un código `200`. Si el usuario es **ADMIN** se le permite añadir el ingrediente aunque la receta no sea suya:
+Si la receta no existe se devuelve un código **404**, si no pertence al usuario actual un código **401**, y sino se devuelve un código **200**. Si el usuario es **ADMIN** se le permite añadir el ingrediente aunque la receta no sea suya:
 
 ```
 DELETE /recipes/{id-receta}/ingredient/{id}
 
 DELETE /recipes/1/ingredient/1
 ```
-

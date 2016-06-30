@@ -6,8 +6,8 @@
 
 ```json
 {
-  "email": "string",
-  "password": "string"
+    "email": "string",
+    "password": "string"
 }
 ```
 
@@ -15,12 +15,12 @@
 
 ```json
 {
-  "username": "string",
-  "email": "string",
-  "password": "string",
-  "passwordRepeat": "string",
-  "first_name": "string nullable",
-  "last_name": "string nullable"
+    "username": "string",
+    "email": "string",
+    "password": "string",
+    "passwordRepeat": "string",
+    "first_name": "string nullable",
+    "last_name": "string nullable"
 }
 ```
 
@@ -28,12 +28,12 @@
 
 ```json
 {
-  "password": "string",
-  "passwordRepeat": "string",
-  "first_name": "string nullable",
-  "last_name": "string nullable",
-  "avatar": "int nullable",
-  "language": "string nullable"
+    "password": "string",
+    "passwordRepeat": "string",
+    "first_name": "string nullable",
+    "last_name": "string nullable",
+    "avatar": "int nullable",
+    "language": "string nullable"
 }
 ```
 
@@ -41,7 +41,7 @@
 
 ```json
 {
-  "email": "string"
+    "email": "string"
 }
 ```
 
@@ -49,8 +49,8 @@
 
 ```json
 {
-  "password": "string",
-  "token": "string"
+    "password": "string",
+    "token": "string"
 }
 ```
 
@@ -58,8 +58,8 @@
 
 ```json
 {
-  "email": "string",
-  "setExpiration": "bool"
+    "email": "string",
+    "setExpiration": "bool"
 }
 ```
 
@@ -67,7 +67,7 @@
 
 ```json
 {
-  "token": "string"
+    "token": "string"
 }
 ```
 
@@ -89,9 +89,9 @@ Si el login es correcto devuelve un JWT junto al lenguaje del usuario y la clave
 }
 ```
 
-Si los datos son correctos pero el email no existe o la contraseña no es correcta se devuelve un `401` vacio.
+Si los datos son correctos pero el email no existe o la contraseña no es correcta se devuelve un **401** vacio.
 
-Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
+Si hubiese algún problema con los datos introducidos se devuelve un **400** con los errores:
 
 ```json
 {
@@ -115,7 +115,7 @@ POST /auth/register
 
 Si el registro es correcto, se crea la cuenta y se envia un email para que el usuario active la cuenta.
 
-Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
+Si hubiese algún problema con los datos introducidos se devuelve un **400** con los errores:
 
 ```json
 {
@@ -138,15 +138,15 @@ PUT   /auth/active
 PATCH /auth/active
 ```
 
-Si el usuario al que le perteneceel token no existe, ya sea porque el token es incorrecto como si ese usuario ya esta activado, se devuelve un `404`:
+Si el usuario al que le perteneceel token no existe, ya sea porque el token es incorrecto como si ese usuario ya esta activado, se devuelve un **404**:
 
 ```json
 {
-    "error": "no encontrado email {email}"
+    "error": "no encontrado el email {email}"
 }
 ```
 
-Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
+Si hubiese algún problema con los datos introducidos se devuelve un **400** con los errores:
 
 ```json
 {
@@ -176,15 +176,15 @@ Cuando el email se haya enviado correctamente se recebirá este mensaje:
 }
 ```
 
-Si el email no existe se devuelve un `404`:
+Si el email no existe se devuelve un **404**:
 
 ```json
 {
-    "error": "no encontrado email {email}"
+    "error": "no encontrado el email {email}"
 }
 ```
 
-Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
+Si hubiese algún problema con los datos introducidos se devuelve un **400** con los errores:
 
 ```json
 {
@@ -215,7 +215,7 @@ Si se cambia la password correctamente se recibirá este mensaje:
 }
 ```
 
-Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
+Si hubiese algún problema con los datos introducidos se devuelve un **400** con los errores:
 
 ```json
 {
@@ -266,7 +266,7 @@ PUT   /auth/profile
 PATCH /auth/profile
 ```
 
-Si hubiese algún problema con los datos introducidos se devuelve un `400` con los errores:
+Si hubiese algún problema con los datos introducidos se devuelve un **400** con los errores:
 
 ```json
 {

@@ -33,7 +33,7 @@ GET /user/1/files/1
 GET /user/1/files/foto-1.jpg
 ```
 
-Devuelve un error `404` si no se encuentra el archivo:
+Devuelve un error **404** si no se encuentra el archivo:
 
 ```json
 {
@@ -48,9 +48,9 @@ Para subir un archivo se necesita enviar el `JWT` en la cabecera **X-Auth-Token*
 ```
 POST /user/{user-id}/files
 ```
-Si el `JWT` es incorrecto se devuelve el código `401`. Tambien ocurre si el `user-id` no coincide con el usuario autentificado, salvo que el usuario autentificado es un **admin**.
+Si el `JWT` es incorrecto se devuelve el código **401**. Tambien ocurre si el `user-id` no coincide con el usuario autentificado, salvo que el usuario autentificado es un **admin**.
 
-Si se crea correctamente devuelve el código `200` con el siguiente mensaje:
+Si se crea correctamente devuelve el código **200** con el siguiente mensaje:
 
 ```json
 {
@@ -58,7 +58,7 @@ Si se crea correctamente devuelve el código `200` con el siguiente mensaje:
 }
 ```
 
-Si no se sube ningun fichero o el `ID` de la receta no existe se devuelve un `404`. Tambien si ocurre algún error con el fichero se recibe un `500` con el mensaje de error:
+Si no se sube ningun fichero o el `ID` de la receta no existe se devuelve un **404**. Tambien si ocurre algún error con el fichero se recibe un `500` con el mensaje de error:
 
 ```json
 {
@@ -86,9 +86,9 @@ Si se borra correctamente devuelve un mensaje advirtiendo de que se ha completad
 }
 ```
 
-Si el `JWT` es incorrecto se devuelve el código `401`.
+Si el `JWT` es incorrecto se devuelve el código **401**.
 
-Devuelve un error `404` si no se encuentra el archivo:
+Devuelve un error **404** si no se encuentra el archivo:
 
 ```json
 {
