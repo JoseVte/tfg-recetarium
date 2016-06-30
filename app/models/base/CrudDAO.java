@@ -2,7 +2,11 @@ package models.base;
 
 import play.db.jpa.JPA;
 
+import javax.persistence.Column;
 import javax.persistence.NoResultException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CrudDAO<T extends Model> {
@@ -12,6 +16,31 @@ public class CrudDAO<T extends Model> {
     public CrudDAO(Class<? extends Model> model) {
         typeOfModel = model;
         TABLE = typeOfModel.getName();
+    }
+
+    /**
+     * Get all columns availables for this model
+     *
+     * @return List<String>
+     */
+    public List<String> columns() {
+        List<String> columns = new ArrayList<String>() {{
+            add("id");
+            add("createdAt");
+            add("updatedAt");
+        }};
+        Field[] fields = typeOfModel.getFields();
+
+        for (Field field: fields) {
+            Annotation[] annotations = field.getDeclaredAnnotations();
+            for(Annotation annotation : annotations){
+                if(annotation instanceof Column) {
+                    columns.add(field.getName());
+                }
+            }
+        }
+
+        return columns;
     }
 
     /**
@@ -96,7 +125,7 @@ public class CrudDAO<T extends Model> {
      */
     @SuppressWarnings("unchecked")
     public List<T> all() {
-        return JPA.em().createQuery("SELECT model FROM " + TABLE + " model ORDER BY id").getResultList();
+        return JPA.em().createQuery("SELECT model FROM " + TABLE + " model ORDER BY model.id").getResultList();
     }
 
     /**
@@ -109,7 +138,7 @@ public class CrudDAO<T extends Model> {
      */
     @SuppressWarnings("unchecked")
     public List<T> paginate(Integer page, Integer size) {
-        return JPA.em().createQuery("SELECT model FROM " + TABLE + " model ORDER BY id").setFirstResult(page * size).setMaxResults(size).getResultList();
+        return JPA.em().createQuery("SELECT model FROM " + TABLE + " model ORDER BY model.id").setFirstResult(page * size).setMaxResults(size).getResultList();
     }
 
     /**

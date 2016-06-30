@@ -373,6 +373,6 @@ public class UserDAO extends CrudDAO<User> {
      * @param user User
      */
     public void addRecipeCount(User user) {
-        JPA.em().createQuery("UPDATE " + TABLE + " users SET num_recipes = '" + user.numRecipes + 1 + "' WHERE id = " + user.id).executeUpdate();
+        JPA.em().createQuery("UPDATE " + TABLE + " users SET num_recipes = '" + (1+user.numRecipes) + "' WHERE users.id = " + user.id).executeUpdate();
     }
 }

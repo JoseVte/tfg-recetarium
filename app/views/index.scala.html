@@ -1,298 +1,594 @@
 @(message: String)
 
 @main(message) {
-<h1>@message</h1>
-<h2>RUTAS DE LA API</h2>
-<div class="divider"></div>
-<h4>Recetas</h4>
-<table class="responsive-table highlight striped">
-    <thead>
-        <tr>
-            <th>Acción</th>
-            <th>URI</th>
-            <th>Login</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#paginaci%C3%B3n">Listado y busqueda por páginas</a></td>
-            <td><strong>GET</strong> /recipes(?page=<em>&amp;size=</em>&amp;search=*)</td>
-            <td>—</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#obtener-una-receta-por-slug">Obtener por slug</a></td>
-            <td><strong>GET</strong> /recipes/{slug}</td>
-            <td>—</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#crear-una-receta-nueva">Crear</a></td>
-            <td><strong>POST</strong> /recipes</td>
-            <td>OWNER / ADMIN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#actualizar-una-receta-ya-existente">Actualizar</a></td>
-            <td><strong>PUT</strong>    /recipes/{id} <br> <strong>PATCH</strong>  /recipes/{id}</td>
-            <td>OWNER / ADMIN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#borrar-una-receta">Borrar</a></td>
-            <td><strong>DELETE</strong> /recipes/{id}</td>
-            <td>OWNER / ADMIN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#comprobar-slug-de-una-receta">Comprobar slug</a></td>
-            <td><strong>HEAD</strong> /recipes/{slug}/check <br> <strong>HEAD</strong> /recipes/{slug}/check/{id}</td>
-            <td>COMUN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#comprobar-si-una-receta-es-del-usuario-logueado">Comprobar propietario</a></td>
-            <td><strong>HEAD</strong> /recipes/{slug}/mine</td>
-            <td>COMUN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#a%C3%B1adir-un-nuevo-ingrediente-a-una-receta">Añadir un ingrediente</a></td>
-            <td><strong>POST</strong> /recipes/{id-receta}/ingredient</td>
-            <td>OWNER / ADMIN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#borrar-un-ingrediente-de-una-receta">Borrar un ingrediente</a></td>
-            <td><strong>DELETE</strong> /recipes/{id-receta}/ingredient/{id}</td>
-            <td>OWNER / ADMIN</td>
-        </tr>
-    </tbody>
-</table>
-<div class="divider"></div>
-<h4>Categorias</h4>
-<table class="responsive-table highlight striped">
-    <thead>
-        <tr>
-            <th>Acción</th>
-            <th>URI</th>
-            <th>Login</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-doc.md#todas-las-categorias">Todas las categorias</a></td>
-            <td><strong>GET</strong>  /categories</td>
-            <td>—</td>
-        </tr>
-    </tbody>
-</table>
-<div class="divider"></div>
-<h4>Tags</h4>
-<table>
-    <thead>
-        <tr>
-            <th>Acción</th>
-            <th>URI</th>
-            <th>Login</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/tag-doc.md#buscar-tags-por-cadena">Buscar tags</a></td>
-            <td><strong>GET</strong>  /tags(?search=*)</td>
-            <td>—</td>
-        </tr>
-    </tbody>
-</table>
-<div class="divider"></div>
-<h4>Autentificación</h4>
-<table class="responsive-table highlight striped">
-    <thead>
-        <tr>
-            <th>Acción</th>
-            <th>URI</th>
-            <th>Login</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#loguear-un-usuario">Loguear un usuario</a></td>
-            <td><strong>POST</strong>    /auth/login</td>
-            <td>—</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#registrar-un-usuario">Registrar un usuario</a></td>
-            <td><strong>POST</strong>    /auth/register</td>
-            <td>—</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#enviar-email-para-reiniciar-la-password">Enviar email para reiniciar la password</a></td>
-            <td><strong>POST</strong>    /auth/reset/password</td>
-            <td>—</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#cambiar-la-password">Cambia la password</a></td>
-            <td><strong>PUT</strong>     /auth/reset/password <br> <strong>PATCH</strong>   /auth/reset/password</td>
-            <td>—</td>
-        </tr>
-    </tbody>
-</table>
-<div class="divider"></div>
-<h4>Usuarios</h4>
-<table class="responsive-table highlight striped">
-    <thead>
-        <tr>
-            <th>Acción</th>
-            <th>URI</th>
-            <th>Login</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#paginaci%C3%B3n">Listado por páginas</a></td>
-            <td><strong>GET</strong>    /users(?page=<em>&amp;size=</em>&amp;search=*)</td>
-            <td>COMUN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#obtener-un-usuario-por-id">Obtener por id</a></td>
-            <td><strong>GET</strong>    /users/{id}</td>
-            <td>COMUN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#crear-un-usuario-nuevo">Crear</a></td>
-            <td><strong>POST</strong>   /users</td>
-            <td>ADMIN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#actualizar-un-usuario-ya-existente">Actualizar</a></td>
-            <td><strong>PUT</strong>    /users/{id} <br> <strong>PATCH</strong>  /users/{id}</td>
-            <td>ADMIN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#borrar-un-usuario">Borrar</a></td>
-            <td><strong>DELETE</strong> /users/{id}</td>
-            <td>ADMIN</td>
-        </tr>
-    </tbody>
-</table>
-<div class="divider"></div>
-<h4>Archivos</h4>
-<table class="responsive-table highlight striped">
-    <thead>
-        <tr>
-            <th>Acción</th>
-            <th>URI</th>
-            <th>Login</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md#obtener-por-nombre-del-archivo">Obtener por nombre del archivo</a></td>
-            <td><strong>GET</strong>    /recipes/{idReceta}/media/{id} <br> <strong>GET</strong>    /recipes/{idReceta}/media/{nombreFichero}</td>
-            <td>—</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md#subida-del-archivo">Subida del archivo</a></td>
-            <td><strong>POST</strong>   /recipes/{idReceta}/media</td>
-            <td>OWNER / ADMIN</td>
-        </tr>
-        <tr>
-            <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md#borrar-archivo">Borrar archivo</a></td>
-            <td><strong>DELETE</strong> /recipes/{idReceta}/media/{id} <br> <strong>DELETE</strong> /recipes/{idReceta}/media/{nombre}</td>
-            <td>OWNER / ADMIN</td>
-        </tr>
-    </tbody>
-</table>
-<div class="divider"></div>
-<h2>DOCUMENTACIÓN EXPANDIDA</h2>
-<div class="collection">
-    <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md">Autentificación</a>
-    <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md">Recetas</a>
-    <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md">Usuarios</a>
-    <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md">Archivos</a>
-    <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-deoc.md">Categorias</a>
-    <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/tags-doc.md">Tags</a>
-</div>
-<div class="divider"></div>
-<h3>CHANGELOG</h3>
-<h4><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.1"><img alt="0.4.1" src="@routes.Assets.versioned("images/rocket-blue.png")"> 0.4.1</a></h4>
-<ul class="collection">
-    <li class="collection-item">Busqueda de recetas</li>
-    <li class="collection-item">Actualizada la documentación</li>
-    <li class="collection-item">Añadidos nuevos test</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.0"><img alt="0.4.0" src="@routes.Assets.versioned("images/release.png")"> 0.4.0</a></h6>
-<ul class="collection">
-    <li class="collection-item">Gestion de ficheros con dropbox</li>
-    <li class="collection-item">Cambio del servidor CI a Travis</li>
-    <li class="collection-item">Añadidas las URL en los mails</li>
-    <li class="collection-item">Cambios en la estructura del modelo de la receta</li>
-    <li class="collection-item">Fix en el JWT y añadido token sin expiración</li>
-    <li class="collection-item">Subida de múltiples archivos</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.4"><img alt="0.3.4" src="@routes.Assets.versioned("images/release.png")"> 0.3.4</a></h6>
-<ul class="collection">
-    <li class="collection-item">Subida, lectura y borrado de archivos en el servidor.</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.3"><img alt="0.3.3" src="@routes.Assets.versioned("images/release.png")"> 0.3.3</a></h6>
-<ul class="collection">
-    <li class="collection-item">Nuevos formatos de JSON para el input y output de los usuarios y recetas.</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2-hotfix"><img alt="0.3.2-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.3.2-hotfix</a></h6>
-<ul class="collection">
-    <li class="collection-item">Nombre de los test fixeado en Jenkins</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2"><img alt="0.3.2" src="@routes.Assets.versioned("images/release.png")"> 0.3.2</a></h6>
-<ul class="collection">
-    <li class="collection-item">Añadidos los middleware para evitar el acceso a zonas privadas.</li>
-    <li class="collection-item">Versionado de la API con tag en el README.</li>
-    <li class="collection-item">Test para los middleware.</li>
-    <li class="collection-item">Nombre de los test fixeado en Linux (testear en Jenkins).</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.1-hotfix"><img alt="0.3.1-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.3.1-hotfix</a></h6>
-<ul class="collection">
-    <li class="collection-item">Hotfix: Añadido el filtro CORS para poder acceder desde la APP web.</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.1"><img alt="0.3.1" src="@routes.Assets.versioned("images/release.png")"> 0.3.1</a></h6>
-<ul class="collection">
-    <li class="collection-item">Despliegue de la aplicación en Heroku: <a href="https://recetarium.herokuapp.com/">recetarium</a></li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.0"><img alt="0.3.0" src="@routes.Assets.versioned("images/release.png")"> 0.3.0</a></h6>
-<ul class="collection">
-    <li class="collection-item">Nuevo README.</li>
-    <li class="collection-item">Implementación de registro,login y reinicio de password en un nuevo <strong>controller</strong>.</li>
-    <li class="collection-item">Acceso a rutas privadas mediante <strong>JWT</strong>.</li>
-    <li class="collection-item">Test para el nuevo <strong>controller</strong></li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.2.2"><img alt="0.2.2" src="@routes.Assets.versioned("images/release.png")"> 0.2.2</a></h6>
-<ul class="collection">
-    <li class="collection-item"><strong>Controller</strong> para las recetas.</li>
-    <li class="collection-item">Test para el nuevo controllador.</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.2.1"><img alt="0.2.1" src="@routes.Assets.versioned("images/release.png")"> 0.2.1</a></h6>
-<ul class="collection">
-    <li class="collection-item">Cambiado el nombre del modelo <strong>Section</strong> por <strong>Category</strong>.</li>
-    <li class="collection-item">Refactorización de los <strong>controllers</strong>, <strong>DAO</strong> y <strong>Models</strong>.</li>
-    <li class="collection-item">Personalizacón de la salida de los test en el terminal.</li>
-    <li class="collection-item">Refactorización de los test y clarificación de los nombres de los test.</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.2.0"><img alt="0.2.0" src="@routes.Assets.versioned("images/release.png")"> 0.2.0</a></h6>
-<ul class="collection">
-    <li class="collection-item">Añadidos todos los modelos básicos y sus relaciones:
+    <h1>@message</h1>
+
+    <h2>RUTAS DE LA API</h2>
+    <div class="divider"></div>
+    <div id="rutas">
+        <h4>Recetas</h4>
+        <table class="responsive-table highlight striped">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>URI</th>
+                    <th class="center">Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#paginaci%C3%B3n">Listado y busqueda por páginas</a></td>
+                    <td><strong>GET</strong> /recipes(?page=&amp;size=&amp;search=&amp;order=&amp;tags=*)</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#obtener-una-receta-por-slug">Obtener por slug</a></td>
+                    <td><strong>GET</strong> /recipes/{slug}</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#crear-una-receta-nueva">Crear</a></td>
+                    <td><strong>POST</strong> /recipes</td>
+                    <td class="center">OWNER</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#crear-un-nuevo-borrador">Crear borrador</a></td>
+                    <td><strong>POST</strong> /recipes/draft</td>
+                    <td class="center">OWNER</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#crear-una-receta-desde-el-borrador">Crear receta desde el borrador</a></td>
+                    <td><strong>POST</strong> /recipes/create-from-draft</td>
+                    <td class="center">OWNER</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#actualizar-una-receta-ya-existente">Actualizar</a></td>
+                    <td><strong>PUT</strong>    /recipes/{id} <br> <strong>PATCH</strong>  /recipes/{id}</td>
+                    <td class="center">OWNER / ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#borrar-una-receta">Borrar</a></td>
+                    <td><strong>DELETE</strong> /recipes/{id}</td>
+                    <td class="center">OWNER / ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#comprobar-slug-de-una-receta">Comprobar slug</a></td>
+                    <td><strong>HEAD</strong> /recipes/{slug}/check <br> <strong>HEAD</strong> /recipes/{slug}/check/{id}</td>
+                    <td class="center">COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#comprobar-si-una-receta-es-del-usuario-logueado">Comprobar propietario</a></td>
+                    <td><strong>HEAD</strong> /recipes/{slug}/mine</td>
+                    <td class="center">COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#a%C3%B1adir-un-nuevo-ingrediente-a-una-receta">Añadir un ingrediente</a></td>
+                    <td><strong>POST</strong> /recipes/{id-receta}/ingredient</td>
+                    <td class="center">OWNER / ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#borrar-un-ingrediente-de-una-receta">Borrar un ingrediente</a></td>
+                    <td><strong>DELETE</strong> /recipes/{id-receta}/ingredient/{id}</td>
+                    <td class="center">OWNER / ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#a%C3%B1adir-o-quitar-de-favoritos">Añadir/Borrar a favoritos</a></td>
+                    <td><strong>PUT</strong> /recipes/{id}/fav</td>
+                    <td class="center">COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md#puntuar-la-receta">Puntuar la receta</a></td>
+                    <td><strong>PUT</strong> /recipes/{id}/rating</td>
+                    <td class="center">COMUN</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="divider"></div>
+
+        <h4>Comentarios</h4>
+        <table class="responsive-table highlight striped">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>URI</th>
+                    <th class="center">Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/comentarios-doc.md#todas-las-respuestas">Todas las respuestas</a></td>
+                    <td><strong>GET</strong>  /recipes{recipe-id}/comments/{comentario-id}</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/comentarios-doc.md#crear-una-categoria">Crear</a></td>
+                    <td><strong>POST</strong> /recipes{id}/comments <br> <strong>POST</strong> /recipes{recipe-id}/comments/{comentario-id}</td>
+                    <td class="center">COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/comentarios-doc.md#actualizar-una-categoria">Actualizar</a></td>
+                    <td><strong>PUT</strong>    /recipes{recipe-id}/comments/{comentario-id} <br> <strong>PATCH</strong>  /recipes{recipe-id}/comments/{comentario-id}</td>
+                    <td class="center">OWNER / ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/comentarios-doc.md#borrar-una-categoria">Borrar</a></td>
+                    <td><strong>DELETE</strong> /recipes{recipe-id}/comments/{comentario-id}</td>
+                    <td class="center">OWNER / ADMIN</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="divider"></div>
+
+        <h4>Categorias</h4>
+        <table class="responsive-table highlight striped">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>URI</th>
+                    <th class="center">Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-doc.md#todas-las-categorias">Todas las categorias</a></td>
+                    <td><strong>GET</strong>  /categories</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-doc.md#todas-las-categorias-con-paginacion">Todas las categorias con paginacion</a></td>
+                    <td><strong>GET</strong>  /categories(?page=&amp;size=&amp;search=&amp;order=)</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-doc.md#obtener-una-categoria-por-id">Obtener por id</a></td>
+                    <td><strong>GET</strong>    /categories/{id}</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-doc.md#crear-una-categoria">Crear</a></td>
+                    <td><strong>POST</strong> /categories</td>
+                    <td class="center">ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-doc.md#actualizar-una-categoria">Actualizar</a></td>
+                    <td><strong>PUT</strong>    /categories/{id} <br> <strong>PATCH</strong>  /categories/{id}</td>
+                    <td class="center">ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-doc.md#borrar-una-categoria">Borrar</a></td>
+                    <td><strong>DELETE</strong> /categories/{id}</td>
+                    <td class="center">ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-doc.md#borrar-multiples-categorias">Borrar multiple</a></td>
+                    <td><strong>DELETE</strong> /categories?ids=&amp;ids=</td>
+                    <td class="center">ADMIN</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="divider"></div>
+
+        <h4>Tags</h4>
+        <table class="responsive-table highlight striped">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>URI</th>
+                    <th class="center">Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/tag-doc.md#buscar-etiquetas-por-cadena">Buscar tags</a></td>
+                    <td><strong>GET</strong>  /tags(?search=*)</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/tag-doc.md#obtener-una-etiqueta-por-id">Obtener por id</a></td>
+                    <td><strong>GET</strong>    /tags/{id}</td>
+                    <td class="center">-</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="divider"></div>
+
+        <h4>Autentificación</h4>
+        <table class="responsive-table highlight striped">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>URI</th>
+                    <th class="center">Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#loguear-un-usuario">Loguear un usuario</a></td>
+                    <td><strong>POST</strong>    /auth/login</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#registrar-un-usuario">Registrar un usuario</a></td>
+                    <td><strong>POST</strong>    /auth/register</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#enviar-email-para-reiniciar-la-password">Enviar email para reiniciar la password</a></td>
+                    <td><strong>POST</strong>    /auth/reset/password</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#cambiar-la-password">Cambia la password</a></td>
+                    <td><strong>PUT</strong>     /auth/reset/password <br> <strong>PATCH</strong>   /auth/reset/password</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#comprobar-token">Comprobar el token</a></td>
+                    <td><strong>POST</strong>    /auth/check</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#activar-la-cuenta-del-usuario">Activar cuenta</a></td>
+                    <td><strong>PUT</strong>     /auth/active <br> <strong>PATCH</strong>   /auth/active</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#obtener-los-detalles-del-perfil">Obtener los detalles del perfil</a></td>
+                    <td><strong>GET</strong>    /auth/profile</td>
+                    <td class="center">COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md#guardar-los-cambios-del-perfil">Guardar los cambios del perfil</a></td>
+                    <td><strong>PUT</strong>     /auth/profile <br> <strong>PATCH</strong>   /auth/profile</td>
+                    <td class="center">COMUN</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="divider"></div>
+
+        <h4>Usuarios</h4>
+        <table class="responsive-table highlight striped">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>URI</th>
+                    <th class="center">Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#paginaci%C3%B3n">Listado por páginas</a></td>
+                    <td><strong>GET</strong>    /users(?page=&amp;size=&amp;search=&amp;order=)</td>
+                    <td>COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#obtener-un-usuario-por-id">Obtener por id</a></td>
+                    <td><strong>GET</strong>    /users/{id}</td>
+                    <td>COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#crear-un-usuario-nuevo">Crear</a></td>
+                    <td><strong>POST</strong>   /users</td>
+                    <td>ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#actualizar-un-usuario-ya-existente">Actualizar</a></td>
+                    <td><strong>PUT</strong>    /users/{id} <br> <strong>PATCH</strong>  /users/{id}</td>
+                    <td>ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#borrar-un-usuario">Borrar</a></td>
+                    <td><strong>DELETE</strong> /users/{id}</td>
+                    <td>ADMIN</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="divider"></div>
+
+        <h4>Amigos</h4>
+        <table class="responsive-table highlight striped">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>URI</th>
+                    <th class="center">Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#paginaci%C3%B3n">Listado por páginas</a></td>
+                    <td><strong>GET</strong>    /users/{id}/friends(?page=&amp;size=&amp;search=&amp;order=)</td>
+                    <td class="center">COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#crear-un-usuario-nuevo">Crear</a></td>
+                    <td><strong>POST</strong>   /users/{id}/friends</td>
+                    <td class="center">COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md#borrar-un-usuario">Borrar</a></td>
+                    <td><strong>DELETE</strong> /users/{user-id}/friends/{amigo-id}</td>
+                    <td class="center">COMUN</td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="divider"></div>
+
+        <h4>Archivos</h4>
+        <table class="responsive-table highlight striped">
+            <thead>
+                <tr>
+                    <th>Acción</th>
+                    <th>URI</th>
+                    <th class="center">Login</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md#todas-las-imagenes">Todas las imagenes</a></td>
+                    <td><strong>GET</strong>  /users/{user-id}/files</td>
+                    <td class="center">COMUN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md#obtener-por-nombre-del-archivo">Obtener por nombre del archivo</a></td>
+                    <td><strong>GET</strong>    /users/{user-id}/files/{id} <br> <strong>GET</strong>    /users/{user-id}/files/{nombre}</td>
+                    <td class="center">-</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md#subida-del-archivo">Subida del archivo</a></td>
+                    <td><strong>POST</strong>   /users/{user-id}/files</td>
+                    <td class="center">OWNER / ADMIN</td>
+                </tr>
+                <tr>
+                    <td><a href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md#borrar-archivo">Borrar archivo</a></td>
+                    <td><strong>DELETE</strong> /users/{user-id}/files/{id} <br> <strong>DELETE</strong> /users/{user-id}/files/{nombre}</td>
+                    <td class="center">OWNER / ADMIN</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <h2>DOCUMENTACIÓN EXPANDIDA</h2>
+    <div class="collection">
+        <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/auth-doc.md">Autentificación</a>
+        <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/recetas-doc.md">Recetas</a>
+        <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/user-doc.md">Usuarios</a>
+        <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/archivos-doc.md">Archivos</a>
+        <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/categorias-deoc.md">Categorias</a>
+        <a class="collection-item" href="https://github.com/JoseVte/tfg-recetarium/tree/master/doc/tags-doc.md">Tags</a>
+    </div>
+    <div class="divider"></div>
+
+    <div id="changelog">
+        <h3>CHANGELOG</h3>
+
+        <h4><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.13.1"><img alt="0.13.1" src="@routes.Assets.versioned("images/rocket-blue.png")"> 0.13.1</a></h4>
         <ul class="collection">
-            <li class="collection-item">User</li>
-            <li class="collection-item">Recipe</li>
-            <li class="collection-item">Comment</li>
-            <li class="collection-item">Media</li>
-            <li class="collection-item">Tag</li>
-            <li class="collection-item">Section</li>
+            <li class="collection-item">Comprobar el parametro <code>order</code> en la paginación</li>
+            <li class="collection-item">Arreglado problema con el autoincremento de las recetas del usuario</li>
         </ul>
-    </li>
-    <li class="collection-item">Clases <strong>DAO</strong> y <strong>Service</strong> para los modelos.</li>
-    <li class="collection-item">CRUD y servicios para usuarios, recetas, comentarios, categorias, tags y archivos.</li>
-    <li class="collection-item">Automatización de los campos <code>created_at</code> y <code>updated_at</code> para los modelos.</li>
-    <li class="collection-item">Creados los <strong>controllers</strong> básicos para usuarios y recetas.</li>
-    <li class="collection-item">Creados los test para las clases <strong>DAO</strong> y <strong>Service</strong> usando un fichero <code>YAML</code>.</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.1.0"><img alt="0.1.0" src="@routes.Assets.versioned("images/release.png")"> 0.1.0</a></h6>
-<ul class="collection">
-    <li class="collection-item">Integración con Jenkins</li>
-</ul>
-<h6><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.0.0"><img alt="0.0.0" src="@routes.Assets.versioned("images/release.png")"> 0.0.0</a></h6>
-<ul class="collection">
-    <li class="collection-item">App base</li>
-</ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.12.3"><img alt="0.12.3" src="@routes.Assets.versioned("images/release.png")"> 0.12.3</a></h5>
+        <ul class="collection">
+            <li class="collection-item">CRUD de las categorias</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.12.2"><img alt="0.12.2" src="@routes.Assets.versioned("images/release.png")"> 0.12.2</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Nueva ruta: obtener tag por ID</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.12.1"><img alt="0.12.1" src="@routes.Assets.versioned("images/release.png")"> 0.12.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Añadido idioma al perfil del usuario</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.11.3"><img alt="0.11.3" src="@routes.Assets.versioned("images/release.png")"> 0.11.3</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Creados los mensajes en español e ingles para la internacionalización</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.11.2"><img alt="0.11.2" src="@routes.Assets.versioned("images/release.png")"> 0.11.2</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Añadido <a href="https://github.com/pusher/pusher-http-java">pusher</a> para las notificaciones</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.11.1"><img alt="0.11.1" src="@routes.Assets.versioned("images/release.png")"> 0.11.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Ver las recetas favoritas en el perfil</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.3-hotfix"><img alt="0.10.3-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.10.3-hotfix</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Arreglos en los Serializer</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.3"><img alt="0.10.3" src="@routes.Assets.versioned("images/release.png")"> 0.10.3</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Validacion del email durante el registro</li>
+            <li class="collection-item">Añadido avatar al usuario</li>
+            <li class="collection-item">Recreacion del JWT</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.2"><img alt="0.10.2" src="@routes.Assets.versioned("images/release.png")"> 0.10.2</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Busqueda de usuarios</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.1-hotfix"><img alt="0.10.1-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.10.1-hotfix</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Arreglo de errores y nuevos test añadidos</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.10.1"><img alt="0.10.1" src="@routes.Assets.versioned("images/release.png")"> 0.10.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Rutas para ver, agregar y borrar amigos</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.9.1"><img alt="0.9.1" src="@routes.Assets.versioned("images/release.png")"> 0.9.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Ver las recetas por usuario</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.2-hotfix"><img alt="0.8.2-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.8.2-hotfix</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Fixeada query para la busqueda de recetas por tags</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.2"><img alt="0.8.2" src="@routes.Assets.versioned("images/release.png")"> 0.8.2</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Busqueda de recetas por tags</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.1"><img alt="0.8.1" src="@routes.Assets.versioned("images/release.png")"> 0.8.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">CRUD de comentarios</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.8.0-hotfix"><img alt="0.8.0-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.8.0-hotfix</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Ordenar recetas por fecha</li>
+            <li class="collection-item">Nuevo sistema para contar las recetas</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.7.1"><img alt="0.7.1" src="@routes.Assets.versioned("images/release.png")"> 0.7.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Añadida galeria para elegir imagenes en la receta y el perfil de usuario</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.6.1"><img alt="0.6.1" src="@routes.Assets.versioned("images/release.png")"> 0.6.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Añadidas rutas para añadir a favoritos</li>
+            <li class="collection-item">Añadida posibilidad de puntuar una receta del 0 al 5</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.2"><img alt="0.5.2" src="@routes.Assets.versioned("images/release.png")"> 0.5.2</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Nuevas rutas para el perfil</li>
+            <li class="collection-item">Cambiados algunos metodos del UserService</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.1"><img alt="0.5.1" src="@routes.Assets.versioned("images/release.png")"> 0.5.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Generar borrador de una receta</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.0-hotfix-2"><img alt="0.5.0-hotfix-2" src="@routes.Assets.versioned("images/release.png")"> 0.5.0-hotfix-2</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Arreglado problema con la visibilidad de las recetas</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.0"><img alt="0.5.0-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.5.0-hotfix</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Arreglado login cuando se ha enviado un correo para restaurar la password</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.5.0"><img alt="0.5.0" src="@routes.Assets.versioned("images/release.png")"> 0.5.0</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Añadida visibilidad a las recetas</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.1"><img alt="0.4.1" src="@routes.Assets.versioned("images/release.png")"> 0.4.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Busqueda de recetas</li>
+            <li class="collection-item">Actualizada la documentación</li>
+            <li class="collection-item">Añadidos nuevos test</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.4.0"><img alt="0.4.0" src="@routes.Assets.versioned("images/release.png")"> 0.4.0</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Gestion de ficheros con dropbox</li>
+            <li class="collection-item">Cambio del servidor CI a Travis</li>
+            <li class="collection-item">Añadidas las URL en los mails</li>
+            <li class="collection-item">Cambios en la estructura del modelo de la receta</li>
+            <li class="collection-item">Fix en el JWT y añadido token sin expiración</li>
+            <li class="collection-item">Subida de múltiples archivos</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.4"><img alt="0.3.4" src="@routes.Assets.versioned("images/release.png")"> 0.3.4</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Subida, lectura y borrado de archivos en el servidor.</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.3"><img alt="0.3.3" src="@routes.Assets.versioned("images/release.png")"> 0.3.3</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Nuevos formatos de JSON para el input y output de los usuarios y recetas.</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2-hotfix"><img alt="0.3.2-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.3.2-hotfix</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Nombre de los test fixeado en Jenkins</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.2"><img alt="0.3.2" src="@routes.Assets.versioned("images/release.png")"> 0.3.2</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Añadidos los middleware para evitar el acceso a zonas privadas.</li>
+            <li class="collection-item">Versionado de la API con tag en el README.</li>
+            <li class="collection-item">Test para los middleware.</li>
+            <li class="collection-item">Nombre de los test fixeado en Linux (testear en Jenkins).</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.1-hotfix"><img alt="0.3.1-hotfix" src="@routes.Assets.versioned("images/release.png")"> 0.3.1-hotfix</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Hotfix: Añadido el filtro CORS para poder acceder desde la APP web.</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.1"><img alt="0.3.1" src="@routes.Assets.versioned("images/release.png")"> 0.3.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Despliegue de la aplicación en Heroku: <a href="https://recetarium.herokuapp.com/">recetarium</a></li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.3.0"><img alt="0.3.0" src="@routes.Assets.versioned("images/release.png")"> 0.3.0</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Nuevo README.</li>
+            <li class="collection-item">Implementación de registro,login y reinicio de password en un nuevo <strong>controller</strong>.</li>
+            <li class="collection-item">Acceso a rutas privadas mediante <strong>JWT</strong>.</li>
+            <li class="collection-item">Test para el nuevo <strong>controller</strong></li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.2.2"><img alt="0.2.2" src="@routes.Assets.versioned("images/release.png")"> 0.2.2</a></h5>
+        <ul class="collection">
+            <li class="collection-item"><strong>Controller</strong> para las recetas.</li>
+            <li class="collection-item">Test para el nuevo controllador.</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.2.1"><img alt="0.2.1" src="@routes.Assets.versioned("images/release.png")"> 0.2.1</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Cambiado el nombre del modelo <strong>Section</strong> por <strong>Category</strong>.</li>
+            <li class="collection-item">Refactorización de los <strong>controllers</strong>, <strong>DAO</strong> y <strong>Models</strong>.</li>
+            <li class="collection-item">Personalizacón de la salida de los test en el terminal.</li>
+            <li class="collection-item">Refactorización de los test y clarificación de los nombres de los test.</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.2.0"><img alt="0.2.0" src="@routes.Assets.versioned("images/release.png")"> 0.2.0</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Añadidos todos los modelos básicos y sus relaciones:
+                <ul class="collection">
+                    <li class="collection-item">User</li>
+                    <li class="collection-item">Recipe</li>
+                    <li class="collection-item">Comment</li>
+                    <li class="collection-item">Media</li>
+                    <li class="collection-item">Tag</li>
+                    <li class="collection-item">Section</li>
+                </ul>
+            </li>
+            <li class="collection-item">Clases <strong>DAO</strong> y <strong>Service</strong> para los modelos.</li>
+            <li class="collection-item">CRUD y servicios para usuarios, recetas, comentarios, categorias, tags y archivos.</li>
+            <li class="collection-item">Automatización de los campos <code>created_at</code> y <code>updated_at</code> para los modelos.</li>
+            <li class="collection-item">Creados los <strong>controllers</strong> básicos para usuarios y recetas.</li>
+            <li class="collection-item">Creados los test para las clases <strong>DAO</strong> y <strong>Service</strong> usando un fichero <code>YAML</code>.</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.1.0"><img alt="0.1.0" src="@routes.Assets.versioned("images/release.png")"> 0.1.0</a></h5>
+        <ul class="collection">
+            <li class="collection-item">Integración con Jenkins</li>
+        </ul>
+
+        <h5><a href="https://github.com/JoseVte/tfg-recetarium/releases/tag/0.0.0"><img alt="0.0.0" src="@routes.Assets.versioned("images/release.png")"> 0.0.0</a></h5>
+        <ul class="collection">
+            <li class="collection-item">App base</li>
+        </ul>
+    </div>
 }
